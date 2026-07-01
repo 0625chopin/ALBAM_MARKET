@@ -3,22 +3,37 @@
 // 표현 컴포넌트(AuctionGrid/Card/Gallery/Info/SellerReputation)는 수정하지 않는다.
 
 import { createClient } from "@/lib/supabase/server";
-import type { AuctionSummary, AuctionDetail, Category } from "@/lib/types";
+import type {
+  AuctionSummary,
+  AuctionDetail,
+  Category,
+  ProductStatus,
+} from "@/lib/types";
 import { toAuctionSummary, toAuctionDetail, toSellerReputation } from "./_map";
+
+/** 홈 상태 필터 값 — 실제 상품 상태 + "all"(전체) */
+export type AuctionStatusFilterValue = ProductStatus | "all";
 
 /**
  * 홈/목록 카드 요약 목록.
  * 대표 이미지를 단일 조인 select 로 함께 가져와 N+1 을 회피한다(최신 등록순).
+ * @param status "all"이면 전체, 그 외 특정 상태만 조회(기본 "all").
  */
-export async function fetchAuctionSummaries(): Promise<AuctionSummary[]> {
+export async function fetchAuctionSummaries(
+  status: AuctionStatusFilterValue = "all"
+): Promise<AuctionSummary[]> {
   const supabase = await createClient();
-  const { data, error } = await supabase
+  let query = supabase
     .from("products")
     .select(
       "id, title, current_price, auction_ends_at, status, region, product_images(url, is_primary)"
     )
     .order("created_at", { ascending: false });
 
+  // "all"이 아니면 상태로 필터
+  if (status !== "all") query = query.eq("status", status);
+
+  const { data, error } = await query;
   if (error || !data) return [];
   return data.map(toAuctionSummary);
 }

@@ -9,14 +9,19 @@ import type { AuctionSummary } from "@/lib/types";
 interface AuctionGridProps {
   /** 렌더할 경매 요약 목록 */
   auctions: AuctionSummary[];
+  /** 빈 목록일 때 표시할 문구 (기본: "진행 중인 경매가 없습니다.") */
+  emptyMessage?: string;
 }
 
-export function AuctionGrid({ auctions }: AuctionGridProps) {
+export function AuctionGrid({
+  auctions,
+  emptyMessage = "진행 중인 경매가 없습니다.",
+}: AuctionGridProps) {
   // 빈 목록 처리 — Phase 3에서 Empty 상태 컴포넌트로 교체
   if (auctions.length === 0) {
     return (
       <p className="py-12 text-center text-sm text-muted-foreground">
-        진행 중인 경매가 없습니다.
+        {emptyMessage}
       </p>
     );
   }
