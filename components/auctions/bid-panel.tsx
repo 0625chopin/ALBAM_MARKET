@@ -54,8 +54,11 @@ export function BidPanel({
   className,
 }: BidPanelProps) {
   const router = useRouter();
-  // 입찰가 입력 상태
-  const [bidAmount, setBidAmount] = useState("");
+  // 입찰가 입력 상태 — 진입 시 최소 입찰가(현재가 + 증가폭)로 미리 채워
+  // 사용자가 바로 "입찰하기"를 눌러도 빈값 검증에 걸리지 않도록 한다.
+  const [bidAmount, setBidAmount] = useState(() =>
+    String(currentPrice + MIN_BID_INCREMENT)
+  );
   // 현재가 — 낙관적 UI: 입찰 성공 시 로컬에서 즉시 갱신 (Mock 시뮬레이션)
   const [currentPriceState, setCurrentPriceState] = useState(currentPrice);
   // 누적 입찰 횟수 — 낙관적 UI 시뮬레이션
@@ -142,10 +145,10 @@ export function BidPanel({
     setIsBidding(true);
     try {
       const newPrice = await placeBid(productId, amount);
-      // 서버 확정 현재가로 갱신
+      // 서버 확정 현재가로 갱신 + 다음 최소 입찰가로 입력칸 재설정
       setCurrentPriceState(newPrice);
       setBidCount((prev) => prev + 1);
-      setBidAmount("");
+      setBidAmount(String(newPrice + MIN_BID_INCREMENT));
       setBidSuccess(true);
       router.refresh();
     } catch (error) {
