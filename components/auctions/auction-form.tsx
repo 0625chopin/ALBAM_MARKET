@@ -35,6 +35,13 @@ import { createAuction } from "@/lib/mutations/auctions";
 // 이미지 최대 등록 개수 (대표 1 + 추가 5)
 const IMAGE_SLOT_COUNT = 6;
 
+// 입력 문자열에서 숫자만 남긴다 (콤마·공백 등 제거)
+const onlyDigits = (value: string) => value.replace(/[^\d]/g, "");
+
+// 숫자 문자열을 3자리마다 콤마 찍어 표시용으로 변환 (빈 값이면 빈 문자열)
+const formatWithComma = (digits: string) =>
+  digits === "" ? "" : Number(digits).toLocaleString("ko-KR");
+
 // 폼 필드별 검증 에러 키
 interface FormErrors {
   title?: string;
@@ -412,12 +419,11 @@ export function AuctionForm() {
         <Label htmlFor="auction-start-price">시작가(원)</Label>
         <Input
           id="auction-start-price"
-          type="number"
+          type="text"
+          inputMode="numeric"
           placeholder="0"
-          min={0}
-          step={100}
-          value={startPrice}
-          onChange={(e) => setStartPrice(e.target.value)}
+          value={formatWithComma(startPrice)}
+          onChange={(e) => setStartPrice(onlyDigits(e.target.value))}
           aria-invalid={errors.startPrice !== undefined}
         />
         {errors.startPrice && (
@@ -432,12 +438,11 @@ export function AuctionForm() {
         <Label htmlFor="auction-buy-now-price">즉시구매가(원) · 선택</Label>
         <Input
           id="auction-buy-now-price"
-          type="number"
+          type="text"
+          inputMode="numeric"
           placeholder="0"
-          min={0}
-          step={100}
-          value={buyNowPrice}
-          onChange={(e) => setBuyNowPrice(e.target.value)}
+          value={formatWithComma(buyNowPrice)}
+          onChange={(e) => setBuyNowPrice(onlyDigits(e.target.value))}
           aria-invalid={errors.buyNowPrice !== undefined}
           aria-describedby="buy-now-hint"
         />
