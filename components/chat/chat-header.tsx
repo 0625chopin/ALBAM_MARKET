@@ -1,0 +1,46 @@
+// 채팅방 상단 헤더 컴포넌트 (RSC)
+// 상대방 아바타(이름 첫 글자), 닉네임, 별점을 표시한다.
+// 뒤로가기는 Link로 처리 — RSC이므로 onClick 이벤트 핸들러 사용 금지.
+import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { StarRating } from "@/components/common/star-rating";
+
+interface ChatHeaderProps {
+  /** 상대방 닉네임 */
+  nickname: string;
+  /** 상대방 평점 (0~10 범위) */
+  score: number;
+}
+
+export function ChatHeader({ nickname, score }: ChatHeaderProps) {
+  // 아바타 폴백: 닉네임 첫 글자
+  const initial = nickname.charAt(0);
+
+  return (
+    <header className="flex items-center gap-3 border-b bg-background px-4 py-3">
+      {/* 뒤로가기 링크 — onClick 없이 Link만 사용(RSC 규칙) */}
+      <Link
+        href="/transactions"
+        className="flex shrink-0 items-center text-muted-foreground transition-colors hover:text-foreground"
+        aria-label="거래 목록으로 돌아가기"
+      >
+        <ChevronLeft className="size-5" aria-hidden="true" />
+      </Link>
+
+      {/* 상대방 아바타 */}
+      <Avatar size="default">
+        <AvatarFallback>{initial}</AvatarFallback>
+      </Avatar>
+
+      {/* 닉네임 + 별점 영역 */}
+      <div className="flex flex-1 flex-col gap-0.5">
+        <span className="text-sm font-semibold text-foreground">
+          {nickname}
+        </span>
+        {/* TODO: Phase 5 — 실제 평점 데이터로 교체 */}
+        <StarRating score={score} max={10} />
+      </div>
+    </header>
+  );
+}

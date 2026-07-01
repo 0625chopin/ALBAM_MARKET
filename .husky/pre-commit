@@ -1,0 +1,5 @@
+# 스테이징된 파일에 ESLint --fix + Prettier 적용 (빠름)
+npx lint-staged
+
+# 프로젝트 전체 타입체크 (타입 오류 시 커밋 중단)
+npx tsc --noEmit

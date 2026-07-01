@@ -25,17 +25,17 @@ export async function updateSession(request: NextRequest) {
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value),
+            request.cookies.set(name, value)
           );
           supabaseResponse = NextResponse.next({
             request,
           });
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options),
+            supabaseResponse.cookies.set(name, value, options)
           );
         },
       },
-    },
+    }
   );
 
   // Do not run code between createServerClient and
@@ -47,13 +47,19 @@ export async function updateSession(request: NextRequest) {
   const { data } = await supabase.auth.getClaims();
   const user = data?.claims;
 
-  if (
-    request.nextUrl.pathname !== "/" &&
-    !user &&
-    !request.nextUrl.pathname.startsWith("/login") &&
-    !request.nextUrl.pathname.startsWith("/auth")
-  ) {
-    // no user, potentially respond by redirecting the user to the login page
+  // 로그인 필요 보호 경로 (PRD: 경매 등록/거래/채팅은 로그인 필요, 내 프로필은 본인 전용).
+  // 공개 경로는 비로그인 브라우징 허용: 홈("/"), 경매 상세("/auctions/[id]"),
+  // 타인 프로필("/profile/[id]"), /sample, /auth/*.
+  const pathname = request.nextUrl.pathname;
+  const isProtectedRoute =
+    pathname === "/auctions/new" ||
+    pathname === "/profile" ||
+    pathname === "/profile/edit" ||
+    pathname.startsWith("/transactions") ||
+    pathname.startsWith("/chat");
+
+  if (isProtectedRoute && !user) {
+    // 비로그인 사용자는 로그인 페이지로 리다이렉트
     const url = request.nextUrl.clone();
     url.pathname = "/auth/login";
     return NextResponse.redirect(url);

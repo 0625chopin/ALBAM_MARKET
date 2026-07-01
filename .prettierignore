@@ -1,0 +1,11 @@
+node_modules
+.next
+out
+build
+coverage
+*.lock
+package-lock.json
+lib/database.types.ts
+public
+shrimp_data
+.playwright-mcp
