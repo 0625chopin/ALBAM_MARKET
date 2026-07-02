@@ -13,30 +13,30 @@
 
 ## 이슈 목록
 
-| ID        | 상태     | 분류   | 제목                                                                        | 비고                                                                 |
-| --------- | -------- | ------ | --------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| ISSUE-009 | 🟢 DONE  | UI     | 모바일 헤더 메뉴(드로어/햄버거) 미구현 → 하단 BottomNav로 대체              | T033 확인, 하단 탭바가 모바일 내비 제공                              |
-| ISSUE-010 | 🟢 DONE  | 국제화 | `app/layout.tsx` lang 속성 "en" → "ko" 적용                                 | MVP 한국어 고정(2026-07-02), 다국어는 Phase 7(T074)                  |
-| ISSUE-011 | 🟢 DONE  | 인프라 | cacheComponents 동적 라우트 prerender — Suspense 경계 패턴                  | T012에서 해결, Phase 2 참고 패턴                                     |
-| ISSUE-012 | 🟢 DONE  | 데이터 | 타입 네이밍 camelCase 확정 → 실DB(snake_case) 매핑 레이어 필요              | `lib/queries/_map.ts` 매핑 레이어로 구현(컴포넌트 무수정)            |
-| ISSUE-013 | 🟢 DONE  | 인프라 | RSC에 onClick 등 이벤트 핸들러 전달 시 500 에러 — 정적/클라이언트 분리      | T025에서 해결, Phase 3 인터랙션 참고                                 |
-| ISSUE-014 | 🟢 DONE  | 데이터 | `profiles.nickname` NOT NULL 제약 적용                                      | 트리거 폴백 보강 + 가입 폼 닉네임 입력 + NOT NULL (2026-07-02)       |
-| ISSUE-015 | 🟢 DONE  | 데이터 | `products`에 상품 설명(description) 컬럼 부재 → 등록 폼의 설명 미저장       | 컬럼 추가 + 타입/매퍼/폼/상세표시 반영 완료                          |
-| ISSUE-016 | 🟢 DONE  | 평판   | 평점 코멘트(comment) UI 입력되나 미저장                                     | `ratings.comment`+`submit_rating` p_comment 인자 추가 완료           |
-| ISSUE-017 | 🟢 DONE  | 인증   | 미들웨어 비로그인 보호 경로 복원(Phase 2 임시 허용 제거)                    | T062에서 해결                                                        |
-| ISSUE-018 | 🟢 DONE  | 인프라 | 스타터킷 잔재(groups/group_members + group RPC 4종) anon 노출 제거          | 테이블·함수·트리거 DROP + get_policy_int anon 노출 차단 (2026-07-02) |
-| ISSUE-019 | 🟢 DONE  | 성능   | FK 커버링 인덱스 미생성 → 도메인 FK 8건 인덱스 추가                         | unindexed_foreign_keys advisor 0 (2026-07-02)                        |
-| ISSUE-001 | 🟢 DONE  | 경매   | 기본 낙찰시간 상수 → DB 공통코드 이관(단일값)                               | codes.policy로 이관, 컬럼 DEFAULT 자동설정                           |
-| ISSUE-002 | 🟢 DONE  | 거래   | 거래완료 자동완료 대기시간 결정 (저장위치는 DB 이관됨)                      | 기본 24h 확정, 24~168h DB 조정 가능(RPC 클램프)                      |
-| ISSUE-003 | 🟢 DONE  | 입찰   | 최소 입찰 증가폭 방식(정액/정률/구간) (저장위치는 DB 이관됨)                | 정액 방식 확정, 값 1,000원                                           |
-| ISSUE-004 | 🟢 DONE  | 평판   | 낙찰 포기 패널티 정책(점수/기준/제재)                                       | 이용 제한 확정: 30일 3회 누적 시 경매 등록 차단(트리거)              |
-| ISSUE-005 | 🟢 DONE  | 평판   | 판매자/구매자 레벨 산정식                                                   | 현재 산정식 확정(가중치 조정은 함수 교체로 대응)                     |
-| ISSUE-006 | 🟢 DONE  | 상품   | 입찰 후 상품 내리기 제한 강도                                               | 패널티 후 허용 확정(입찰 시 penalties 기록, 004 누적 대상)           |
-| ISSUE-007 | 🟢 DONE  | 경매   | 연쇄 이양 시 차순위 수락 대기시간 적용 여부                                 | 즉시 이양 확정(대기시간 미적용)                                      |
-| ISSUE-008 | 🟢 DONE  | 인프라 | 경매 자동 종료/자동완료 실행 메커니즘 → **pg_cron + DB 함수**               | T054/T058 구현, cron 2종(close/auto-complete) active                 |
-| ISSUE-020 | 🟢 DONE  | 데이터 | 타인 프로필 `/profile/[id]` 실데이터 전환 (Mock "김알밤" → Supabase)        | 2026-06-29 해결, `fetchProfile`+`fetchProfileScores` 교체            |
-| ISSUE-021 | 🟡 DEFER | 평판   | 평점 제출 시 브라우저 콘솔 `submit_rating` 400 1건 관측(데이터는 정상 저장) | 모달 가드 확인 완료 — 재제출(UNIQUE)/스키마캐시 추정, 재현 불가      |
-| ISSUE-022 | 🟡 DEFER | 데이터 | 고아 `product_images.url` → Storage 객체 부재로 `/_next/image` 400          | 코드 무관(테스트 데이터), 온에러 폴백 UI로 개선 가능                 |
+| ID        | 상태    | 분류   | 제목                                                                        | 비고                                                                 |
+| --------- | ------- | ------ | --------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| ISSUE-009 | 🟢 DONE | UI     | 모바일 헤더 메뉴(드로어/햄버거) 미구현 → 하단 BottomNav로 대체              | T033 확인, 하단 탭바가 모바일 내비 제공                              |
+| ISSUE-010 | 🟢 DONE | 국제화 | `app/layout.tsx` lang 속성 "en" → "ko" 적용                                 | MVP 한국어 고정(2026-07-02), 다국어는 Phase 7(T074)                  |
+| ISSUE-011 | 🟢 DONE | 인프라 | cacheComponents 동적 라우트 prerender — Suspense 경계 패턴                  | T012에서 해결, Phase 2 참고 패턴                                     |
+| ISSUE-012 | 🟢 DONE | 데이터 | 타입 네이밍 camelCase 확정 → 실DB(snake_case) 매핑 레이어 필요              | `lib/queries/_map.ts` 매핑 레이어로 구현(컴포넌트 무수정)            |
+| ISSUE-013 | 🟢 DONE | 인프라 | RSC에 onClick 등 이벤트 핸들러 전달 시 500 에러 — 정적/클라이언트 분리      | T025에서 해결, Phase 3 인터랙션 참고                                 |
+| ISSUE-014 | 🟢 DONE | 데이터 | `profiles.nickname` NOT NULL 제약 적용                                      | 트리거 폴백 보강 + 가입 폼 닉네임 입력 + NOT NULL (2026-07-02)       |
+| ISSUE-015 | 🟢 DONE | 데이터 | `products`에 상품 설명(description) 컬럼 부재 → 등록 폼의 설명 미저장       | 컬럼 추가 + 타입/매퍼/폼/상세표시 반영 완료                          |
+| ISSUE-016 | 🟢 DONE | 평판   | 평점 코멘트(comment) UI 입력되나 미저장                                     | `ratings.comment`+`submit_rating` p_comment 인자 추가 완료           |
+| ISSUE-017 | 🟢 DONE | 인증   | 미들웨어 비로그인 보호 경로 복원(Phase 2 임시 허용 제거)                    | T062에서 해결                                                        |
+| ISSUE-018 | 🟢 DONE | 인프라 | 스타터킷 잔재(groups/group_members + group RPC 4종) anon 노출 제거          | 테이블·함수·트리거 DROP + get_policy_int anon 노출 차단 (2026-07-02) |
+| ISSUE-019 | 🟢 DONE | 성능   | FK 커버링 인덱스 미생성 → 도메인 FK 8건 인덱스 추가                         | unindexed_foreign_keys advisor 0 (2026-07-02)                        |
+| ISSUE-001 | 🟢 DONE | 경매   | 기본 낙찰시간 상수 → DB 공통코드 이관(단일값)                               | codes.policy로 이관, 컬럼 DEFAULT 자동설정                           |
+| ISSUE-002 | 🟢 DONE | 거래   | 거래완료 자동완료 대기시간 결정 (저장위치는 DB 이관됨)                      | 기본 24h 확정, 24~168h DB 조정 가능(RPC 클램프)                      |
+| ISSUE-003 | 🟢 DONE | 입찰   | 최소 입찰 증가폭 방식(정액/정률/구간) (저장위치는 DB 이관됨)                | 정액 방식 확정, 값 1,000원                                           |
+| ISSUE-004 | 🟢 DONE | 평판   | 낙찰 포기 패널티 정책(점수/기준/제재)                                       | 이용 제한 확정: 30일 3회 누적 시 경매 등록 차단(트리거)              |
+| ISSUE-005 | 🟢 DONE | 평판   | 판매자/구매자 레벨 산정식                                                   | 현재 산정식 확정(가중치 조정은 함수 교체로 대응)                     |
+| ISSUE-006 | 🟢 DONE | 상품   | 입찰 후 상품 내리기 제한 강도                                               | 패널티 후 허용 확정(입찰 시 penalties 기록, 004 누적 대상)           |
+| ISSUE-007 | 🟢 DONE | 경매   | 연쇄 이양 시 차순위 수락 대기시간 적용 여부                                 | 즉시 이양 확정(대기시간 미적용)                                      |
+| ISSUE-008 | 🟢 DONE | 인프라 | 경매 자동 종료/자동완료 실행 메커니즘 → **pg_cron + DB 함수**               | T054/T058 구현, cron 2종(close/auto-complete) active                 |
+| ISSUE-020 | 🟢 DONE | 데이터 | 타인 프로필 `/profile/[id]` 실데이터 전환 (Mock "김알밤" → Supabase)        | 2026-06-29 해결, `fetchProfile`+`fetchProfileScores` 교체            |
+| ISSUE-021 | 🟢 DONE | 평판   | 평점 제출 시 브라우저 콘솔 `submit_rating` 400 1건 관측(데이터는 정상 저장) | 재제출 멱등 처리(`ON CONFLICT DO NOTHING` no-op) — 롤백 테스트 통과  |
+| ISSUE-022 | 🟢 DONE | 데이터 | 고아 `product_images.url` → Storage 객체 부재로 `/_next/image` 400          | `ProductImage` onError 폴백(카드·갤러리) — 깨진 아이콘 제거          |
 
 ---
 
@@ -179,13 +179,14 @@
 - **원인**: `app/profile/[id]/page.tsx`가 아직 `getMockProfile`을 사용(실데이터 미전환). 내 프로필(`/profile`)·홈·상세 등 다른 화면은 모두 Supabase 실데이터로 동작.
 - **해결(2026-06-29)**: `ProfileContent`의 조회부를 `getMockProfile/toSellerReputation` → `fetchProfile(id)` + `fetchProfileScores(id)`(`@/lib/queries`, 기존 함수 재사용)로 교체. 미존재 id는 `notFound()`로 404 처리. **UI 컴포넌트(`ProfileCard`)·읽기전용 구조는 무변경**(컴포넌트 무수정 원칙 준수). Playwright로 실데이터(`user_404087e6bbbbb`·서울·Lv.3) 표시 및 비존재 id 404 확인, `check-all` 통과.
 
-## ISSUE-021 · 평점 제출 시 `submit_rating` 콘솔 400 관측 🟡 DEFER
+## ISSUE-021 · 평점 제출 시 `submit_rating` 콘솔 400 관측 🟢 DONE(멱등 처리)
 
 - **배경**: 회귀테스트에서 평점 제출 시 브라우저 콘솔에 `POST /rest/v1/rpc/submit_rating 400` 1건이 관측됨.
 - **확인**: 양방향 평점은 `ratings`에 정상 저장(as_seller 9점/as_buyer 10점)되고 레벨도 재계산됨. postgres 로그에 `submit_rating` 관련 DB 에러 없음(데이터 무결성 영향 없음).
 - **추정**: 모달 제출의 중복 호출/멱등성 또는 일시적 스키마 캐시 이슈. 재현 시 네트워크 요청을 캡처해 원인 규명 권장.
 - **조사(2026-07-02)**: `rating-modal`에 이미 중복 제출 가드 존재 확인(제출 버튼 `disabled={selectedScore===0 || isSubmitting}` + 성공 후 `submitted` 뷰 전환) → 버튼 연타는 원인 아님. 남는 400은 ① **이미 평가된 거래 재제출**(`ratings` 거래당 1회 UNIQUE 위반) 또는 ② **ISSUE-016 마이그레이션 직후 PostgREST 스키마 캐시 일시 불일치**로 좁혀짐. 현재 스키마 캐시 warm 상태라 재현 불가. **데이터 무결성 영향 없음**으로 DEFER 유지.
-- **권장 하드닝(선택)**: `submit_rating`을 멱등 처리(`insert ... on conflict (transaction_id, rater_role) do nothing` 또는 사전 존재 검사)하면 재제출 400을 정상 흐름으로 흡수 가능. MVP 필수 아님.
+- **해결(2026-07-02)**: `submit_rating`을 멱등 처리로 재정의(마이그레이션 `resolve_issue_021_submit_rating_idempotent`). 기존 `unique_violation → raise`(=REST 400)를 제거하고 `insert ... on conflict (transaction_id, rater_id) do nothing`으로 흡수, 실제 삽입된 경우(`if not found then return`)에만 평판 레벨을 재계산한다(중복 재제출은 부작용 없는 no-op). 권한(authenticated/service_role)·검증 로직 유지.
+- **검증**: 사용자 가장 RAISE-to-rollback 테스트 — 동일 거래 2회 제출 시 2차가 예외 없이 통과, `ratings` 1건·최초 점수(8) 보존 확인(`cnt=1 score=8`). 재제출 콘솔 400 제거.
 
 ## ISSUE-015 · 상품 설명(description) 미저장 🟢 DONE
 
@@ -197,8 +198,9 @@
 - **배경**: 평점 모달에서 코멘트를 입력하나 `ratings`에 `comment` 컬럼이 없고 `submit_rating(p_transaction_id, p_score)`에도 인자가 없어 미저장(2026-06-29 재확인).
 - **해결**: `ALTER TABLE ratings ADD COLUMN comment text`. `submit_rating`을 `(p_transaction_id, p_score, p_comment text default null)`로 재정의(insert에 comment 포함, 레벨 재계산 로직·권한(authenticated/service_role) 유지). `submitRating(transactionId, score, comment)` 뮤테이션, `rating-modal` 제출 배선(`comment.trim() || null`), `Rating.comment` 타입 반영. 롤백 테스트로 코멘트 저장 확인.
 
-## ISSUE-022 · 고아 상품 이미지 → `/_next/image` 400 🟡 DEFER
+## ISSUE-022 · 고아 상품 이미지 → `/_next/image` 400 🟢 DONE(온에러 폴백)
 
 - **배경**: 홈/상세에서 상품 카드 이미지가 `/_next/image?url=…supabase…/product-images/…/0.png`로 요청될 때 콘솔에 **400 Bad Request**가 관측됨(2026-07-02 미커밋 작업 빌드 검증 중 발견).
 - **원인**: `next.config.ts`의 `images.remotePatterns`(Supabase 호스트 + `/storage/v1/object/public/**`)는 정상. 원본 Storage URL 자체가 400이며, `storage.objects`(bucket `product-images`)가 **0건**으로 확인됨. 즉 `product_images.url` 행은 존재하나 실제 업로드 파일이 없다(과거 로컬 이미지 삭제 커밋 `e299eab` + P6TEST 정리 잔재로 추정되는 고아 데이터). **코드/경로 생성 로직은 정상**(데이터 바인딩·매핑 검증 통과).
-- **개선 방향(선택)**: ① 대표 이미지 로드 실패 시 `ImagePlaceholder`로 폴백하는 `onError` 처리(카드/갤러리) — UX 개선, ② 고아 `product_images` 정리 또는 실제 이미지 재업로드(테스트 데이터). MVP 필수 아님.
+- **해결(2026-07-02)**: `ProductImage` 클라이언트 컴포넌트 신설(`components/common/product-image.tsx`) — `next/image` `onError` 시 `ImagePlaceholder`로 전환. `auction-card` 대표 이미지·`auction-gallery` 대표/썸네일에 적용해 로드 실패 시 깨진 아이콘 대신 그레이스풀 폴백. 신규 업로드 흐름은 실제 파일이 존재하므로 정상.
+- **잔여(참고)**: onError는 UI를 폴백하지만 브라우저는 실패한 원본 요청을 여전히 네트워크 400으로 기록한다(이미지 바이너리 자체가 없기 때문). 현재 `product_images` 5행은 모두 고아 **테스트 데이터**이며, 콘솔 400까지 완전 제거하려면 고아 행 정리(선택)가 필요하다 — 신규 실업로드로 대체되면 자연 소멸.
