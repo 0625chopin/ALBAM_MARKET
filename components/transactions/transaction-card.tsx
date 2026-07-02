@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ImagePlaceholder } from "@/components/common/image-placeholder";
+import { ProductImage } from "@/components/common/product-image";
 import { StatusBadge } from "@/components/common/status-badge";
 import { TransactionActions } from "@/components/transactions/transaction-actions";
 import { formatPrice } from "@/lib/format";
@@ -16,6 +17,8 @@ interface TransactionCardProps {
   transaction: Transaction;
   /** 거래 대상 상품 */
   product: Product;
+  /** 상품 대표 이미지 URL (없으면 null) */
+  primaryImageUrl: string | null;
   /** 현재 사용자의 역할 (판매자 | 구매자) */
   role: "seller" | "buyer";
   /** 거래 상대방 닉네임 */
@@ -29,6 +32,7 @@ interface TransactionCardProps {
 export function TransactionCard({
   transaction,
   product,
+  primaryImageUrl,
   role,
   counterpartNickname,
   chatRoomId,
@@ -39,16 +43,27 @@ export function TransactionCard({
       <CardContent className="p-4">
         {/* 상품 정보 영역 */}
         <div className="flex gap-3">
-          {/* 상품 대표 이미지 (작은 썸네일) */}
-          <ImagePlaceholder
-            className="size-16 shrink-0 rounded-md"
-            label={`${product.title} 상품 이미지`}
-          />
+          {/* 상품 대표 이미지 (작은 썸네일) — 있으면 실제 이미지(로드 실패 시 폴백), 없으면 placeholder */}
+          {primaryImageUrl ? (
+            <ProductImage
+              src={primaryImageUrl}
+              alt={`${product.title} 상품 이미지`}
+              width={64}
+              height={64}
+              className="size-16 shrink-0 rounded-md object-cover"
+              placeholderClassName="size-16 shrink-0 rounded-md"
+            />
+          ) : (
+            <ImagePlaceholder
+              className="size-16 shrink-0 rounded-md"
+              label={`${product.title} 상품 이미지`}
+            />
+          )}
 
           {/* 상품 제목 및 배지 묶음 */}
           <div className="min-w-0 flex-1 space-y-1.5">
             {/* 상품 제목 */}
-            <p className="truncate text-sm font-semibold text-foreground">
+            <p className="text-foreground truncate text-sm font-semibold">
               {product.title}
             </p>
 
@@ -67,14 +82,14 @@ export function TransactionCard({
             </div>
 
             {/* 확정가 */}
-            <p className="text-sm font-bold text-foreground">
+            <p className="text-foreground text-sm font-bold">
               {formatPrice(transaction.finalPrice)}
             </p>
           </div>
         </div>
 
         {/* 상대방 닉네임 */}
-        <p className="mt-2 text-xs text-muted-foreground">
+        <p className="text-muted-foreground mt-2 text-xs">
           {role === "seller" ? "구매자" : "판매자"}: {counterpartNickname}
         </p>
 
@@ -83,6 +98,7 @@ export function TransactionCard({
         {/* 액션 영역 (Client) — 거래완료/낙찰 포기/상품 내리기/평점 인터랙션 */}
         <TransactionActions
           transaction={transaction}
+          productStatus={product.status}
           role={role}
           counterpartNickname={counterpartNickname}
           chatRoomId={chatRoomId}

@@ -18,11 +18,11 @@ export function ChatHeader({ nickname, score }: ChatHeaderProps) {
   const initial = nickname.charAt(0);
 
   return (
-    <header className="flex items-center gap-3 border-b bg-background px-4 py-3">
+    <header className="bg-background flex items-center gap-3 border-b px-4 py-3">
       {/* 뒤로가기 링크 — onClick 없이 Link만 사용(RSC 규칙) */}
       <Link
         href="/transactions"
-        className="flex shrink-0 items-center text-muted-foreground transition-colors hover:text-foreground"
+        className="text-muted-foreground hover:text-foreground flex shrink-0 items-center transition-colors"
         aria-label="거래 목록으로 돌아가기"
       >
         <ChevronLeft className="size-5" aria-hidden="true" />
@@ -35,7 +35,7 @@ export function ChatHeader({ nickname, score }: ChatHeaderProps) {
 
       {/* 닉네임 + 별점 영역 */}
       <div className="flex flex-1 flex-col gap-0.5">
-        <span className="text-sm font-semibold text-foreground">
+        <span className="text-foreground text-sm font-semibold">
           {nickname}
         </span>
         {/* TODO: Phase 5 — 실제 평점 데이터로 교체 */}

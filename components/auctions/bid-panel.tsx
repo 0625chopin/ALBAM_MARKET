@@ -188,16 +188,16 @@ export function BidPanel({
       {/* ===== 공통 상단: 현재가 표시 ===== */}
       <CardHeader className="pb-3">
         <div className="flex items-baseline justify-between gap-2">
-          <span className="text-sm font-medium text-muted-foreground">
+          <span className="text-muted-foreground text-sm font-medium">
             현재가
           </span>
-          <span className="text-2xl font-bold text-foreground">
+          <span className="text-foreground text-2xl font-bold">
             {formatPrice(currentPriceState)}
           </span>
         </div>
         {/* 낙관적 입찰 횟수 표시 (입찰이 1회 이상 발생했을 때만) */}
         {bidCount > 0 && (
-          <p className="text-right text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-right text-xs">
             내 입찰 {bidCount}회 반영됨
           </p>
         )}
@@ -207,14 +207,14 @@ export function BidPanel({
         {/* ===== 즉시구매 완료(낙찰 확정) 상태 ===== */}
         {boughtNow ? (
           <div
-            className="rounded-lg border bg-muted/60 px-4 py-5 text-center"
+            className="bg-muted/60 rounded-lg border px-4 py-5 text-center"
             role="status"
             aria-live="polite"
           >
-            <p className="text-sm font-semibold text-foreground">
+            <p className="text-foreground text-sm font-semibold">
               즉시구매로 낙찰이 확정되었습니다.
             </p>
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className="text-muted-foreground mt-1 text-xs">
               거래 내역에서 판매자와 채팅으로 약속을 잡아보세요.
             </p>
             {/* 생성된 거래로 이동 (거래 목록에서 해당 거래의 채팅방 진입) */}
@@ -227,11 +227,11 @@ export function BidPanel({
             {/* ===== 비로그인 상태: 로그인 유도 ===== */}
             {!isLoggedIn && (
               <div
-                className="rounded-lg bg-muted/60 px-4 py-5 text-center"
+                className="bg-muted/60 rounded-lg px-4 py-5 text-center"
                 role="alert"
                 aria-live="polite"
               >
-                <p className="mb-3 text-sm text-muted-foreground">
+                <p className="text-muted-foreground mb-3 text-sm">
                   입찰하려면 로그인이 필요합니다.
                 </p>
                 <Button asChild className="w-full">
@@ -244,11 +244,11 @@ export function BidPanel({
             {isLoggedIn && isOwner && (
               <>
                 <div
-                  className="rounded-lg bg-muted/60 px-4 py-3 text-center"
+                  className="bg-muted/60 rounded-lg px-4 py-3 text-center"
                   role="note"
                   aria-label="본인 상품 입찰 불가 안내"
                 >
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     본인 상품에는 입찰할 수 없습니다.
                   </p>
                 </div>
@@ -329,9 +329,9 @@ export function BidPanel({
                     </Button>
                   </div>
                   {/* 검증 힌트 — 증가폭은 DB 정책값(codes.policy.min_bid_increment) */}
-                  <p id="bid-hint" className="text-xs text-muted-foreground">
+                  <p id="bid-hint" className="text-muted-foreground text-xs">
                     최소{" "}
-                    <span className="font-semibold text-foreground">
+                    <span className="text-foreground font-semibold">
                       {formatPrice(minBidPrice)}
                     </span>{" "}
                     이상 · {formatPrice(minBidIncrement)} 단위로 입찰
@@ -340,7 +340,7 @@ export function BidPanel({
                   {/* 입찰 검증 에러 메시지 */}
                   {bidError && (
                     <p
-                      className="text-xs font-medium text-destructive"
+                      className="text-destructive text-xs font-medium"
                       role="alert"
                       aria-live="assertive"
                     >
@@ -351,7 +351,7 @@ export function BidPanel({
                   {/* 입찰 성공 메시지 (낙관적 UI) */}
                   {bidSuccess && (
                     <p
-                      className="text-xs font-medium text-foreground"
+                      className="text-foreground text-xs font-medium"
                       role="status"
                       aria-live="polite"
                     >
@@ -378,10 +378,10 @@ export function BidPanel({
                     <div className="space-y-3">
                       {/* 즉시구매가 표시 */}
                       <div className="flex items-baseline justify-between gap-2">
-                        <span className="text-sm text-muted-foreground">
+                        <span className="text-muted-foreground text-sm">
                           즉시구매가
                         </span>
-                        <span className="text-lg font-semibold text-foreground">
+                        <span className="text-foreground text-lg font-semibold">
                           {formatPrice(buyNowPrice)}
                         </span>
                       </div>

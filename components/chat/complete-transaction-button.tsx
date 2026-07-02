@@ -39,7 +39,7 @@ export function CompleteTransactionButton({
     <div className="border-t px-4 py-2">
       {done ? (
         <p
-          className="py-1 text-center text-sm font-medium text-foreground"
+          className="text-foreground py-1 text-center text-sm font-medium"
           role="status"
           aria-live="polite"
         >
@@ -59,7 +59,7 @@ export function CompleteTransactionButton({
           </Button>
           {error && (
             <p
-              className="mt-1 text-center text-xs font-medium text-destructive"
+              className="text-destructive mt-1 text-center text-xs font-medium"
               role="alert"
             >
               {error}

@@ -42,17 +42,17 @@ export function EmptyState({
     >
       {/* 아이콘: bg-muted 원형 배경 안에 배치 */}
       {Icon && (
-        <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-muted">
-          <Icon className="size-8 text-muted-foreground" aria-hidden="true" />
+        <div className="bg-muted mb-4 flex size-16 items-center justify-center rounded-full">
+          <Icon className="text-muted-foreground size-8" aria-hidden="true" />
         </div>
       )}
 
       {/* 빈 상태 제목 */}
-      <p className="text-base font-semibold text-foreground">{title}</p>
+      <p className="text-foreground text-base font-semibold">{title}</p>
 
       {/* 부가 설명 (선택적 표시) */}
       {description && (
-        <p className="mt-2 max-w-xs text-sm text-muted-foreground">
+        <p className="text-muted-foreground mt-2 max-w-xs text-sm">
           {description}
         </p>
       )}

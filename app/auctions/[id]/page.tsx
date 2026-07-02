@@ -32,12 +32,12 @@ function AuctionDetailSkeleton() {
       aria-label="경매 상세 로딩 중"
     >
       {/* 대표 이미지 자리 */}
-      <div className="aspect-square w-full bg-muted" />
+      <div className="bg-muted aspect-square w-full" />
       {/* 제목·가격 자리 */}
       <div className="space-y-3 px-4">
-        <div className="h-4 w-1/4 rounded bg-muted" />
-        <div className="h-6 w-3/4 rounded bg-muted" />
-        <div className="h-8 w-1/3 rounded bg-muted" />
+        <div className="bg-muted h-4 w-1/4 rounded" />
+        <div className="bg-muted h-6 w-3/4 rounded" />
+        <div className="bg-muted h-8 w-1/3 rounded" />
       </div>
     </div>
   );

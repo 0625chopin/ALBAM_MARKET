@@ -101,11 +101,11 @@ export function RatingModal({
         {submitted ? (
           // ===== 제출 완료 화면 =====
           <div className="py-6 text-center" role="status" aria-live="polite">
-            <p className="text-sm font-semibold text-foreground">
+            <p className="text-foreground text-sm font-semibold">
               {selectedScore / 2}개의 별 ({selectedScore}/10점) 평점을
               남겼습니다.
             </p>
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className="text-muted-foreground mt-1 text-xs">
               소중한 평가 감사합니다.
             </p>
             <Button
@@ -122,7 +122,7 @@ export function RatingModal({
             <div className="space-y-4 py-2">
               {/* 별 5개 별점 UI — 별 0.5개(반 별) 단위로 1점씩, 총 1~10점 */}
               <div className="space-y-2">
-                <p className="text-sm font-medium text-foreground">별점</p>
+                <p className="text-foreground text-sm font-medium">별점</p>
                 <div
                   className="flex gap-1"
                   role="group"
@@ -143,7 +143,7 @@ export function RatingModal({
                       <div key={i} className="relative size-7">
                         {/* 빈 별(바탕) */}
                         <Star
-                          className="size-7 text-muted-foreground"
+                          className="text-muted-foreground size-7"
                           aria-hidden="true"
                         />
                         {/* 채운 별(전체/반쪽) — 너비를 잘라 반 별 표현 */}
@@ -153,7 +153,7 @@ export function RatingModal({
                             style={{ width: `${fillPercent}%` }}
                           >
                             <Star
-                              className="size-7 fill-current text-foreground"
+                              className="text-foreground size-7 fill-current"
                               aria-hidden="true"
                             />
                           </div>
@@ -163,7 +163,7 @@ export function RatingModal({
                           type="button"
                           aria-label={`${leftScore}점`}
                           aria-pressed={selectedScore === leftScore}
-                          className="absolute inset-y-0 left-0 w-1/2 rounded-l focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          className="focus-visible:ring-ring absolute inset-y-0 left-0 w-1/2 rounded-l focus-visible:ring-2 focus-visible:outline-none"
                           onClick={() => setSelectedScore(leftScore)}
                           onMouseEnter={() => setHoveredScore(leftScore)}
                           onMouseLeave={() => setHoveredScore(0)}
@@ -173,7 +173,7 @@ export function RatingModal({
                           type="button"
                           aria-label={`${rightScore}점`}
                           aria-pressed={selectedScore === rightScore}
-                          className="absolute inset-y-0 right-0 w-1/2 rounded-r focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          className="focus-visible:ring-ring absolute inset-y-0 right-0 w-1/2 rounded-r focus-visible:ring-2 focus-visible:outline-none"
                           onClick={() => setSelectedScore(rightScore)}
                           onMouseEnter={() => setHoveredScore(rightScore)}
                           onMouseLeave={() => setHoveredScore(0)}
@@ -183,7 +183,7 @@ export function RatingModal({
                   })}
                 </div>
                 {/* 선택된 점수 텍스트 표시 (별 개수 = 점수/2) */}
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {selectedScore > 0
                     ? `${selectedScore}/10점 선택됨 (별 ${selectedScore / 2}개)`
                     : "별을 클릭해 점수를 선택하세요 (반 별 = 1점)"}
@@ -194,10 +194,10 @@ export function RatingModal({
               <div className="space-y-2">
                 <label
                   htmlFor="rating-comment"
-                  className="text-sm font-medium text-foreground"
+                  className="text-foreground text-sm font-medium"
                 >
                   코멘트{" "}
-                  <span className="font-normal text-muted-foreground">
+                  <span className="text-muted-foreground font-normal">
                     (선택)
                   </span>
                 </label>
@@ -207,7 +207,7 @@ export function RatingModal({
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                   placeholder="거래 경험을 자유롭게 작성해 주세요."
-                  className="w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  className="border-input bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-ring w-full resize-none rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 />
               </div>
             </div>
@@ -215,7 +215,7 @@ export function RatingModal({
             {/* 제출 실패 안내 */}
             {submitError && (
               <p
-                className="text-center text-xs font-medium text-destructive"
+                className="text-destructive text-center text-xs font-medium"
                 role="alert"
               >
                 {submitError}

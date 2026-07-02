@@ -23,14 +23,14 @@ export default function ProfilePage({ params }: ProfilePageProps) {
       <main className="flex flex-1 flex-col">
         <Container className="py-10">
           {/* 페이지 제목 */}
-          <h1 className="mb-6 text-2xl font-bold text-foreground">프로필</h1>
+          <h1 className="text-foreground mb-6 text-2xl font-bold">프로필</h1>
 
           {/* 430px 모바일 프레임 기준 콘텐츠 영역 */}
           <div className="mx-auto max-w-[430px]">
             {/* 동적 params를 Suspense 경계 안에서 처리 (ISSUE-011 참고) */}
             <Suspense
               fallback={
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   프로필 불러오는 중…
                 </p>
               }

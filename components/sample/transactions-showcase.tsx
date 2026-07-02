@@ -37,15 +37,15 @@ export default function TransactionsShowcase() {
 
   return (
     <section id="transactions" className="mb-16 scroll-mt-20">
-      <h2 className="mb-6 text-2xl font-bold text-foreground">거래</h2>
-      <p className="mb-6 text-sm text-muted-foreground">
+      <h2 className="text-foreground mb-6 text-2xl font-bold">거래</h2>
+      <p className="text-muted-foreground mb-6 text-sm">
         거래 목록 카드 — 역할(판매/구매)과 상태(진행중/완료/자동완료)에 따라
         액션 버튼이 달라집니다.
       </p>
 
       {/* TransactionCard 다양한 상태 전시 */}
       <div className="space-y-4">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+        <h3 className="text-muted-foreground text-sm font-semibold tracking-wider uppercase">
           TransactionCard
         </h3>
 
@@ -78,6 +78,7 @@ export default function TransactionsShowcase() {
                 key={transaction.id}
                 transaction={transaction}
                 product={product}
+                primaryImageUrl={null}
                 role={role}
                 counterpartNickname={counterpartProfile.nickname}
                 chatRoomId={chatRoomId}
@@ -91,6 +92,7 @@ export default function TransactionsShowcase() {
             <TransactionCard
               transaction={buyerPendingTransaction}
               product={buyerPendingProduct}
+              primaryImageUrl={null}
               role="buyer"
               counterpartNickname={buyerPendingCounterpart.nickname}
               chatRoomId={null}
@@ -102,11 +104,11 @@ export default function TransactionsShowcase() {
 
       {/* RatingModal 단독 전시 */}
       <div className="mt-8 space-y-4">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+        <h3 className="text-muted-foreground text-sm font-semibold tracking-wider uppercase">
           RatingModal (단독 전시)
         </h3>
         <div className="rounded-lg border p-6">
-          <p className="mb-4 text-sm text-muted-foreground">
+          <p className="text-muted-foreground mb-4 text-sm">
             아래 버튼을 클릭하면 평점 모달이 열립니다. 별점(반 별 단위)·코멘트
             입력, 제출 검증, 닫을 때 초기화가 동작합니다(T032, Mock). 실제 평점
             반영은 Phase 5에서 연결됩니다.

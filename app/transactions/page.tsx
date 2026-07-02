@@ -33,7 +33,7 @@ export default async function TransactionsPage() {
       <main className="flex flex-1 flex-col">
         <Container className="py-10">
           {/* 페이지 제목 */}
-          <h1 className="mb-6 text-2xl font-bold text-foreground">거래</h1>
+          <h1 className="text-foreground mb-6 text-2xl font-bold">거래</h1>
 
           {/* 거래 목록 (세로 목록, 430px 모바일 프레임 최적화) */}
           <div className="mx-auto max-w-[430px] space-y-3">
@@ -48,6 +48,7 @@ export default async function TransactionsPage() {
                   key={item.transaction.id}
                   transaction={item.transaction}
                   product={item.product}
+                  primaryImageUrl={item.primaryImageUrl}
                   role={item.role}
                   counterpartNickname={item.counterpartNickname}
                   chatRoomId={item.chatRoomId}

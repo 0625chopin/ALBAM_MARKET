@@ -63,10 +63,10 @@ async function ChatRoomContent({ params }: ChatRoomPageProps) {
   if (!room) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-2 p-8 text-center">
-        <p className="text-sm font-semibold text-foreground">
+        <p className="text-foreground text-sm font-semibold">
           채팅방에 접근할 수 없습니다
         </p>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           존재하지 않거나 거래 당사자만 입장할 수 있습니다.
         </p>
       </div>

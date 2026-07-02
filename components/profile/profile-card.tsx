@@ -45,13 +45,13 @@ export function ProfileCard({
           </Avatar>
 
           {/* 닉네임 (큰 글씨) */}
-          <h2 className="text-xl font-bold text-foreground">
+          <h2 className="text-foreground text-xl font-bold">
             {profile.nickname}
           </h2>
 
           {/* 지역 (MapPin 아이콘 + 지역명) */}
           <div
-            className="flex items-center gap-1 text-sm text-muted-foreground"
+            className="text-muted-foreground flex items-center gap-1 text-sm"
             aria-label={`직거래 지역: ${profile.region}`}
           >
             <MapPin className="size-4 shrink-0" aria-hidden="true" />
@@ -69,7 +69,7 @@ export function ProfileCard({
         <div className="space-y-4">
           {/* 판매자 평판 블록 */}
           <div className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <p className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
               판매자 평판
             </p>
             <div className="flex flex-wrap items-center gap-3">
@@ -80,7 +80,7 @@ export function ProfileCard({
 
           {/* 구매자 평판 블록 */}
           <div className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <p className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
               구매자 평판
             </p>
             <div className="flex flex-wrap items-center gap-3">

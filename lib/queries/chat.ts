@@ -29,12 +29,23 @@ export async function fetchChatRoom(
   const supabase = await createClient();
   const { data: room } = await supabase
     .from("chat_rooms")
-    .select("id, transaction_id, seller_id, buyer_id")
+    .select(
+      "id, transaction_id, seller_id, buyer_id, transactions(status, products(status))"
+    )
     .eq("id", roomId)
     .maybeSingle();
   if (!room) return null;
   // 당사자 아님 → 접근 차단
   if (room.seller_id !== userId && room.buyer_id !== userId) return null;
+  // 유찰(failed)/내림(withdrawn)/취소(canceled) → 거래 관계 해소, 채팅 차단
+  const productStatus = room.transactions?.products?.status;
+  if (
+    room.transactions?.status === "canceled" ||
+    productStatus === "failed" ||
+    productStatus === "withdrawn"
+  ) {
+    return null;
+  }
 
   const counterpartId =
     room.seller_id === userId ? room.buyer_id : room.seller_id;

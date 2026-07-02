@@ -38,10 +38,10 @@ export default async function AuctionEditPage({
         <Container className="py-10">
           {/* 페이지 헤더 */}
           <div className="mb-6 space-y-1">
-            <h1 className="text-2xl font-bold text-foreground">
+            <h1 className="text-foreground text-2xl font-bold">
               상품 정보 수정
             </h1>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               사진, 설명, 즉시구매가를 수정할 수 있습니다.
             </p>
           </div>

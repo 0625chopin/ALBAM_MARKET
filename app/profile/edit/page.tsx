@@ -29,12 +29,12 @@ export default async function ProfileEditPage() {
           <div className="mb-6 flex items-center gap-2">
             <Link
               href="/profile"
-              className="flex shrink-0 items-center text-muted-foreground transition-colors hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground flex shrink-0 items-center transition-colors"
               aria-label="내 프로필로 돌아가기"
             >
               <ChevronLeft className="size-5" aria-hidden="true" />
             </Link>
-            <h1 className="text-2xl font-bold text-foreground">프로필 수정</h1>
+            <h1 className="text-foreground text-2xl font-bold">프로필 수정</h1>
           </div>
 
           {/* 430px 모바일 프레임 기준 콘텐츠 영역 */}

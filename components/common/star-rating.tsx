@@ -44,7 +44,7 @@ export function StarRating({
               className={cn(
                 "size-4 shrink-0",
                 isFilled
-                  ? "fill-current text-foreground"
+                  ? "text-foreground fill-current"
                   : "text-muted-foreground"
               )}
               aria-hidden="true"
@@ -55,7 +55,7 @@ export function StarRating({
 
       {/* 점수 텍스트 (showValue가 true일 때만 표시) */}
       {showValue && (
-        <span className="text-xs text-muted-foreground">
+        <span className="text-muted-foreground text-xs">
           {formatScore(score)}/{max}
         </span>
       )}

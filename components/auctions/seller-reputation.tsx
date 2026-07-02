@@ -22,7 +22,7 @@ export function SellerReputation({ seller }: SellerReputationProps) {
     <Card className="w-full rounded-none border-x-0">
       <CardHeader className="pb-3">
         {/* 섹션 제목 */}
-        <CardTitle className="text-sm font-semibold text-muted-foreground">
+        <CardTitle className="text-muted-foreground text-sm font-semibold">
           판매자 신뢰 정보
         </CardTitle>
       </CardHeader>
@@ -46,14 +46,14 @@ export function SellerReputation({ seller }: SellerReputationProps) {
           <div className="min-w-0 flex-1 space-y-1.5">
             {/* 닉네임 + 레벨 배지 한 줄 */}
             <div className="flex flex-wrap items-center gap-2">
-              <span className="truncate text-sm font-semibold text-foreground">
+              <span className="text-foreground truncate text-sm font-semibold">
                 {seller.nickname}
               </span>
               <LevelBadge level={seller.sellerLevel} role="seller" />
             </div>
 
             {/* 지역 */}
-            <p className="flex items-center gap-1 text-xs text-muted-foreground">
+            <p className="text-muted-foreground flex items-center gap-1 text-xs">
               <MapPin className="size-3 shrink-0" aria-hidden="true" />
               {seller.region}
             </p>

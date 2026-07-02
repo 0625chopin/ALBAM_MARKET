@@ -251,7 +251,7 @@ export function AuctionEditForm({ detail }: AuctionEditFormProps) {
               {index === 0 && (
                 <Badge
                   variant="default"
-                  className="pointer-events-none absolute left-1 top-1 text-xs"
+                  className="pointer-events-none absolute top-1 left-1 text-xs"
                 >
                   대표
                 </Badge>
@@ -262,7 +262,7 @@ export function AuctionEditForm({ detail }: AuctionEditFormProps) {
                 type="button"
                 onClick={() => removeImage(index)}
                 aria-label={`상품 이미지 ${index + 1} 제거`}
-                className="absolute right-1 top-1 inline-flex size-5 items-center justify-center rounded-full bg-foreground/70 text-background transition-colors hover:bg-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="bg-foreground/70 text-background hover:bg-foreground focus-visible:ring-ring absolute top-1 right-1 inline-flex size-5 items-center justify-center rounded-full transition-colors focus-visible:ring-2 focus-visible:outline-none"
               >
                 <X className="size-3" aria-hidden="true" />
               </button>
@@ -276,10 +276,10 @@ export function AuctionEditForm({ detail }: AuctionEditFormProps) {
               onClick={() => fileInputRef.current?.click()}
               className={cn(
                 "w-full overflow-hidden rounded-md transition-colors",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
+                "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:outline-none",
                 images.length === 0
-                  ? "border-2 border-dashed border-muted-foreground hover:border-ring"
-                  : "border border-dashed border-input hover:border-ring"
+                  ? "border-muted-foreground hover:border-ring border-2 border-dashed"
+                  : "border-input hover:border-ring border border-dashed"
               )}
               aria-label={
                 images.length === 0
@@ -295,14 +295,14 @@ export function AuctionEditForm({ detail }: AuctionEditFormProps) {
           )}
         </div>
 
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           첫 번째 이미지가 대표 이미지로 사용됩니다. 최대 6장까지 등록
           가능합니다.
         </p>
 
         {imageNotice && (
           <p
-            className="text-xs font-medium text-destructive"
+            className="text-destructive text-xs font-medium"
             role="alert"
             aria-live="polite"
           >
@@ -340,12 +340,12 @@ export function AuctionEditForm({ detail }: AuctionEditFormProps) {
           aria-invalid={buyNowError !== null}
           aria-describedby="edit-buy-now-hint"
         />
-        <p id="edit-buy-now-hint" className="text-xs text-muted-foreground">
+        <p id="edit-buy-now-hint" className="text-muted-foreground text-xs">
           현재가({formatPrice(detail.currentPrice)})보다 높아야 하며, 비우면
           즉시구매가 해제됩니다.
         </p>
         {buyNowError && (
-          <p className="text-xs font-medium text-destructive" role="alert">
+          <p className="text-destructive text-xs font-medium" role="alert">
             {buyNowError}
           </p>
         )}
@@ -355,29 +355,29 @@ export function AuctionEditForm({ detail }: AuctionEditFormProps) {
 
       {/* ===== 4. 읽기 전용 정보 (수정 불가 항목) ===== */}
       <div className="space-y-2">
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           아래 항목은 경매 공정성을 위해 수정할 수 없습니다.
         </p>
-        <dl className="space-y-1.5 rounded-md bg-muted/40 px-4 py-3 text-sm">
+        <dl className="bg-muted/40 space-y-1.5 rounded-md px-4 py-3 text-sm">
           <div className="flex items-center justify-between gap-4">
             <dt className="text-muted-foreground">제목</dt>
-            <dd className="truncate font-medium text-foreground">
+            <dd className="text-foreground truncate font-medium">
               {detail.title}
             </dd>
           </div>
           <div className="flex items-center justify-between gap-4">
             <dt className="text-muted-foreground">카테고리</dt>
-            <dd className="font-medium text-foreground">
+            <dd className="text-foreground font-medium">
               {detail.categoryLabel}
             </dd>
           </div>
           <div className="flex items-center justify-between gap-4">
             <dt className="text-muted-foreground">직거래 지역</dt>
-            <dd className="font-medium text-foreground">{detail.region}</dd>
+            <dd className="text-foreground font-medium">{detail.region}</dd>
           </div>
           <div className="flex items-center justify-between gap-4">
             <dt className="text-muted-foreground">시작가</dt>
-            <dd className="font-medium text-foreground">
+            <dd className="text-foreground font-medium">
               {formatPrice(detail.startPrice)}
             </dd>
           </div>
@@ -387,7 +387,7 @@ export function AuctionEditForm({ detail }: AuctionEditFormProps) {
       {/* ===== 5. 저장 실패 안내 ===== */}
       {saveError && (
         <p
-          className="text-sm font-medium text-destructive"
+          className="text-destructive text-sm font-medium"
           role="alert"
           aria-live="polite"
         >
@@ -399,11 +399,11 @@ export function AuctionEditForm({ detail }: AuctionEditFormProps) {
       {partialResult ? (
         // 텍스트는 저장됨 + 일부 이미지 실패 → 중복 저장 방지 위해 상세 이동 링크만 제공
         <div
-          className="space-y-3 rounded-md border bg-muted/40 px-4 py-3"
+          className="bg-muted/40 space-y-3 rounded-md border px-4 py-3"
           role="status"
           aria-live="polite"
         >
-          <p className="text-sm text-foreground">
+          <p className="text-foreground text-sm">
             상품 정보가 저장되었습니다. 다만 이미지 {partialResult.failedCount}
             장 업로드에 실패했습니다.
           </p>

@@ -42,7 +42,7 @@ export function BottomNav({ showMyProducts = false }: BottomNavProps) {
 
   return (
     <nav
-      className="sticky bottom-0 z-50 border-t border-t-foreground/10 bg-background"
+      className="border-t-foreground/10 bg-background sticky bottom-0 z-50 border-t"
       aria-label="주요 메뉴"
     >
       <ul className="flex items-stretch justify-around">
@@ -61,8 +61,9 @@ export function BottomNav({ showMyProducts = false }: BottomNavProps) {
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
                   "flex flex-col items-center gap-1 py-2 text-xs transition-colors",
+                  // 활성 색상: 상단 상태 필터 선택 탭·즉시구매가와 동일(text-primary-foreground)
                   isActive
-                    ? "text-foreground"
+                    ? "text-primary-foreground"
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >

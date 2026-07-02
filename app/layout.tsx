@@ -17,7 +17,9 @@ export const metadata: Metadata = {
   description: "알밤마켓에서 중고 물품을 경매로 사고 팔아보세요.",
 };
 
-const geistSans = Geist({
+// 본문 폰트 — 배포 사이트와 동일한 Geist. globals.css의 --font-sans 토큰과 연결.
+// 한글 글리프는 Geist Fallback(시스템)으로 렌더된다.
+const fontSans = Geist({
   variable: "--font-geist-sans",
   display: "swap",
   subsets: ["latin"],
@@ -30,7 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" suppressHydrationWarning>
-      <body className={`${geistSans.className} antialiased`}>
+      <body className={`${fontSans.variable} font-sans antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
@@ -40,8 +42,8 @@ export default function RootLayout({
           {/* 인앱 브라우저(카톡/네이버 등) 감지 시 외부 브라우저로 열도록 유도 */}
           <InAppBrowserGuard />
           {/* 모바일 사이즈 프레임 — 데스크톱에서도 화면 중앙 430px 컬럼으로 고정 */}
-          <div className="flex min-h-screen w-full justify-center bg-muted/30">
-            <div className="relative flex min-h-screen w-full max-w-[430px] flex-col bg-background shadow-lg">
+          <div className="bg-muted/30 flex min-h-screen w-full justify-center">
+            <div className="bg-background relative flex min-h-screen w-full max-w-[430px] flex-col shadow-lg">
               {children}
               {/* 모바일 하단 탭바 (인증 화면에서는 자동 숨김)
                   BottomNav는 usePathname()(요청 시점 데이터)을 사용하고,

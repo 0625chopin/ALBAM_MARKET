@@ -36,7 +36,7 @@ export function WithdrawProductButton({
   if (done) {
     return (
       <p
-        className="text-center text-sm font-medium text-foreground"
+        className="text-foreground text-center text-sm font-medium"
         role="status"
         aria-live="polite"
       >
@@ -59,7 +59,7 @@ export function WithdrawProductButton({
         onConfirm={handleWithdraw}
       />
       {error && (
-        <p className="text-xs font-medium text-destructive" role="alert">
+        <p className="text-destructive text-xs font-medium" role="alert">
           {error}
         </p>
       )}

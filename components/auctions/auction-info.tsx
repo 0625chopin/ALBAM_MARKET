@@ -52,14 +52,14 @@ export function AuctionInfo({ detail }: AuctionInfoProps) {
         </div>
 
         {/* 상품 제목 */}
-        <h1 className="text-xl font-bold leading-snug text-foreground">
+        <h1 className="text-foreground text-xl leading-snug font-bold">
           {detail.title}
         </h1>
       </div>
 
       {/* ===== 메타 정보: 카테고리·중고등급·지역 ===== */}
       <div
-        className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground"
+        className="text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1 text-xs"
         aria-label="상품 정보"
       >
         {/* 카테고리 */}
@@ -68,14 +68,14 @@ export function AuctionInfo({ detail }: AuctionInfoProps) {
           {detail.categoryLabel}
         </span>
 
-        <span aria-hidden="true" className="select-none text-border">
+        <span aria-hidden="true" className="text-border select-none">
           ·
         </span>
 
         {/* 중고등급 */}
         <span>{conditionLabel}</span>
 
-        <span aria-hidden="true" className="select-none text-border">
+        <span aria-hidden="true" className="text-border select-none">
           ·
         </span>
 
@@ -92,9 +92,9 @@ export function AuctionInfo({ detail }: AuctionInfoProps) {
       <div className="space-y-3">
         {/* 현재가 (강조) */}
         <div>
-          <p className="text-xs text-muted-foreground">현재가</p>
+          <p className="text-muted-foreground text-xs">현재가</p>
           <p
-            className="text-2xl font-bold text-foreground"
+            className="text-foreground text-2xl font-bold"
             aria-label={`현재가 ${formatPrice(detail.currentPrice)}`}
           >
             {formatPrice(detail.currentPrice)}
@@ -103,10 +103,10 @@ export function AuctionInfo({ detail }: AuctionInfoProps) {
 
         {/* 즉시구매가 (있을 때만 표시) */}
         {detail.buyNowPrice !== null && (
-          <div className="flex items-center justify-between rounded-md bg-muted/50 px-3 py-2">
-            <p className="text-sm text-muted-foreground">즉시구매가</p>
+          <div className="bg-muted/50 flex items-center justify-between rounded-md px-3 py-2">
+            <p className="text-muted-foreground text-sm">즉시구매가</p>
             <p
-              className="text-sm font-semibold text-foreground"
+              className="text-foreground text-sm font-semibold"
               aria-label={`즉시구매가 ${formatPrice(detail.buyNowPrice)}`}
             >
               {formatPrice(detail.buyNowPrice)}
@@ -120,8 +120,8 @@ export function AuctionInfo({ detail }: AuctionInfoProps) {
         <>
           <Separator />
           <div className="space-y-1">
-            <p className="text-xs text-muted-foreground">상품 설명</p>
-            <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
+            <p className="text-muted-foreground text-xs">상품 설명</p>
+            <p className="text-foreground text-sm leading-relaxed whitespace-pre-wrap">
               {detail.description}
             </p>
           </div>
@@ -134,18 +134,18 @@ export function AuctionInfo({ detail }: AuctionInfoProps) {
       <div className="space-y-2">
         {/* 마감까지 남은 시간 — 클라이언트 컴포넌트 (hydration mismatch 방지) */}
         <div className="flex items-center justify-between">
-          <span className="text-xs text-muted-foreground">마감</span>
+          <span className="text-muted-foreground text-xs">마감</span>
           <RemainingTime endsAt={detail.auctionEndsAt} />
         </div>
 
         {/* 입찰 수 */}
         <div className="flex items-center justify-between">
-          <span className="flex items-center gap-1 text-xs text-muted-foreground">
+          <span className="text-muted-foreground flex items-center gap-1 text-xs">
             <Gavel className="size-3 shrink-0" aria-hidden="true" />
             입찰
           </span>
           <span
-            className="text-sm font-medium text-foreground"
+            className="text-foreground text-sm font-medium"
             aria-label={`${detail.bidCount}회 입찰`}
           >
             {detail.bidCount}회
@@ -154,8 +154,8 @@ export function AuctionInfo({ detail }: AuctionInfoProps) {
 
         {/* 시작가 */}
         <div className="flex items-center justify-between">
-          <span className="text-xs text-muted-foreground">시작가</span>
-          <span className="text-sm text-muted-foreground">
+          <span className="text-muted-foreground text-xs">시작가</span>
+          <span className="text-muted-foreground text-sm">
             {formatPrice(detail.startPrice)}
           </span>
         </div>

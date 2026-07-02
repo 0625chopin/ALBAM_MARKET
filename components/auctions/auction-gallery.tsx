@@ -57,7 +57,7 @@ export function AuctionGallery({ images, title }: AuctionGalleryProps) {
       {/* 썸네일 가로 스크롤 줄 */}
       {thumbnails.length > 1 && (
         <div
-          className="scrollbar-none flex gap-2 overflow-x-auto px-4 py-3"
+          className="flex scrollbar-none gap-2 overflow-x-auto px-4 py-3"
           aria-label="상품 이미지 목록"
           role="list"
         >
@@ -72,7 +72,7 @@ export function AuctionGallery({ images, title }: AuctionGalleryProps) {
                   onClick={() => setSelectedIndex(idx)}
                   aria-label={`이미지 ${idx + 1} 크게 보기`}
                   aria-current={isSelected}
-                  className="block rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="focus-visible:ring-ring block rounded-md focus-visible:ring-2 focus-visible:outline-none"
                 >
                   {img.url ? (
                     <ProductImageView
@@ -82,8 +82,8 @@ export function AuctionGallery({ images, title }: AuctionGalleryProps) {
                       height={64}
                       className={
                         isSelected
-                          ? "size-16 rounded-md object-cover ring-2 ring-foreground"
-                          : "size-16 rounded-md object-cover ring-1 ring-border"
+                          ? "ring-foreground size-16 rounded-md object-cover ring-2"
+                          : "ring-border size-16 rounded-md object-cover ring-1"
                       }
                       placeholderClassName={
                         isSelected
@@ -96,8 +96,8 @@ export function AuctionGallery({ images, title }: AuctionGalleryProps) {
                       className={
                         // 선택된 썸네일에 테두리 강조
                         isSelected
-                          ? "size-16 rounded-md ring-2 ring-foreground"
-                          : "size-16 rounded-md ring-1 ring-border"
+                          ? "ring-foreground size-16 rounded-md ring-2"
+                          : "ring-border size-16 rounded-md ring-1"
                       }
                       label={`${title} 이미지 ${idx + 1}`}
                     />

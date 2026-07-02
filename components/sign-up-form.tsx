@@ -215,10 +215,10 @@ export function SignUpForm({
               </Button>
 
               <div className="relative text-center text-sm">
-                <span className="relative z-10 bg-card px-2 text-muted-foreground">
+                <span className="bg-card text-muted-foreground relative z-10 px-2">
                   Or continue with
                 </span>
-                <div className="absolute inset-0 top-1/2 z-0 border-t border-border" />
+                <div className="border-border absolute inset-0 top-1/2 z-0 border-t" />
               </div>
 
               <Button

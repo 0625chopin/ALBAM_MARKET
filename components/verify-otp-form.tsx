@@ -160,7 +160,7 @@ export function VerifyOtpForm({
               >
                 {isLoading ? "인증 중..." : "인증 완료"}
               </Button>
-              <div className="text-center text-sm text-muted-foreground">
+              <div className="text-muted-foreground text-center text-sm">
                 인증번호를 받지 못하셨나요?{" "}
                 <button
                   type="button"

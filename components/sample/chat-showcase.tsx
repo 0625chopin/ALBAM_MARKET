@@ -14,8 +14,8 @@ export default function ChatShowcase() {
 
   return (
     <section id="chat" className="mb-16 scroll-mt-20">
-      <h2 className="mb-6 text-2xl font-bold text-foreground">채팅</h2>
-      <p className="mb-6 text-sm text-muted-foreground">
+      <h2 className="text-foreground mb-6 text-2xl font-bold">채팅</h2>
+      <p className="text-muted-foreground mb-6 text-sm">
         채팅 화면 컴포넌트 — ChatHeader(상단 헤더) + ChatThread(메시지 목록 +
         입력 바)를 430px 모바일 프레임으로 전시합니다. 입력창에 메시지를 보내면
         낙관적으로 목록에 추가됩니다(Mock).
