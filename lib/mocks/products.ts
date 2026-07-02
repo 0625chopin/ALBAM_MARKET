@@ -156,6 +156,7 @@ function toAuctionSummary(product: Product): AuctionSummary {
     id: product.id,
     title: product.title,
     primaryImageUrl: primary?.url ? primary.url : null,
+    startPrice: product.startPrice,
     currentPrice: product.currentPrice,
     auctionEndsAt: product.auctionEndsAt,
     status: product.status,

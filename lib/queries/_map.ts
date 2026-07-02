@@ -50,7 +50,13 @@ interface SummaryImageEmbed {
 export function toAuctionSummary(
   row: Pick<
     Tables<"products">,
-    "id" | "title" | "current_price" | "auction_ends_at" | "status" | "region"
+    | "id"
+    | "title"
+    | "start_price"
+    | "current_price"
+    | "auction_ends_at"
+    | "status"
+    | "region"
   > & { product_images: SummaryImageEmbed[] },
   statusLabel: string
 ): AuctionSummary {
@@ -60,6 +66,7 @@ export function toAuctionSummary(
     id: row.id,
     title: row.title,
     primaryImageUrl: primary?.url ? primary.url : null,
+    startPrice: row.start_price,
     currentPrice: row.current_price,
     auctionEndsAt: row.auction_ends_at,
     status: row.status as ProductStatus,

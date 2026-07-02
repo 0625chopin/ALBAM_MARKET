@@ -87,6 +87,8 @@ export interface AuctionSummary {
   title: string;
   /** 대표 이미지 URL (없으면 null) */
   primaryImageUrl: string | null;
+  /** 시작가 (경매 시작 시점의 최초 입찰가) */
+  startPrice: number;
   /** 현재 최고가 */
   currentPrice: number;
   /** 마감 시각(ISO 8601) — 남은 시간 계산 기준 */
