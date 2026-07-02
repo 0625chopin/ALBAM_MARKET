@@ -273,24 +273,24 @@
 
 ## ⚠️ 리스크 / 의존성 요약 (ISSUES 연계)
 
-| ISSUE | 상태 | 영향 작업        | 로드맵 처리 방침                                                           |
-| ----- | ---- | ---------------- | -------------------------------------------------------------------------- |
-| 001   | 🟢   | T011, T024, T052 | DB 공통코드 이관 완료(codes.policy) — 컬럼 DEFAULT 자동설정                |
-| 002   | 🟢   | T058, T063       | 기본 24h 확정, 24~168h DB 조정 가능(RPC 클램프 가드)                       |
-| 003   | 🟢   | T023, T031, T053 | 정액 방식 1,000원 확정(DB codes.policy 단일 소스+RPC 최종검증)             |
-| 004   | 🟢   | T055, T061       | 이용 제한 확정: 30일 3회 누적 시 등록 차단(트리거+codes.policy)            |
-| 005   | 🟢   | T043, T059       | 현재 산정식 확정(가중치 조정은 calc_reputation_level 교체로 대응)          |
-| 006   | 🟢   | T056             | 패널티 후 허용 확정(입찰 시 penalties 기록, 004 누적 대상)                 |
-| 007   | 🟢   | T055             | 즉시 이양 확정(차순위 수락 대기 미적용)                                    |
-| 008   | 🟢   | T054, T058, T063 | **해결**: `pg_cron`+DB 함수 확정, cron 2종(close/auto-complete) active     |
-| 014   | 🟢   | T040-A, T050     | nickname NOT NULL 적용(트리거 폴백 + 가입 폼 닉네임) — 2026-07-02          |
-| 015   | 🟢   | T076(후속)       | `products.description` 컬럼 추가 + 타입/매퍼/폼/상세표시 반영 완료         |
-| 016   | 🟢   | T076(후속)       | `ratings.comment`+`submit_rating` p_comment 인자 추가 완료                 |
-| 018   | 🟢   | T062(후속)       | 스타터 groups 잔재 제거 + get_policy_int anon 노출 차단 — 2026-07-02       |
-| 019   | 🟢   | T064(후속)       | 도메인 FK 커버링 인덱스 8건 추가(unindexed_foreign_keys 0) — 2026-07-02    |
-| 010   | 🟢   | 레이아웃         | `html lang` en → ko 고정(다국어는 T074) — 2026-07-02                       |
-| 012   | 🟢   | T051~            | snake↔camel 매핑 레이어 `lib/queries/_map.ts`로 구현(컴포넌트 무수정)      |
-| 021   | 🟡   | T059(후속)       | `submit_rating` 콘솔 400 — 모달 가드 확인, 재제출/스키마캐시 추정·재현불가 |
-| 022   | 🟡   | T051/T052(후속)  | 고아 `product_images` → `/_next/image` 400(코드 무관 테스트 데이터)        |
+| ISSUE | 상태 | 영향 작업        | 로드맵 처리 방침                                                        |
+| ----- | ---- | ---------------- | ----------------------------------------------------------------------- |
+| 001   | 🟢   | T011, T024, T052 | DB 공통코드 이관 완료(codes.policy) — 컬럼 DEFAULT 자동설정             |
+| 002   | 🟢   | T058, T063       | 기본 24h 확정, 24~168h DB 조정 가능(RPC 클램프 가드)                    |
+| 003   | 🟢   | T023, T031, T053 | 정액 방식 1,000원 확정(DB codes.policy 단일 소스+RPC 최종검증)          |
+| 004   | 🟢   | T055, T061       | 이용 제한 확정: 30일 3회 누적 시 등록 차단(트리거+codes.policy)         |
+| 005   | 🟢   | T043, T059       | 현재 산정식 확정(가중치 조정은 calc_reputation_level 교체로 대응)       |
+| 006   | 🟢   | T056             | 패널티 후 허용 확정(입찰 시 penalties 기록, 004 누적 대상)              |
+| 007   | 🟢   | T055             | 즉시 이양 확정(차순위 수락 대기 미적용)                                 |
+| 008   | 🟢   | T054, T058, T063 | **해결**: `pg_cron`+DB 함수 확정, cron 2종(close/auto-complete) active  |
+| 014   | 🟢   | T040-A, T050     | nickname NOT NULL 적용(트리거 폴백 + 가입 폼 닉네임) — 2026-07-02       |
+| 015   | 🟢   | T076(후속)       | `products.description` 컬럼 추가 + 타입/매퍼/폼/상세표시 반영 완료      |
+| 016   | 🟢   | T076(후속)       | `ratings.comment`+`submit_rating` p_comment 인자 추가 완료              |
+| 018   | 🟢   | T062(후속)       | 스타터 groups 잔재 제거 + get_policy_int anon 노출 차단 — 2026-07-02    |
+| 019   | 🟢   | T064(후속)       | 도메인 FK 커버링 인덱스 8건 추가(unindexed_foreign_keys 0) — 2026-07-02 |
+| 010   | 🟢   | 레이아웃         | `html lang` en → ko 고정(다국어는 T074) — 2026-07-02                    |
+| 012   | 🟢   | T051~            | snake↔camel 매핑 레이어 `lib/queries/_map.ts`로 구현(컴포넌트 무수정)   |
+| 021   | 🟢   | T059(후속)       | 재제출 멱등 처리(`ON CONFLICT DO NOTHING` no-op) — 롤백 테스트 통과     |
+| 022   | 🟢   | T051/T052(후속)  | `ProductImage` onError 폴백(카드·갤러리) — 깨진 아이콘 제거             |
 
 > ✅ **ISSUE-008 해소**: 자동 종료/완료 실행 메커니즘은 `pg_cron` + DB 함수(plpgsql)로 확정·구현되었습니다(Edge Function/외부 스케줄러 미사용). `cron.job`에 `close-expired-auctions`·`auto-complete-transactions` 2종이 매분 active.
