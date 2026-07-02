@@ -5,6 +5,7 @@
 
 import { AuctionCard } from "@/components/auctions/auction-card";
 import { AuctionGrid } from "@/components/auctions/auction-grid";
+import { AuctionStatusFilter } from "@/components/auctions/auction-status-filter";
 import { AuctionGallery } from "@/components/auctions/auction-gallery";
 import { AuctionInfo } from "@/components/auctions/auction-info";
 import { SellerReputation } from "@/components/auctions/seller-reputation";
@@ -69,6 +70,40 @@ export default function AuctionShowcase() {
             AuctionGrid — 전체 Mock 목록 (6건)
           </h3>
           <AuctionGrid auctions={mockAuctionSummaries} />
+        </div>
+
+        {/* ===== 내 상품 상태 필터 전시 (F0?? 내 상품) ===== */}
+        <div className="rounded-lg border p-6">
+          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+            AuctionStatusFilter — 내 상품 필터 (전체/경매중/낙찰/유찰/내림/완료)
+          </h3>
+          <p className="mb-4 text-sm text-muted-foreground">
+            <code className="rounded bg-muted px-1 font-mono text-xs">
+              /my-products
+            </code>{" "}
+            상단 상태 필터입니다. 홈과 동일 컴포넌트를{" "}
+            <code className="rounded bg-muted px-1 font-mono text-xs">
+              basePath
+            </code>{" "}
+            /{" "}
+            <code className="rounded bg-muted px-1 font-mono text-xs">
+              defaultStatus=&quot;all&quot;
+            </code>{" "}
+            로 재사용하며, 로그인 사용자에게만 하단 탭이 노출됩니다.
+          </p>
+          <div className="mb-4">
+            <AuctionStatusFilter
+              current="all"
+              labels={MOCK_PRODUCT_STATUS_LABELS}
+              basePath="/my-products"
+              defaultStatus="all"
+            />
+          </div>
+          {/* 내가 올린 상품 목록 예시 (Mock 전체를 판매자 시점으로 표시) */}
+          <AuctionGrid
+            auctions={mockAuctionSummaries}
+            emptyMessage="내 상품 전체이 없습니다."
+          />
         </div>
 
         {/* ===== 빈 상태 전시 ===== */}
