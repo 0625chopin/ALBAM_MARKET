@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { BottomNav } from "@/components/layout/bottom-nav";
+import { InAppBrowserGuard } from "@/components/in-app-browser-guard";
 import "./globals.css";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -36,6 +37,8 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          {/* 인앱 브라우저(카톡/네이버 등) 감지 시 외부 브라우저로 열도록 유도 */}
+          <InAppBrowserGuard />
           {/* 모바일 사이즈 프레임 — 데스크톱에서도 화면 중앙 430px 컬럼으로 고정 */}
           <div className="flex min-h-screen w-full justify-center bg-muted/30">
             <div className="relative flex min-h-screen w-full max-w-[430px] flex-col bg-background shadow-lg">
