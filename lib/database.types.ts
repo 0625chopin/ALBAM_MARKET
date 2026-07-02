@@ -7,6 +7,7 @@
 //       ISSUE-014(profiles.nickname NOT NULL) 반영해 재생성.
 //       커스텀 OTP(email_verifications 테이블 + otp_find_user/cleanup_email_verifications 함수) 반영해 재생성.
 //       닉네임 중복 체크(profiles.nickname lower() UNIQUE 인덱스 + nickname_exists 함수) 반영해 재생성.
+//       사이트 누적 카운터(site_counters 테이블 + increment_site_counter 함수) 반영해 재생성.
 
 export type Json =
   | string
@@ -542,6 +543,24 @@ export type Database = {
           },
         ]
       }
+      site_counters: {
+        Row: {
+          count: number
+          key: string
+          updated_at: string
+        }
+        Insert: {
+          count?: number
+          key: string
+          updated_at?: string
+        }
+        Update: {
+          count?: number
+          key?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       transactions: {
         Row: {
           buyer_id: string
@@ -648,6 +667,7 @@ export type Database = {
         Returns: undefined
       }
       get_policy_int: { Args: { p_key: string }; Returns: number }
+      increment_site_counter: { Args: { p_key: string }; Returns: number }
       nickname_exists: {
         Args: { p_exclude_id?: string; p_nickname: string }
         Returns: boolean

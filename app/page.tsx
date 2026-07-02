@@ -7,9 +7,11 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { Container } from "@/components/layout/container";
 import { AuctionGrid } from "@/components/auctions/auction-grid";
 import { AuctionStatusFilter } from "@/components/auctions/auction-status-filter";
+import { SiteVisitCounter } from "@/components/site-visit-counter";
 import {
   fetchAuctionSummaries,
   fetchStatusLabels,
+  fetchSiteCounter,
   type AuctionStatusFilterValue,
 } from "@/lib/queries";
 
@@ -55,10 +57,11 @@ export default async function Home({
     ? (status as AuctionStatusFilterValue)
     : "active";
 
-  // 선택 상태의 경매 카드 요약 (Supabase 실데이터) + 상태 라벨(DB 공통코드)
-  const [auctions, statusLabels] = await Promise.all([
+  // 선택 상태의 경매 카드 요약 (Supabase 실데이터) + 상태 라벨(DB 공통코드) + 누적 방문 수
+  const [auctions, statusLabels, visitCount] = await Promise.all([
     fetchAuctionSummaries(current),
     fetchStatusLabels("product_status"),
+    fetchSiteCounter("home_visits"),
   ]);
   const heading = STATUS_HEADINGS[current];
 
@@ -68,14 +71,17 @@ export default async function Home({
 
       <main className="flex flex-1 flex-col">
         <Container className="py-6">
-          {/* 홈 헤더 — 선택 상태에 맞는 제목 */}
-          <div className="mb-4 space-y-1">
-            <h1 className="text-xl font-bold text-foreground">
-              {heading.title}
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              {heading.description}
-            </p>
+          {/* 홈 헤더 — 선택 상태에 맞는 제목 + 누적 방문 수 */}
+          <div className="mb-4 flex items-start justify-between gap-4">
+            <div className="space-y-1">
+              <h1 className="text-xl font-bold text-foreground">
+                {heading.title}
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                {heading.description}
+              </p>
+            </div>
+            <SiteVisitCounter initialCount={visitCount} />
           </div>
 
           {/* 상단 상태 필터 탭 */}
