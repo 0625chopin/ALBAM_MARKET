@@ -13,75 +13,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { validateEmail, validateNickname } from "@/lib/auth/validation";
+import {
+  useAvailabilityCheck,
+  statusClass,
+  type FieldStatus,
+} from "@/lib/hooks/use-availability-check";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-
-// 중복 확인 필드 상태: 미확인 / 확인 중 / 사용 가능 / 사용 불가
-type FieldStatus = "idle" | "checking" | "available" | "unavailable";
-
-// 중복 확인 공통 훅: 형식 검증 → 디바운스 후 서버 확인.
-// 입력이 바뀌면 이전 요청 결과는 무시하도록 requestId 로 최신 요청만 반영한다.
-function useAvailabilityCheck(
-  type: "nickname" | "email",
-  value: string,
-  validate: (v: string) => string | null,
-  setStatus: (s: FieldStatus) => void,
-  setMsg: (m: string | null) => void
-) {
-  const reqIdRef = useRef(0);
-  useEffect(() => {
-    const trimmed = value.trim();
-    if (trimmed === "") {
-      setStatus("idle");
-      setMsg(null);
-      return;
-    }
-    const formatError = validate(trimmed);
-    if (formatError) {
-      setStatus("unavailable");
-      setMsg(formatError);
-      return;
-    }
-
-    setStatus("checking");
-    setMsg("확인 중...");
-    const reqId = ++reqIdRef.current;
-    const timer = setTimeout(async () => {
-      try {
-        const res = await fetch(
-          `/api/auth/check-availability?type=${type}&value=${encodeURIComponent(trimmed)}`
-        );
-        const data = (await res.json().catch(() => ({}))) as {
-          available?: boolean;
-          reason?: string;
-        };
-        // 그 사이 값이 바뀌었다면(최신 요청이 아니면) 결과를 버린다.
-        if (reqId !== reqIdRef.current) return;
-        if (data.available) {
-          setStatus("available");
-          setMsg("사용 가능합니다.");
-        } else {
-          setStatus("unavailable");
-          setMsg(data.reason ?? "사용할 수 없습니다.");
-        }
-      } catch {
-        if (reqId !== reqIdRef.current) return;
-        setStatus("idle");
-        setMsg(null);
-      }
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [type, value, validate, setStatus, setMsg]);
-}
-
-// 상태별 안내 문구 색상: 사용 가능(초록) / 불가(빨강) / 그 외(muted)
-function statusClass(status: FieldStatus) {
-  if (status === "available") return "text-green-600 dark:text-green-500";
-  if (status === "unavailable") return "text-red-500";
-  return "text-muted-foreground";
-}
+import { useState } from "react";
 
 export function SignUpForm({
   className,

@@ -7,8 +7,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { uploadAvatar } from "@/lib/mutations/profiles";
+import { validateNickname } from "@/lib/auth/validation";
+import {
+  useAvailabilityCheck,
+  statusClass,
+  type FieldStatus,
+} from "@/lib/hooks/use-availability-check";
 import { IMAGE_ALLOWED_TYPES, IMAGE_MAX_SIZE } from "@/lib/supabase/storage";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -48,8 +55,19 @@ export function ProfileEditForm({
     regions.find((opt) => opt.label === profile.region)?.value ?? ""
   );
 
-  // 닉네임 검증 에러 (없으면 null)
-  const [nicknameError, setNicknameError] = useState<string | null>(null);
+  // 닉네임 실시간 중복 확인 상태와 안내 메시지 (회원가입 폼과 동일 UX)
+  // excludeId 로 본인 행을 제외하고, initialValue 로 기존 닉네임 유지 시 서버 호출을 건너뛴다.
+  const [nicknameStatus, setNicknameStatus] = useState<FieldStatus>("idle");
+  const [nicknameMsg, setNicknameMsg] = useState<string | null>(null);
+  useAvailabilityCheck(
+    "nickname",
+    nickname,
+    validateNickname,
+    setNicknameStatus,
+    setNicknameMsg,
+    { excludeId: profile.id, initialValue: profile.nickname }
+  );
+
   // 저장 진행 상태 (스피너 표시용)
   const [isSaving, setIsSaving] = useState(false);
   // 저장 완료 피드백 표시 여부
@@ -90,32 +108,46 @@ export function ProfileEditForm({
     setAvatarFile(file);
   };
 
-  // 저장 처리 — 닉네임 검증 후 Supabase profiles update (T050 실저장)
+  // 저장 처리 — 닉네임 검증/중복확인 후 Supabase profiles update (T050 실저장)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaved(false);
     setSaveError(null);
 
-    // 닉네임 비어있음 검증
-    if (nickname.trim() === "") {
-      setNicknameError("닉네임을 입력해 주세요.");
+    const trimmedNickname = nickname.trim();
+
+    // 1) 닉네임 형식 검증 (빈값/허용문자) — 아바타 업로드보다 먼저 수행해 부분 저장을 막는다.
+    const formatError = validateNickname(trimmedNickname);
+    if (formatError) {
+      setNicknameStatus("unavailable");
+      setNicknameMsg(formatError);
+      return;
+    }
+    // 2) 실시간 중복 확인 결과 반영: 확인 중이면 대기, 중복이면 차단
+    if (nicknameStatus === "checking") {
+      setSaveError("닉네임 중복 확인이 진행 중입니다. 잠시만 기다려 주세요.");
+      return;
+    }
+    if (nicknameStatus === "unavailable") {
+      setSaveError("닉네임을 확인해 주세요.");
       return;
     }
 
-    setNicknameError(null);
     setIsSaving(true);
 
-    // 선택된 지역 value(예: seoul) → 저장용 라벨(예: 서울)로 변환 (미선택 시 빈 문자열)
-    const regionLabel =
-      regions.find((opt) => opt.value === regionValue)?.label ?? "";
+    // 선택된 지역 value(예: seoul) → 저장용 라벨(예: 서울).
+    // 미선택이면 undefined → 갱신 대상에서 제외해 기존 지역을 덮어쓰지 않는다.
+    const regionLabel = regions.find((opt) => opt.value === regionValue)?.label;
 
     // 갱신할 필드 (아바타 선택 시 Storage 업로드 후 avatar_url 포함)
     const updates: {
       nickname: string;
-      region: string;
+      region?: string;
       avatar_url?: string;
-    } = { nickname: nickname.trim(), region: regionLabel };
+    } = { nickname: trimmedNickname };
+    if (regionLabel !== undefined) updates.region = regionLabel;
 
+    // 3) 아바타 업로드는 닉네임 검증을 통과한 뒤에 수행(중복 실패 시 이미지만 바뀌는 부분 저장 방지).
     if (avatarFile) {
       try {
         updates.avatar_url = await uploadAvatar(avatarFile, profile.id);
@@ -128,16 +160,28 @@ export function ProfileEditForm({
       }
     }
 
-    // 본인 행만 갱신 (RLS: auth.uid() = id). profile.id 는 현재 사용자 UUID.
+    // 본인 행만 갱신 (RLS: auth.uid() = id). .select() 로 실제 반영된 행을 확인한다.
     const supabase = createClient();
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("profiles")
       .update(updates)
-      .eq("id", profile.id);
+      .eq("id", profile.id)
+      .select("id");
 
     setIsSaving(false);
     if (error) {
+      // 닉네임 UNIQUE 위반(Postgres 23505): 사전 확인을 통과했더라도 저장 직전 경합으로 발생 가능
+      if (error.code === "23505") {
+        setNicknameStatus("unavailable");
+        setNicknameMsg("이미 사용 중인 닉네임입니다.");
+        return;
+      }
       setSaveError("저장에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+      return;
+    }
+    // RLS 차단 등으로 반영된 행이 없으면(에러 없는 조용한 실패) 명시적으로 알린다.
+    if (!data || data.length === 0) {
+      setSaveError("저장 권한이 없거나 대상을 찾을 수 없습니다.");
       return;
     }
 
@@ -210,23 +254,26 @@ export function ProfileEditForm({
               value={nickname}
               onChange={(e) => {
                 setNickname(e.target.value);
-                if (nicknameError) setNicknameError(null);
                 if (saved) setSaved(false);
+                if (saveError) setSaveError(null);
               }}
               placeholder="닉네임을 입력하세요"
               autoComplete="nickname"
-              aria-invalid={nicknameError !== null}
+              aria-invalid={nicknameStatus === "unavailable"}
               aria-describedby={
-                nicknameError ? "profile-edit-nickname-error" : undefined
+                nicknameMsg ? "profile-edit-nickname-status" : undefined
               }
             />
-            {nicknameError && (
+            {nicknameMsg && (
               <p
-                id="profile-edit-nickname-error"
-                className="text-xs font-medium text-destructive"
-                role="alert"
+                id="profile-edit-nickname-status"
+                className={cn(
+                  "text-xs font-medium",
+                  statusClass(nicknameStatus)
+                )}
+                role={nicknameStatus === "unavailable" ? "alert" : "status"}
               >
-                {nicknameError}
+                {nicknameMsg}
               </p>
             )}
           </div>
@@ -273,7 +320,11 @@ export function ProfileEditForm({
           <Button
             type="submit"
             className="w-full"
-            disabled={isSaving}
+            disabled={
+              isSaving ||
+              nicknameStatus === "checking" ||
+              nicknameStatus === "unavailable"
+            }
             aria-busy={isSaving}
           >
             {isSaving && (

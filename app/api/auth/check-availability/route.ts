@@ -24,6 +24,8 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const type = searchParams.get("type");
     const value = (searchParams.get("value") ?? "").trim();
+    // 중복 검사에서 제외할 사용자 id (프로필 수정 시 본인 행 제외). 없으면 undefined.
+    const excludeId = searchParams.get("excludeId") ?? undefined;
 
     if (type === "nickname") {
       const formatError = validateNickname(value);
@@ -37,6 +39,7 @@ export async function GET(request: NextRequest) {
       const admin = createAdminClient();
       const { data: taken, error } = await admin.rpc("nickname_exists", {
         p_nickname: value,
+        p_exclude_id: excludeId,
       });
       if (error) {
         return NextResponse.json<AvailabilityResult>(
