@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
-import { BottomNav } from "@/components/layout/bottom-nav";
+import { BottomNavGate } from "@/components/layout/bottom-nav-gate";
 import { InAppBrowserGuard } from "@/components/in-app-browser-guard";
 import "./globals.css";
 
@@ -44,10 +44,11 @@ export default function RootLayout({
             <div className="relative flex min-h-screen w-full max-w-[430px] flex-col bg-background shadow-lg">
               {children}
               {/* 모바일 하단 탭바 (인증 화면에서는 자동 숨김)
-                  BottomNav는 usePathname()(요청 시점 데이터)을 사용하므로
-                  cacheComponents 환경의 동적 라우트 prerender를 위해 Suspense로 감쌈 */}
+                  BottomNav는 usePathname()(요청 시점 데이터)을 사용하고,
+                  BottomNavGate는 로그인 여부(getClaims)를 서버 조회하므로
+                  cacheComponents 환경의 동적 처리를 위해 Suspense로 감쌈 */}
               <Suspense fallback={null}>
-                <BottomNav />
+                <BottomNavGate />
               </Suspense>
             </div>
           </div>
