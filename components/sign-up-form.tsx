@@ -30,12 +30,11 @@ export function SignUpForm({
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    const supabase = createClient();
     setIsLoading(true);
     setError(null);
 
     if (password !== repeatPassword) {
-      setError("Passwords do not match");
+      setError("비밀번호가 일치하지 않습니다.");
       setIsLoading(false);
       return;
     }
@@ -47,19 +46,21 @@ export function SignUpForm({
     }
 
     try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-          // 프로필 nickname 은 handle_new_user 트리거가 이 metadata 를 사용해 채운다
-          data: { nickname: nickname.trim() },
-        },
+      // 커스텀 OTP 1단계: 서버가 미인증 유저를 만들고 6자리 인증번호를 이메일로 발송한다.
+      // 비밀번호는 이 요청에서만 서버로 전달되고 이후 단계로 넘기지 않는다(세션은 서버가 발급).
+      const res = await fetch("/api/auth/otp/request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, nickname: nickname.trim() }),
       });
-      if (error) throw error;
-      router.push("/auth/sign-up-success");
+      const data = (await res.json()) as { ok?: boolean; error?: string };
+      if (!res.ok) {
+        throw new Error(data.error ?? "회원가입 요청에 실패했습니다.");
+      }
+      // 발송된 6자리 코드를 입력받기 위해 인증 화면으로 이동(이메일 전달)
+      router.push(`/auth/verify-otp?email=${encodeURIComponent(email)}`);
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
+      setError(error instanceof Error ? error.message : "오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
     }

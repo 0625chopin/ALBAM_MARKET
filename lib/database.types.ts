@@ -5,6 +5,7 @@
 //       카테고리 공통코드 이관(categories 테이블 제거, products.category text) 반영해 재생성.
 //       ISSUE-018(스타터 groups/group_members + group 함수 4종 제거),
 //       ISSUE-014(profiles.nickname NOT NULL) 반영해 재생성.
+//       커스텀 OTP(email_verifications 테이블 + otp_find_user/cleanup_email_verifications 함수) 반영해 재생성.
 
 export type Json =
   | string
@@ -195,6 +196,42 @@ export type Database = {
             referencedColumns: ["group_key"]
           },
         ]
+      }
+      email_verifications: {
+        Row: {
+          attempts: number
+          code_hash: string
+          consumed_at: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          max_attempts: number
+          purpose: string
+        }
+        Insert: {
+          attempts?: number
+          code_hash: string
+          consumed_at?: string | null
+          created_at?: string
+          email: string
+          expires_at: string
+          id?: string
+          max_attempts?: number
+          purpose?: string
+        }
+        Update: {
+          attempts?: number
+          code_hash?: string
+          consumed_at?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          max_attempts?: number
+          purpose?: string
+        }
+        Relationships: []
       }
       messages: {
         Row: {
@@ -603,12 +640,20 @@ export type Database = {
         Args: { avg_score: number; completed_count: number }
         Returns: number
       }
+      cleanup_email_verifications: { Args: never; Returns: undefined }
       close_expired_auctions: { Args: never; Returns: number }
       complete_transaction: {
         Args: { p_transaction_id: string }
         Returns: undefined
       }
       get_policy_int: { Args: { p_key: string }; Returns: number }
+      otp_find_user: {
+        Args: { p_email: string }
+        Returns: {
+          email_confirmed: boolean
+          id: string
+        }[]
+      }
       place_bid: {
         Args: { p_amount: number; p_product_id: string }
         Returns: number
