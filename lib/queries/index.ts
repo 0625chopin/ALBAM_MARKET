@@ -9,7 +9,11 @@ export {
   fetchProfileScores,
 } from "./profiles";
 export type { ProfileScores } from "./profiles";
-export { fetchAuctionSummaries, fetchAuctionDetail } from "./auctions";
+export {
+  fetchAuctionSummaries,
+  fetchMyProductSummaries,
+  fetchAuctionDetail,
+} from "./auctions";
 export type { AuctionStatusFilterValue } from "./auctions";
 export {
   fetchCodeGroup,

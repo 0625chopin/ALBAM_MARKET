@@ -41,6 +41,39 @@ export async function fetchAuctionSummaries(
 }
 
 /**
+ * 내가 올린 상품 요약 목록 (판매자 본인 상품).
+ * fetchAuctionSummaries 와 동일한 요약 계약을 반환하되 seller_id 로 필터한다.
+ * @param sellerId 판매자(로그인 사용자) id
+ * @param status "all"이면 전체, 그 외 특정 상태만 조회(기본 "all").
+ */
+export async function fetchMyProductSummaries(
+  sellerId: string,
+  status: AuctionStatusFilterValue = "all"
+): Promise<AuctionSummary[]> {
+  const supabase = await createClient();
+  let query = supabase
+    .from("products")
+    .select(
+      "id, title, start_price, current_price, auction_ends_at, status, region, product_images(url, is_primary)"
+    )
+    .eq("seller_id", sellerId)
+    .order("created_at", { ascending: false });
+
+  // "all"이 아니면 상태로 필터
+  if (status !== "all") query = query.eq("status", status);
+
+  // 상태 표시 라벨(DB 공통코드) — 프로세스 단위 캐시라 목록 조회와 병행해도 저렴
+  const [{ data, error }, statusLabels] = await Promise.all([
+    query,
+    fetchStatusLabels("product_status"),
+  ]);
+  if (error || !data) return [];
+  return data.map((row) =>
+    toAuctionSummary(row, statusLabels[row.status] ?? row.status)
+  );
+}
+
+/**
  * 경매 상세. 미존재 시 null.
  * 상품(이미지·카테고리 임베드) → 판매자 프로필 → 평판 평균 별점 → 입찰 수 순으로 조합한다.
  */
