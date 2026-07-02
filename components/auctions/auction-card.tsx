@@ -18,9 +18,15 @@ interface AuctionCardProps {
   auction: AuctionSummary;
   /** 추가 Tailwind 클래스 (선택) */
   className?: string;
+  /** 대표 이미지 우선 로드 여부 (첫 화면 above-the-fold LCP 최적화용) */
+  priority?: boolean;
 }
 
-export function AuctionCard({ auction, className }: AuctionCardProps) {
+export function AuctionCard({
+  auction,
+  className,
+  priority,
+}: AuctionCardProps) {
   return (
     // 카드 전체를 Link로 감싸 경매 상세 페이지로 이동
     <Link
@@ -43,6 +49,7 @@ export function AuctionCard({ auction, className }: AuctionCardProps) {
             alt={auction.title}
             width={300}
             height={300}
+            priority={priority}
             className="aspect-square w-full object-cover"
             sizes="(max-width: 430px) 50vw, 215px"
             placeholderClassName="aspect-square w-full"

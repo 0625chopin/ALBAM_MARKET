@@ -27,10 +27,11 @@ export function AuctionGrid({
   return (
     // 모바일 2열 고정 그리드 (gap-3 = 12px 간격)
     <div className="grid grid-cols-2 gap-3" role="list" aria-label="경매 목록">
-      {auctions.map((auction) => (
+      {auctions.map((auction, idx) => (
         // role="listitem"은 Link 내부에서 사용 불가이므로 div 래퍼로 감싸지 않음
         // (접근성: Link 자체의 aria-label이 각 카드를 구분함)
-        <AuctionCard key={auction.id} auction={auction} />
+        // 첫 행(2열) 카드는 above-the-fold LCP 후보이므로 우선 로드
+        <AuctionCard key={auction.id} auction={auction} priority={idx < 2} />
       ))}
     </div>
   );
