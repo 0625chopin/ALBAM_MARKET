@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Geist } from "next/font/google";
+import { Libre_Baskerville } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { BottomNavGate } from "@/components/layout/bottom-nav-gate";
 import { InAppBrowserGuard } from "@/components/in-app-browser-guard";
@@ -17,8 +17,10 @@ export const metadata: Metadata = {
   description: "알밤마켓에서 중고 물품을 경매로 사고 팔아보세요.",
 };
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// 본문 폰트 — globals.css의 --font-sans 테마 토큰과 연결(라틴 전용, 한글은 serif 폴백)
+const fontSans = Libre_Baskerville({
+  variable: "--font-libre-baskerville",
+  weight: ["400", "700"],
   display: "swap",
   subsets: ["latin"],
 });
@@ -30,7 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" suppressHydrationWarning>
-      <body className={`${geistSans.className} antialiased`}>
+      <body className={`${fontSans.variable} font-sans antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
