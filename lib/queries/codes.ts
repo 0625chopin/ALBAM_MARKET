@@ -68,6 +68,15 @@ export function fetchCategoryOptions(): Promise<SelectOption[]> {
   return fetchCodeGroup("category");
 }
 
+/**
+ * 경매 진행 시간 옵션 목록 (공통코드 codes.auction_duration → SelectOption, value=시간 문자열).
+ * 다른 공통코드 그룹과 동일하게 fetchCodeGroup 을 재사용한다.
+ * 프로세스당 최초 1회만 DB 조회 후 재사용(모듈 싱글턴).
+ */
+export function fetchAuctionDurationOptions(): Promise<SelectOption[]> {
+  return fetchCodeGroup("auction_duration");
+}
+
 /** PolicyMap 이 요구하는 정책 키 전체 (DB codes.policy 에 모두 존재해야 함) */
 const POLICY_KEYS: PolicyKey[] = [
   "default_auction_duration_hours",

@@ -26,6 +26,7 @@ import { Badge } from "@/components/ui/badge";
 import { ImagePlaceholder } from "@/components/common/image-placeholder";
 import type { SelectOption } from "@/lib/types";
 import { createAuction } from "@/lib/mutations/auctions";
+import { DEFAULT_AUCTION_DURATION_HOURS } from "@/lib/constants/auctions";
 
 // 이미지 최대 등록 개수 (대표 1 + 추가 5)
 const IMAGE_SLOT_COUNT = 6;
@@ -36,6 +37,13 @@ const onlyDigits = (value: string) => value.replace(/[^\d]/g, "");
 // 숫자 문자열을 3자리마다 콤마 찍어 표시용으로 변환 (빈 값이면 빈 문자열)
 const formatWithComma = (digits: string) =>
   digits === "" ? "" : Number(digits).toLocaleString("ko-KR");
+
+// 지금부터 hours 시간 뒤의 예상 마감 시각을 한국어 로컬 포맷으로 반환 (안내 표시용)
+const formatExpectedEndAt = (hours: number) =>
+  new Date(Date.now() + hours * 60 * 60 * 1000).toLocaleString("ko-KR", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
 
 // 폼 필드별 검증 에러 키
 interface FormErrors {
@@ -56,7 +64,9 @@ interface AuctionFormProps {
   regions: SelectOption[];
   /** 중고등급 옵션 */
   conditions: SelectOption[];
-  /** 기본 경매 진행 시간(시간) — 마감 안내 표시용 (codes.policy.default_auction_duration_hours 주입) */
+  /** 경매 진행 시간 옵션 (value=시간 문자열, label=표시명) — 공통코드 codes.auction_duration 주입 */
+  durationOptions: SelectOption[];
+  /** 기본 경매 진행 시간(시간) — 진행 시간 Select 의 초기 선택값 소스 (codes.policy.default_auction_duration_hours 주입) */
   auctionDurationHours: number;
   /** 누적 패널티 이용 제한 여부 (ISSUE-004) — true면 등록 차단 */
   restricted?: boolean;
@@ -72,6 +82,7 @@ export function AuctionForm({
   categories,
   regions,
   conditions,
+  durationOptions,
   auctionDurationHours,
   restricted = false,
   penaltyCount = 0,
@@ -91,6 +102,17 @@ export function AuctionForm({
   const [condition, setCondition] = useState("");
   const [startPrice, setStartPrice] = useState("");
   const [buyNowPrice, setBuyNowPrice] = useState("");
+  // 경매 진행 시간(시간). shadcn Select 는 문자열 value 를 사용한다.
+  // 초기값: 정책 기본값(auctionDurationHours)이 옵션에 있으면 그 값,
+  //         없으면 기본 상수(24)가 옵션에 있으면 그 값, 그것도 없으면 첫 옵션.
+  const [durationHours, setDurationHours] = useState<string>(() => {
+    const has = (hours: number) =>
+      durationOptions.some((option) => option.value === String(hours));
+    if (has(auctionDurationHours)) return String(auctionDurationHours);
+    if (has(DEFAULT_AUCTION_DURATION_HOURS))
+      return String(DEFAULT_AUCTION_DURATION_HOURS);
+    return durationOptions[0]?.value ?? String(DEFAULT_AUCTION_DURATION_HOURS);
+  });
 
   // 선택된 이미지 파일 + 미리보기 URL (첫 장이 대표 이미지)
   const [images, setImages] = useState<{ file: File; preview: string }[]>([]);
@@ -207,6 +229,7 @@ export function AuctionForm({
         condition,
         startPrice: Number(startPrice),
         buyNowPrice: buyNowPrice.trim() === "" ? null : Number(buyNowPrice),
+        durationHours: Number(durationHours),
         files: images.map((img) => img.file),
       });
 
@@ -505,19 +528,30 @@ export function AuctionForm({
         )}
       </div>
 
-      {/* ===== 9. 마감 안내 박스 ===== */}
-      {/* 진행 시간은 DB 공통코드(codes.policy.default_auction_duration_hours) 기반.
-          실제 마감시각은 서버 트리거(set_auction_ends_at)가 채운다. */}
-      <div
-        className="rounded-md border bg-muted/40 px-4 py-3 text-sm text-muted-foreground"
-        role="note"
-        aria-label="경매 마감 안내"
-      >
-        등록 시 자동으로{" "}
-        <span className="font-semibold text-foreground">
-          {auctionDurationHours}시간
-        </span>{" "}
-        후 마감됩니다.
+      {/* ===== 9. 경매 진행 시간 선택 ===== */}
+      {/* 등록자가 진행 시간을 선택한다. 선택값 기준 now()+N시간을 마감 시각으로 저장한다.
+          (createAuction 이 auction_ends_at 을 명시 전달) */}
+      <div className="space-y-2">
+        <Label htmlFor="auction-duration">경매 진행 시간</Label>
+        <Select value={durationHours} onValueChange={setDurationHours}>
+          <SelectTrigger id="auction-duration" className="w-full">
+            <SelectValue placeholder="진행 시간 선택" />
+          </SelectTrigger>
+          <SelectContent>
+            {durationOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {/* 선택값 기준 예상 마감 시각 안내 */}
+        <p className="text-xs text-muted-foreground">
+          등록 시점부터 선택한 시간 후 마감됩니다. 예상 마감:{" "}
+          <span className="font-medium text-foreground">
+            {formatExpectedEndAt(Number(durationHours))}
+          </span>
+        </p>
       </div>
 
       {/* ===== 10. 제출 실패 안내 ===== */}

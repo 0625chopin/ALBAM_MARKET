@@ -11,6 +11,7 @@ import {
   getCurrentUserId,
   fetchCategoryOptions,
   fetchCodeGroup,
+  fetchAuctionDurationOptions,
   fetchPolicies,
   fetchMyPenaltyStatus,
 } from "@/lib/queries";
@@ -24,14 +25,21 @@ export default async function AuctionNewPage() {
 
   // 폼 옵션/정책값을 DB 공통코드에서 조회해 Client 폼에 주입 (미주입 시 상수 폴백)
   // penaltyStatus: 누적 패널티 이용 제한(ISSUE-004) UX 사전검증용 (최종 강제는 서버 트리거)
-  const [categories, regions, conditions, policies, penaltyStatus] =
-    await Promise.all([
-      fetchCategoryOptions(),
-      fetchCodeGroup("region"),
-      fetchCodeGroup("product_condition"),
-      fetchPolicies(),
-      fetchMyPenaltyStatus(),
-    ]);
+  const [
+    categories,
+    regions,
+    conditions,
+    durationOptions,
+    policies,
+    penaltyStatus,
+  ] = await Promise.all([
+    fetchCategoryOptions(),
+    fetchCodeGroup("region"),
+    fetchCodeGroup("product_condition"),
+    fetchAuctionDurationOptions(),
+    fetchPolicies(),
+    fetchMyPenaltyStatus(),
+  ]);
 
   return (
     <div className="flex flex-1 flex-col">
@@ -53,6 +61,7 @@ export default async function AuctionNewPage() {
               categories={categories}
               regions={regions}
               conditions={conditions}
+              durationOptions={durationOptions}
               auctionDurationHours={policies.default_auction_duration_hours}
               restricted={penaltyStatus.restricted}
               penaltyCount={penaltyStatus.count}

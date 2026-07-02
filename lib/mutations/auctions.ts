@@ -19,6 +19,8 @@ export interface CreateAuctionInput {
   startPrice: number;
   /** 즉시구매가 (미설정 시 null) */
   buyNowPrice: number | null;
+  /** 경매 진행 시간(시간 단위, 예: 24=1일) — 마감 시각 계산에 사용 */
+  durationHours: number;
   /** 업로드할 이미지 파일 (첫 장이 대표 이미지) */
   files: File[];
 }
@@ -34,7 +36,7 @@ const PRODUCT_IMAGES_BUCKET = "product-images";
 /**
  * 경매 상품을 등록한다.
  * (a) products insert(seller_id=세션 사용자, category=공통코드 코드값, current_price=start_price,
- * auction_ends_at=DB 트리거 set_auction_ends_at 가 정책값 기반으로 자동 설정) →
+ * auction_ends_at=등록자가 선택한 진행 시간으로 now()+N시간 계산해 명시 전달) →
  * (b) Storage 업로드(product-images/{userId}/{productId}/...) →
  * (c) product_images insert. RLS(본인 seller_id)·Storage 본인 경로 정책을 준수한다.
  */
@@ -50,8 +52,11 @@ export async function createAuction(
 
   // 상품 insert (현재가는 시작가로 초기화, status 기본 'active')
   // 카테고리는 공통코드(codes.category) 코드값을 그대로 저장한다.
-  // 마감 시각(auction_ends_at)은 서버 트리거 set_auction_ends_at 가
-  // 정책값(codes.policy.default_auction_duration_hours) 기반 now()+N시간으로 채운다.
+  // 마감 시각(auction_ends_at)은 등록자가 선택한 진행 시간(durationHours) 기준으로
+  // now()+N시간을 계산해 명시 전달한다. (미전달 시에만 DB 컬럼 DEFAULT 가 적용됨)
+  const auctionEndsAt = new Date(
+    Date.now() + input.durationHours * 60 * 60 * 1000
+  ).toISOString();
   const { data: product, error: productError } = await supabase
     .from("products")
     .insert({
@@ -64,6 +69,7 @@ export async function createAuction(
       start_price: input.startPrice,
       buy_now_price: input.buyNowPrice,
       current_price: input.startPrice,
+      auction_ends_at: auctionEndsAt,
     })
     .select("id")
     .single();

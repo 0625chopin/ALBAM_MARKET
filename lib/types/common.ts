@@ -15,6 +15,7 @@ export type CodeGroupKey =
   | "product_condition"
   | "category"
   | "region"
+  | "auction_duration"
   | "product_status"
   | "transaction_status"
   | "policy";

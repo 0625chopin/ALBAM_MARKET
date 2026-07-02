@@ -57,6 +57,18 @@ export const MOCK_REGION_OPTIONS: SelectOption[] = [
   { value: "jeju", label: "제주" },
 ];
 
+/** 경매 진행 시간 옵션 — value=시간(hours) 문자열, label=표시명 (DB codes.auction_duration 시드와 동일) */
+export const MOCK_AUCTION_DURATIONS: SelectOption[] = [
+  { value: "12", label: "12시간" },
+  { value: "24", label: "1일" },
+  { value: "48", label: "2일" },
+  { value: "72", label: "3일" },
+  { value: "96", label: "4일" },
+  { value: "120", label: "5일" },
+  { value: "144", label: "6일" },
+  { value: "168", label: "7일" },
+];
+
 /** 경매 상태 → 한글 라벨 맵 */
 export const MOCK_PRODUCT_STATUS_LABELS: Record<ProductStatus, string> = {
   active: "경매중",
@@ -83,6 +95,7 @@ const CODE_GROUPS: Record<CodeGroupKey, SelectOption[]> = {
   product_condition: MOCK_PRODUCT_CONDITIONS,
   category: MOCK_CATEGORY_OPTIONS,
   region: MOCK_REGION_OPTIONS,
+  auction_duration: MOCK_AUCTION_DURATIONS,
   product_status: recordToOptions(MOCK_PRODUCT_STATUS_LABELS),
   transaction_status: recordToOptions(MOCK_TRANSACTION_STATUS_LABELS),
   policy: [],
@@ -106,6 +119,11 @@ export async function fetchStatusLabels(
 /** 카테고리 옵션 목록 (Mock) */
 export async function fetchCategoryOptions(): Promise<SelectOption[]> {
   return MOCK_CATEGORY_OPTIONS;
+}
+
+/** 경매 진행 시간 옵션 목록 (Mock) */
+export async function fetchAuctionDurationOptions(): Promise<SelectOption[]> {
+  return MOCK_AUCTION_DURATIONS;
 }
 
 /** 정책 수치 맵 시드 (DB codes.policy 초기 시드와 동일) */

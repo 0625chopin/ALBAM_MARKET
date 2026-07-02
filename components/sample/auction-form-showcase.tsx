@@ -6,6 +6,7 @@ import {
   MOCK_CATEGORY_OPTIONS,
   MOCK_REGION_OPTIONS,
   MOCK_PRODUCT_CONDITIONS,
+  MOCK_AUCTION_DURATIONS,
   MOCK_POLICIES,
 } from "@/lib/mocks";
 
@@ -26,6 +27,7 @@ export default function AuctionFormShowcase() {
           categories={MOCK_CATEGORY_OPTIONS}
           regions={MOCK_REGION_OPTIONS}
           conditions={MOCK_PRODUCT_CONDITIONS}
+          durationOptions={MOCK_AUCTION_DURATIONS}
           auctionDurationHours={MOCK_POLICIES.default_auction_duration_hours}
         />
       </div>

@@ -15,7 +15,10 @@ export {
   fetchCodeGroup,
   fetchStatusLabels,
   fetchCategoryOptions,
+  fetchAuctionDurationOptions,
   fetchPolicies,
 } from "./codes";
 export { fetchMyPenaltyStatus } from "./penalties";
 export type { PenaltyStatus } from "./penalties";
+export { fetchSiteCounter } from "./site";
+export type { SiteCounterKey } from "./site";
