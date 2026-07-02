@@ -18,10 +18,20 @@ export async function GET() {
     nodeEnv: process.env.NODE_ENV ?? null,
     hasServiceRoleKey: present(process.env.SUPABASE_SERVICE_ROLE_KEY),
     serviceRoleKeyLength: process.env.SUPABASE_SERVICE_ROLE_KEY?.length ?? 0,
+    // 신규 secret 키 형식인지(sb_secret_...). false 면 아직 레거시 JWT 를 쓰는 중.
+    serviceRoleKeyIsNewFormat: (
+      process.env.SUPABASE_SERVICE_ROLE_KEY ?? ""
+    ).startsWith("sb_secret_"),
     hasSupabaseUrl: present(process.env.NEXT_PUBLIC_SUPABASE_URL),
     hasPublishableKey: present(
       process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
     ),
+    publishableKeyLength:
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.length ?? 0,
+    // 신규 publishable 형식인지(sb_publishable_...). false 면 폐기된 레거시 anon → 앱 전체 깨짐.
+    publishableKeyIsNewFormat: (
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? ""
+    ).startsWith("sb_publishable_"),
     hasSmtpHost: present(process.env.SMTP_HOST),
     hasSmtpPort: present(process.env.SMTP_PORT),
     hasSmtpUser: present(process.env.SMTP_USER),
