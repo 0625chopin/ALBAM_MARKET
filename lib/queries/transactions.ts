@@ -12,6 +12,8 @@ const DEFAULT_NICKNAME = "이름 없음";
 export interface UserTransactionItem {
   transaction: Transaction;
   product: Product;
+  /** 상품 대표 이미지 URL (없으면 null) */
+  primaryImageUrl: string | null;
   role: "seller" | "buyer";
   counterpartNickname: string;
   chatRoomId: string | null;
@@ -27,7 +29,7 @@ export async function fetchUserTransactions(): Promise<UserTransactionItem[]> {
     .from("transactions")
     .select(
       `*,
-       products(*),
+       products(*, product_images(url, is_primary)),
        chat_rooms(id),
        seller:profiles!transactions_seller_id_fkey(nickname),
        buyer:profiles!transactions_buyer_id_fkey(nickname)`
@@ -48,9 +50,15 @@ export async function fetchUserTransactions(): Promise<UserTransactionItem[]> {
       // chat_rooms 는 거래당 1개(unique) → 단일 객체로 임베드됨
       const chatRoomId = row.chat_rooms?.id ?? null;
 
+      // 대표 이미지 추출: is_primary 우선, 없으면 첫 번째
+      const images = row.products!.product_images ?? [];
+      const primary = images.find((img) => img.is_primary) ?? images[0];
+      const primaryImageUrl = primary?.url ? primary.url : null;
+
       return {
         transaction: toTransaction(row),
         product: toProduct(row.products!),
+        primaryImageUrl,
         role,
         counterpartNickname,
         chatRoomId,

@@ -87,7 +87,8 @@ export function AuctionCard({
             시작가 {formatPrice(auction.startPrice)}
           </p>
           {auction.buyNowPrice !== null && (
-            <p className="text-primary text-xs font-medium">
+            // 색상: 상단 상태 필터에서 선택된 탭의 텍스트 색과 동일(text-primary-foreground)
+            <p className="text-primary-foreground text-xs font-medium">
               즉시구매 {formatPrice(auction.buyNowPrice)}
             </p>
           )}

@@ -20,11 +20,17 @@ import {
   abandonAuction,
   completeTransaction,
 } from "@/lib/mutations/transactions";
-import type { Transaction, TransactionStatus } from "@/lib/types";
+import type {
+  ProductStatus,
+  Transaction,
+  TransactionStatus,
+} from "@/lib/types";
 
 interface TransactionActionsProps {
   /** 거래 데이터 (초기 상태 바인딩용) */
   transaction: Transaction;
+  /** 거래 대상 상품 상태 (채팅 가능 여부 판정용 — 유찰/내림 차단) */
+  productStatus: ProductStatus;
   /** 현재 사용자의 역할 */
   role: "seller" | "buyer";
   /** 거래 상대방 닉네임 (평점 모달용) */
@@ -37,6 +43,7 @@ interface TransactionActionsProps {
 
 export function TransactionActions({
   transaction,
+  productStatus,
   role,
   counterpartNickname,
   chatRoomId,
@@ -56,6 +63,13 @@ export function TransactionActions({
   const isCompleted = status === "completed" || status === "auto_completed";
   // 진행중 여부 — 액션 버튼 노출 조건
   const isPending = status === "pending";
+  // 채팅 가능 여부 — 채팅방이 있고, 유찰/내림/취소가 아닐 때만.
+  // 취소는 로컬 status로 판정해 '낙찰 포기' 직후 버튼이 즉시 사라지게 한다.
+  const canChat =
+    !!chatRoomId &&
+    status !== "canceled" &&
+    productStatus !== "failed" &&
+    productStatus !== "withdrawn";
 
   // 거래완료 확정 (구매자) — RPC complete_transaction
   const handleComplete = async () => {
@@ -103,8 +117,8 @@ export function TransactionActions({
 
       {/* 액션 버튼 / 결과 안내 영역 */}
       <div className="flex flex-wrap gap-2">
-        {/* 채팅하기: 채팅방이 있으면 항상 노출 */}
-        {chatRoomId && (
+        {/* 채팅하기: 성립·진행 중인 거래에서만 노출 (유찰/내림/취소 차단) */}
+        {canChat && (
           <Button asChild size="sm" variant="outline">
             <Link href={`/chat/${chatRoomId}`}>채팅하기</Link>
           </Button>

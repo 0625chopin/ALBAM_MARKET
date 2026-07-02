@@ -78,6 +78,7 @@ export default function TransactionsShowcase() {
                 key={transaction.id}
                 transaction={transaction}
                 product={product}
+                primaryImageUrl={null}
                 role={role}
                 counterpartNickname={counterpartProfile.nickname}
                 chatRoomId={chatRoomId}
@@ -91,6 +92,7 @@ export default function TransactionsShowcase() {
             <TransactionCard
               transaction={buyerPendingTransaction}
               product={buyerPendingProduct}
+              primaryImageUrl={null}
               role="buyer"
               counterpartNickname={buyerPendingCounterpart.nickname}
               chatRoomId={null}

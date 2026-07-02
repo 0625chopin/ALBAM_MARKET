@@ -48,6 +48,7 @@ export default async function TransactionsPage() {
                   key={item.transaction.id}
                   transaction={item.transaction}
                   product={item.product}
+                  primaryImageUrl={item.primaryImageUrl}
                   role={item.role}
                   counterpartNickname={item.counterpartNickname}
                   chatRoomId={item.chatRoomId}
