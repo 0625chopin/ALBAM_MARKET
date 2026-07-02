@@ -51,7 +51,7 @@ export function SignUpForm({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/protected`,
+          emailRedirectTo: `${window.location.origin}/`,
           // 프로필 nickname 은 handle_new_user 트리거가 이 metadata 를 사용해 채운다
           data: { nickname: nickname.trim() },
         },
