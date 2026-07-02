@@ -22,7 +22,7 @@ export async function fetchAuctionSummaries(
   let query = supabase
     .from("products")
     .select(
-      "id, title, start_price, current_price, auction_ends_at, status, region, product_images(url, is_primary)"
+      "id, title, start_price, current_price, buy_now_price, auction_ends_at, status, region, product_images(url, is_primary)"
     )
     .order("created_at", { ascending: false });
 
@@ -54,7 +54,7 @@ export async function fetchMyProductSummaries(
   let query = supabase
     .from("products")
     .select(
-      "id, title, start_price, current_price, auction_ends_at, status, region, product_images(url, is_primary)"
+      "id, title, start_price, current_price, buy_now_price, auction_ends_at, status, region, product_images(url, is_primary)"
     )
     .eq("seller_id", sellerId)
     .order("created_at", { ascending: false });

@@ -71,7 +71,7 @@ export function AuctionCard({ auction, className }: AuctionCardProps) {
           {auction.title}
         </p>
 
-        {/* 현재 최고가 + 시작가(보조) */}
+        {/* 현재 최고가 + 시작가(보조) + 즉시구매가(있을 때만) */}
         <div className="space-y-0.5">
           <p className="text-sm font-bold text-foreground">
             {formatPrice(auction.currentPrice)}
@@ -79,6 +79,11 @@ export function AuctionCard({ auction, className }: AuctionCardProps) {
           <p className="text-xs text-muted-foreground">
             시작가 {formatPrice(auction.startPrice)}
           </p>
+          {auction.buyNowPrice !== null && (
+            <p className="text-xs font-medium text-primary">
+              즉시구매 {formatPrice(auction.buyNowPrice)}
+            </p>
+          )}
         </div>
 
         {/* 하단 메타: 지역 + 남은 시간 */}

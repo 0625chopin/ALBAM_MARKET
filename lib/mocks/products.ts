@@ -158,6 +158,7 @@ function toAuctionSummary(product: Product): AuctionSummary {
     primaryImageUrl: primary?.url ? primary.url : null,
     startPrice: product.startPrice,
     currentPrice: product.currentPrice,
+    buyNowPrice: product.buyNowPrice,
     auctionEndsAt: product.auctionEndsAt,
     status: product.status,
     statusLabel: MOCK_PRODUCT_STATUS_LABELS[product.status],

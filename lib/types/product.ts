@@ -91,6 +91,8 @@ export interface AuctionSummary {
   startPrice: number;
   /** 현재 최고가 */
   currentPrice: number;
+  /** 즉시구매가 (없으면 null) */
+  buyNowPrice: number | null;
   /** 마감 시각(ISO 8601) — 남은 시간 계산 기준 */
   auctionEndsAt: string;
   /** 경매 상태 */

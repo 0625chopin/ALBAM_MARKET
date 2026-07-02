@@ -54,6 +54,7 @@ export function toAuctionSummary(
     | "title"
     | "start_price"
     | "current_price"
+    | "buy_now_price"
     | "auction_ends_at"
     | "status"
     | "region"
@@ -68,6 +69,7 @@ export function toAuctionSummary(
     primaryImageUrl: primary?.url ? primary.url : null,
     startPrice: row.start_price,
     currentPrice: row.current_price,
+    buyNowPrice: row.buy_now_price,
     auctionEndsAt: row.auction_ends_at,
     status: row.status as ProductStatus,
     statusLabel,
