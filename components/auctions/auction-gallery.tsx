@@ -3,8 +3,8 @@
 // url이 있으면 next/image, 없으면 ImagePlaceholder로 표시한다(T052 실 이미지 연동).
 // Phase 3에서 캐러셀/썸네일 선택 인터랙션 추가 예정 (현재는 정적 표시).
 
-import Image from "next/image";
 import { ImagePlaceholder } from "@/components/common/image-placeholder";
+import { ProductImage as ProductImageView } from "@/components/common/product-image";
 import type { ProductImage } from "@/lib/types";
 
 interface AuctionGalleryProps {
@@ -25,7 +25,7 @@ export function AuctionGallery({ images, title }: AuctionGalleryProps) {
       {/* 대표 이미지 영역 — 정사각형 전체 폭 */}
       <div className="w-full overflow-hidden">
         {primaryImage && primaryImage.url ? (
-          <Image
+          <ProductImageView
             src={primaryImage.url}
             alt={`${title} 대표 이미지`}
             width={600}
@@ -33,6 +33,7 @@ export function AuctionGallery({ images, title }: AuctionGalleryProps) {
             priority
             className="aspect-square w-full object-cover"
             sizes="(max-width: 430px) 100vw, 430px"
+            placeholderClassName="aspect-square w-full rounded-none"
           />
         ) : (
           <ImagePlaceholder
@@ -58,7 +59,7 @@ export function AuctionGallery({ images, title }: AuctionGalleryProps) {
             >
               {/* TODO: Phase 3 — 클릭 시 대표 이미지 전환 인터랙션 추가 */}
               {img.url ? (
-                <Image
+                <ProductImageView
                   src={img.url}
                   alt={`${title} 이미지 ${idx + 1}`}
                   width={64}
@@ -67,6 +68,11 @@ export function AuctionGallery({ images, title }: AuctionGalleryProps) {
                     img.isPrimary
                       ? "size-16 rounded-md object-cover ring-2 ring-foreground"
                       : "size-16 rounded-md object-cover ring-1 ring-border"
+                  }
+                  placeholderClassName={
+                    img.isPrimary
+                      ? "size-16 rounded-md ring-2 ring-foreground"
+                      : "size-16 rounded-md ring-1 ring-border"
                   }
                 />
               ) : (

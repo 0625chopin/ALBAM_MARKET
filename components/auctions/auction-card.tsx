@@ -4,9 +4,9 @@
 // 카드 전체가 Link로 감싸져 클릭 시 /auctions/[id] 상세 페이지로 이동한다.
 
 import Link from "next/link";
-import Image from "next/image";
 import { MapPin } from "lucide-react";
 import { ImagePlaceholder } from "@/components/common/image-placeholder";
+import { ProductImage } from "@/components/common/product-image";
 import { StatusBadge } from "@/components/common/status-badge";
 import { RemainingTime } from "@/components/common/remaining-time";
 import { formatPrice } from "@/lib/format";
@@ -36,15 +36,16 @@ export function AuctionCard({ auction, className }: AuctionCardProps) {
     >
       {/* ===== 이미지 영역 ===== */}
       <div className="relative">
-        {/* 대표 이미지가 있으면 next/image, 없으면 placeholder */}
+        {/* 대표 이미지: 있으면 ProductImage(로드 실패 시 자동 폴백), 없으면 placeholder */}
         {auction.primaryImageUrl ? (
-          <Image
+          <ProductImage
             src={auction.primaryImageUrl}
             alt={auction.title}
             width={300}
             height={300}
             className="aspect-square w-full object-cover"
             sizes="(max-width: 430px) 50vw, 215px"
+            placeholderClassName="aspect-square w-full"
           />
         ) : (
           <ImagePlaceholder
