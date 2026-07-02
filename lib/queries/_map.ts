@@ -9,12 +9,12 @@ import type {
   AuctionDetail,
   ProductImage,
   ProductStatus,
-  Category,
   SellerReputation,
   Product,
   Transaction,
   TransactionStatus,
   Message,
+  SelectOption,
 } from "@/lib/types";
 
 // region/nickname 미설정(NULL) 시 표시용 기본값
@@ -51,7 +51,8 @@ export function toAuctionSummary(
   row: Pick<
     Tables<"products">,
     "id" | "title" | "current_price" | "auction_ends_at" | "status" | "region"
-  > & { product_images: SummaryImageEmbed[] }
+  > & { product_images: SummaryImageEmbed[] },
+  statusLabel: string
 ): AuctionSummary {
   const images = row.product_images ?? [];
   const primary = images.find((img) => img.is_primary) ?? images[0];
@@ -62,6 +63,7 @@ export function toAuctionSummary(
     currentPrice: row.current_price,
     auctionEndsAt: row.auction_ends_at,
     status: row.status as ProductStatus,
+    statusLabel,
     region: row.region,
   };
 }
@@ -81,19 +83,23 @@ export function toProductImage(
   };
 }
 
-/** DB categories Row → 도메인 Category */
-export function toCategory(
-  row: Pick<Tables<"categories">, "id" | "name" | "slug">
-): Category {
-  return { id: row.id, name: row.name, slug: row.slug };
+/** DB codes Row → UI 옵션 SelectOption (value=code, label=label) */
+export function toSelectOption(
+  row: Pick<Tables<"codes">, "code" | "label">
+): SelectOption {
+  return { value: row.code, label: row.label };
 }
 
 /** DB profiles Row + 평균 별점 → 판매자 평판 요약 */
+// nickname/region 은 매퍼가 기본값으로 방어하므로 nullable 을 허용한다(프로필 미존재 폴백 대응).
 export function toSellerReputation(
-  profile: Pick<
-    Tables<"profiles">,
-    "id" | "nickname" | "avatar_url" | "region" | "seller_level"
-  >,
+  profile: {
+    id: string;
+    nickname: string | null;
+    avatar_url: string | null;
+    region: string | null;
+    seller_level: number;
+  },
   sellerAvgScore: number
 ): SellerReputation {
   return {
@@ -112,7 +118,8 @@ export function toProduct(row: Tables<"products">): Product {
     id: row.id,
     sellerId: row.seller_id,
     title: row.title,
-    categoryId: row.category_id,
+    description: row.description,
+    category: row.category,
     condition: row.condition,
     region: row.region,
     startPrice: row.start_price,
@@ -152,23 +159,34 @@ export function toMessage(
   };
 }
 
-/** 상품 본문 + 이미지/카테고리/판매자/입찰수 → 경매 상세 AuctionDetail */
+/** 상품 본문 + 이미지/카테고리·상태·등급 라벨/판매자/입찰수 → 경매 상세 AuctionDetail */
 export function toAuctionDetail(args: {
   product: Tables<"products">;
   images: Pick<
     Tables<"product_images">,
     "id" | "product_id" | "url" | "is_primary"
   >[];
-  category: Category;
+  categoryLabel: string;
+  statusLabel: string;
+  conditionLabel: string;
   seller: SellerReputation;
   bidCount: number;
 }): AuctionDetail {
-  const { product, images, category, seller, bidCount } = args;
+  const {
+    product,
+    images,
+    categoryLabel,
+    statusLabel,
+    conditionLabel,
+    seller,
+    bidCount,
+  } = args;
   return {
     id: product.id,
     sellerId: product.seller_id,
     title: product.title,
-    categoryId: product.category_id,
+    description: product.description,
+    category: product.category,
     condition: product.condition,
     region: product.region,
     startPrice: product.start_price,
@@ -178,7 +196,9 @@ export function toAuctionDetail(args: {
     auctionEndsAt: product.auction_ends_at,
     winnerId: product.winner_id,
     images: images.map(toProductImage),
-    category,
+    categoryLabel,
+    statusLabel,
+    conditionLabel,
     seller,
     bidCount,
   };

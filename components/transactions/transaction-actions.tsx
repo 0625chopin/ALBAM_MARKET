@@ -1,15 +1,13 @@
 "use client";
 
-// 거래 카드 액션 영역 (Client Component, T032)
+// 거래 카드 액션 영역 (Client Component)
 // transaction-card(RSC)에서 액션 버튼부만 분리해 클라이언트 인터랙션을 담당한다.
-// 거래완료 / 경매취소(낙찰 포기) / 상품 내리기를 ConfirmDialog로 확인 후
-// 로컬 상태(status)를 갱신하는 Mock 시뮬레이션이다.
-// Phase 5: onConfirm 내부를 Supabase mutation으로 교체하고, status는 서버 데이터로 대체한다.
+// 거래완료 / 경매취소(낙찰 포기)를 ConfirmDialog로 확인 후 Supabase mutation(RPC)을 호출한다.
+// (상품 내리기는 경매 상세의 별도 컴포넌트 withdraw-product-button 에서 처리한다.)
 //
-// 미결정 정책(임시 처리, docs/ISSUES.md 참조):
-// - ISSUE-004: 낙찰 포기자 패널티 — 기록만 우선, 제재 강도 미적용.
-// - ISSUE-006: 입찰 후 상품 내리기 제한 — 강도 미결정, 보수적으로 확인 다이얼로그만.
-// - ISSUE-007: 차순위 수락 대기시간 — 미적용(즉시 이양 가정). 안내 UI만 표시.
+// 확정 정책(docs/ISSUES.md 참조):
+// - ISSUE-004: 낙찰 포기자 패널티 — penalties 기록 + 누적 시 경매 등록 제한(30일 3회, 서버 트리거 강제).
+// - ISSUE-007: 차순위 수락 대기시간 — 미적용 확정(즉시 이양). 차순위 입찰자에게 그의 입찰가로 즉시 이양.
 
 import { useState } from "react";
 import Link from "next/link";
@@ -33,6 +31,8 @@ interface TransactionActionsProps {
   counterpartNickname: string;
   /** 연결된 채팅방 id (없으면 null) */
   chatRoomId: string | null;
+  /** 거래 상태 라벨 맵 value→label (DB 공통코드 codes.transaction_status 주입) */
+  statusLabels: Record<TransactionStatus, string>;
 }
 
 export function TransactionActions({
@@ -40,6 +40,7 @@ export function TransactionActions({
   role,
   counterpartNickname,
   chatRoomId,
+  statusLabels,
 }: TransactionActionsProps) {
   const router = useRouter();
   // 거래 상태 — 액션 시 로컬에서 갱신
@@ -92,7 +93,11 @@ export function TransactionActions({
       {lastAction && (
         <div className="flex items-center gap-2">
           <span className="text-xs text-muted-foreground">변경된 상태</span>
-          <StatusBadge kind="transaction" status={status} />
+          <StatusBadge
+            kind="transaction"
+            status={status}
+            label={statusLabels[status]}
+          />
         </div>
       )}
 
@@ -125,7 +130,7 @@ export function TransactionActions({
               </Button>
             }
             title="낙찰을 포기하시겠습니까?"
-            description="낙찰을 포기하면 차순위 입찰자에게 낙찰 기회가 넘어갑니다. 포기 이력이 기록될 수 있습니다."
+            description="낙찰을 포기하면 차순위 입찰자에게 낙찰 기회가 즉시 넘어갑니다. 포기 패널티가 기록되며, 패널티가 누적되면 경매 등록이 제한될 수 있습니다."
             confirmLabel="낙찰 포기"
             confirmVariant="destructive"
             onConfirm={handleAbandon}
@@ -161,8 +166,9 @@ export function TransactionActions({
         >
           <p className="font-medium text-foreground">낙찰을 포기했습니다.</p>
           <p className="mt-1">
-            차순위 입찰자에게 그의 입찰가로 낙찰 기회가 이양되었습니다(차순위가
-            없으면 유찰). 포기 이력이 기록되었습니다.
+            차순위 입찰자에게 그의 입찰가로 낙찰 기회가 즉시
+            이양되었습니다(차순위가 없으면 유찰). 포기 패널티가 기록되며,
+            패널티가 누적되면 경매 등록이 제한될 수 있습니다.
           </p>
         </div>
       )}

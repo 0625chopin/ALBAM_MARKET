@@ -1,6 +1,7 @@
 // 프로필 카드 컴포넌트 (RSC — 읽기 전용)
 // 아바타, 닉네임, 지역, 판매자/구매자 평판을 하나의 Card로 표시한다.
-// ISSUE-005: 레벨 산정 기준이 임시 상수(Phase 3 확정 예정). 추후 DB 정책값으로 이관.
+// ISSUE-005 확정: 레벨 산정식은 DB 함수 calc_reputation_level(1 + floor(완료/5) + 평점보너스)로 확정.
+//            이 컴포넌트는 profiles.seller_level/buyer_level 캐시값을 표시만 한다.
 
 import { MapPin } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";

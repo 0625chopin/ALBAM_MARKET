@@ -4,7 +4,11 @@
 
 import { ProfileCard } from "@/components/profile/profile-card";
 import { ProfileEditForm } from "@/components/profile/profile-edit-form";
-import { mockProfiles, toSellerReputation } from "@/lib/mocks";
+import {
+  mockProfiles,
+  toSellerReputation,
+  MOCK_REGION_OPTIONS,
+} from "@/lib/mocks";
 
 export default function ProfileShowcase() {
   return (
@@ -23,8 +27,9 @@ export default function ProfileShowcase() {
             ProfileCard — 프로필 카드 (읽기 전용)
           </h3>
           <p className="mb-4 text-xs text-muted-foreground">
-            판매자/구매자 레벨, 평균 별점을 역할별로 표시합니다. (ISSUE-005:
-            레벨 산정 임시 고정값)
+            판매자/구매자 레벨, 평균 별점을 역할별로 표시합니다. (ISSUE-005
+            확정: 레벨 산정식 calc_reputation_level. 아래 쇼케이스는 Mock
+            고정값)
           </p>
           {/* 다양한 프로필 카드 전시 — 모바일 기준 단일 컬럼, sm 이상 2열 */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -57,7 +62,10 @@ export default function ProfileShowcase() {
           </p>
           {/* 430px 모바일 프레임 폭 제한 */}
           <div className="max-w-[430px]">
-            <ProfileEditForm profile={mockProfiles[0]} />
+            <ProfileEditForm
+              profile={mockProfiles[0]}
+              regions={MOCK_REGION_OPTIONS}
+            />
           </div>
         </div>
       </div>

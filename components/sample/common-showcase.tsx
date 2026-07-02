@@ -7,6 +7,10 @@ import { StatusBadge } from "@/components/common/status-badge";
 import { StarRating } from "@/components/common/star-rating";
 import { LevelBadge } from "@/components/common/level-badge";
 import { RemainingTime } from "@/components/common/remaining-time";
+import {
+  MOCK_PRODUCT_STATUS_LABELS,
+  MOCK_TRANSACTION_STATUS_LABELS,
+} from "@/lib/mocks";
 
 export default function CommonShowcase() {
   return (
@@ -94,11 +98,31 @@ export default function CommonShowcase() {
               경매 상품 상태 (kind=&quot;product&quot;)
             </p>
             <div className="flex flex-wrap gap-2">
-              <StatusBadge kind="product" status="active" />
-              <StatusBadge kind="product" status="won" />
-              <StatusBadge kind="product" status="failed" />
-              <StatusBadge kind="product" status="withdrawn" />
-              <StatusBadge kind="product" status="completed" />
+              <StatusBadge
+                kind="product"
+                status="active"
+                label={MOCK_PRODUCT_STATUS_LABELS.active}
+              />
+              <StatusBadge
+                kind="product"
+                status="won"
+                label={MOCK_PRODUCT_STATUS_LABELS.won}
+              />
+              <StatusBadge
+                kind="product"
+                status="failed"
+                label={MOCK_PRODUCT_STATUS_LABELS.failed}
+              />
+              <StatusBadge
+                kind="product"
+                status="withdrawn"
+                label={MOCK_PRODUCT_STATUS_LABELS.withdrawn}
+              />
+              <StatusBadge
+                kind="product"
+                status="completed"
+                label={MOCK_PRODUCT_STATUS_LABELS.completed}
+              />
             </div>
           </div>
 
@@ -108,10 +132,26 @@ export default function CommonShowcase() {
               거래 상태 (kind=&quot;transaction&quot;)
             </p>
             <div className="flex flex-wrap gap-2">
-              <StatusBadge kind="transaction" status="pending" />
-              <StatusBadge kind="transaction" status="completed" />
-              <StatusBadge kind="transaction" status="auto_completed" />
-              <StatusBadge kind="transaction" status="canceled" />
+              <StatusBadge
+                kind="transaction"
+                status="pending"
+                label={MOCK_TRANSACTION_STATUS_LABELS.pending}
+              />
+              <StatusBadge
+                kind="transaction"
+                status="completed"
+                label={MOCK_TRANSACTION_STATUS_LABELS.completed}
+              />
+              <StatusBadge
+                kind="transaction"
+                status="auto_completed"
+                label={MOCK_TRANSACTION_STATUS_LABELS.auto_completed}
+              />
+              <StatusBadge
+                kind="transaction"
+                status="canceled"
+                label={MOCK_TRANSACTION_STATUS_LABELS.canceled}
+              />
             </div>
           </div>
         </div>

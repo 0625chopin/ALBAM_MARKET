@@ -9,12 +9,15 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { Container } from "@/components/layout/container";
 import { ProfileEditForm } from "@/components/profile/profile-edit-form";
-import { fetchCurrentProfile } from "@/lib/queries";
+import { fetchCurrentProfile, fetchCodeGroup } from "@/lib/queries";
 
 export default async function ProfileEditPage() {
   // 세션에서 현재 사용자 프로필 조회 (비로그인 시 보호 페이지 차단)
   const me = await fetchCurrentProfile();
   if (!me) redirect("/auth/login");
+
+  // 직거래 지역 옵션(DB 공통코드) 주입
+  const regions = await fetchCodeGroup("region");
 
   return (
     <div className="flex flex-1 flex-col">
@@ -37,7 +40,11 @@ export default async function ProfileEditPage() {
           {/* 430px 모바일 프레임 기준 콘텐츠 영역 */}
           <div className="mx-auto max-w-[430px]">
             {/* 저장 성공 시 /profile(조회)로 복귀 */}
-            <ProfileEditForm profile={me} afterSaveHref="/profile" />
+            <ProfileEditForm
+              profile={me}
+              afterSaveHref="/profile"
+              regions={regions}
+            />
           </div>
         </Container>
       </main>

@@ -22,28 +22,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { REGION_OPTIONS } from "@/lib/constants";
-import type { Profile } from "@/lib/types";
+import type { Profile, SelectOption } from "@/lib/types";
 
 interface ProfileEditFormProps {
   /** 수정할 프로필 데이터 (초기값 바인딩용) */
   profile: Profile;
   /** 저장 성공 후 이동할 경로 (지정 시 해당 경로로 복귀, 미지정 시 현재 화면에 피드백 표시) */
   afterSaveHref?: string;
+  /** 직거래 지역 옵션 (호출부가 DB 공통코드/Mock 에서 주입) */
+  regions: SelectOption[];
 }
 
 export function ProfileEditForm({
   profile,
   afterSaveHref,
+  regions,
 }: ProfileEditFormProps) {
   const router = useRouter();
 
   // 닉네임 입력값 상태 (초기값: profile.nickname)
   const [nickname, setNickname] = useState(profile.nickname);
 
-  // 지역 선택값 상태 (profile.region 라벨 → REGION_OPTIONS 값으로 역매핑)
+  // 지역 선택값 상태 (profile.region 라벨 → 옵션 값으로 역매핑)
   const [regionValue, setRegionValue] = useState(
-    REGION_OPTIONS.find((opt) => opt.label === profile.region)?.value ?? ""
+    regions.find((opt) => opt.label === profile.region)?.value ?? ""
   );
 
   // 닉네임 검증 에러 (없으면 null)
@@ -105,7 +107,7 @@ export function ProfileEditForm({
 
     // 선택된 지역 value(예: seoul) → 저장용 라벨(예: 서울)로 변환 (미선택 시 빈 문자열)
     const regionLabel =
-      REGION_OPTIONS.find((opt) => opt.value === regionValue)?.label ?? "";
+      regions.find((opt) => opt.value === regionValue)?.label ?? "";
 
     // 갱신할 필드 (아바타 선택 시 Storage 업로드 후 avatar_url 포함)
     const updates: {
@@ -237,7 +239,7 @@ export function ProfileEditForm({
                 <SelectValue placeholder="지역을 선택하세요" />
               </SelectTrigger>
               <SelectContent>
-                {REGION_OPTIONS.map((opt) => (
+                {regions.map((opt) => (
                   <SelectItem key={opt.value} value={opt.value}>
                     {opt.label}
                   </SelectItem>

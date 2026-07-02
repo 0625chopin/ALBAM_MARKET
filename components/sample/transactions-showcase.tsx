@@ -8,6 +8,7 @@ import {
   mockChatRooms,
   CURRENT_USER_ID,
   getMockProfile,
+  MOCK_TRANSACTION_STATUS_LABELS,
 } from "@/lib/mocks";
 import type { Transaction } from "@/lib/types";
 
@@ -80,6 +81,7 @@ export default function TransactionsShowcase() {
                 role={role}
                 counterpartNickname={counterpartProfile.nickname}
                 chatRoomId={chatRoomId}
+                statusLabels={MOCK_TRANSACTION_STATUS_LABELS}
               />
             );
           })}
@@ -92,6 +94,7 @@ export default function TransactionsShowcase() {
               role="buyer"
               counterpartNickname={buyerPendingCounterpart.nickname}
               chatRoomId={null}
+              statusLabels={MOCK_TRANSACTION_STATUS_LABELS}
             />
           )}
         </div>

@@ -1,13 +1,38 @@
-// 경매 등록 페이지 (Phase 2 T024 — 정적 마크업 완료)
-// 서버 컴포넌트 페이지 안에 Client Component 폼 배치 (정상 패턴)
-// Phase 3에서 제출 후 리다이렉트 등 라우팅 로직 추가 예정
+// 경매 등록 페이지 (서버 컴포넌트 안에 Client Component 폼 배치)
+// 폼 옵션/정책값·패널티 이용제한 상태를 서버에서 조회해 폼에 주입한다.
+// 제출 성공 시 폼(auction-form)이 상세 페이지로 router.push 한다.
 
+import { redirect } from "next/navigation";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { Container } from "@/components/layout/container";
 import { AuctionForm } from "@/components/auctions/auction-form";
+import {
+  getCurrentUserId,
+  fetchCategoryOptions,
+  fetchCodeGroup,
+  fetchPolicies,
+  fetchMyPenaltyStatus,
+} from "@/lib/queries";
 
-export default function AuctionNewPage() {
+export default async function AuctionNewPage() {
+  // 비로그인 차단 (미들웨어 이중 방어 + Cache Components 동적 렌더 확정)
+  // 이 페이지는 auth-button/패널티 조회로 cookies() 를 읽으므로 정적 셸 prerender 대상이 아니다.
+  // 초반 인증 조회로 동적 렌더를 확정해 prerender 시 cookies() hang(ISSUE-011 계열)을 방지한다.
+  const userId = await getCurrentUserId();
+  if (!userId) redirect("/auth/login");
+
+  // 폼 옵션/정책값을 DB 공통코드에서 조회해 Client 폼에 주입 (미주입 시 상수 폴백)
+  // penaltyStatus: 누적 패널티 이용 제한(ISSUE-004) UX 사전검증용 (최종 강제는 서버 트리거)
+  const [categories, regions, conditions, policies, penaltyStatus] =
+    await Promise.all([
+      fetchCategoryOptions(),
+      fetchCodeGroup("region"),
+      fetchCodeGroup("product_condition"),
+      fetchPolicies(),
+      fetchMyPenaltyStatus(),
+    ]);
+
   return (
     <div className="flex flex-1 flex-col">
       <SiteHeader />
@@ -24,7 +49,16 @@ export default function AuctionNewPage() {
 
           {/* 경매 등록 폼 — 430px 모바일 기준 중앙 정렬 */}
           <div className="mx-auto max-w-[430px]">
-            <AuctionForm />
+            <AuctionForm
+              categories={categories}
+              regions={regions}
+              conditions={conditions}
+              auctionDurationHours={policies.default_auction_duration_hours}
+              restricted={penaltyStatus.restricted}
+              penaltyCount={penaltyStatus.count}
+              penaltyThreshold={penaltyStatus.threshold}
+              penaltyWindowDays={penaltyStatus.windowDays}
+            />
           </div>
         </Container>
       </main>

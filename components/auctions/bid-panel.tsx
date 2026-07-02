@@ -3,8 +3,8 @@
 // 입찰 / 즉시구매 패널 컴포넌트 (T023 마크업 + T031 인터랙션 + T053 실제출)
 // T053: handleBid/handleBuyNow 가 원자적 RPC(place_bid/buy_now)를 호출한다.
 //       클라이언트 검증은 UX용 사전 검증이며, 서버 RPC가 최신 현재가 기준으로 최종 재검증한다.
-// ISSUE-003: 최소 입찰 증가폭(MIN_BID_INCREMENT)은 정액/정률/구간별 정책 미결정 → 임시 정액.
-//            정책 확정 시 minBidPrice 산정식만 교체.
+// ISSUE-003 확정: 최소 입찰 증가폭은 정액 방식(1,000원)으로 확정.
+//            운영값은 codes.policy.min_bid_increment(서버 place_bid 최종 검증), 이 컴포넌트는 UX 사전검증.
 
 import { useState } from "react";
 import Link from "next/link";
@@ -24,7 +24,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { formatPrice } from "@/lib/format";
-import { MIN_BID_INCREMENT } from "@/lib/constants";
 import { placeBid, buyNow } from "@/lib/mutations/auctions";
 import { cn } from "@/lib/utils";
 
@@ -40,6 +39,8 @@ interface BidPanelProps {
   isOwner?: boolean;
   /** 로그인 여부 (기본값: true) */
   isLoggedIn?: boolean;
+  /** 최소 입찰 증가폭(원) — DB 공통코드(codes.policy.min_bid_increment) 주입 */
+  minBidIncrement: number;
   /** 추가 클래스 */
   className?: string;
 }
@@ -51,17 +52,18 @@ export function BidPanel({
   buyNowPrice,
   isOwner = false,
   isLoggedIn = true,
+  minBidIncrement,
   className,
 }: BidPanelProps) {
   const router = useRouter();
   // 입찰가 입력 상태 — 진입 시 최소 입찰가(현재가 + 증가폭)로 미리 채워
   // 사용자가 바로 "입찰하기"를 눌러도 빈값 검증에 걸리지 않도록 한다.
   const [bidAmount, setBidAmount] = useState(() =>
-    String(currentPrice + MIN_BID_INCREMENT)
+    String(currentPrice + minBidIncrement)
   );
-  // 현재가 — 낙관적 UI: 입찰 성공 시 로컬에서 즉시 갱신 (Mock 시뮬레이션)
+  // 현재가 — 입찰 성공 시 서버 확정가(place_bid 반환)로 즉시 갱신
   const [currentPriceState, setCurrentPriceState] = useState(currentPrice);
-  // 누적 입찰 횟수 — 낙관적 UI 시뮬레이션
+  // 이 세션에서 내가 입찰한 횟수 (성공 시 +1, 표시용)
   const [bidCount, setBidCount] = useState(0);
   // 입찰가 검증 에러 메시지 (없으면 null)
   const [bidError, setBidError] = useState<string | null>(null);
@@ -75,9 +77,8 @@ export function BidPanel({
   const [isBidding, setIsBidding] = useState(false);
   const [isBuying, setIsBuying] = useState(false);
 
-  // 최소 입찰 가능 금액 = 현재가 + 최소 증가폭
-  // ISSUE-003: MIN_BID_INCREMENT 임시 정액(1,000원), 정책 확정 후 교체 예정
-  const minBidPrice = currentPriceState + MIN_BID_INCREMENT;
+  // 최소 입찰 가능 금액 = 현재가 + 최소 증가폭(DB 정책값)
+  const minBidPrice = currentPriceState + minBidIncrement;
 
   // 천 단위 콤마 포맷 (원 단위 숫자 문자열 → "35,000", 빈 값은 그대로)
   const formatComma = (digits: string) =>
@@ -127,10 +128,10 @@ export function BidPanel({
       return;
     }
 
-    // 4) 1,000원 단위 검증 (현재가 기준 증가폭) — ISSUE-003 임시 정액
-    if ((amount - currentPriceState) % MIN_BID_INCREMENT !== 0) {
+    // 4) 증가폭 단위 검증 (현재가 기준, DB 정책값)
+    if ((amount - currentPriceState) % minBidIncrement !== 0) {
       setBidError(
-        `입찰가는 ${formatPrice(MIN_BID_INCREMENT)} 단위로 입력해 주세요.`
+        `입찰가는 ${formatPrice(minBidIncrement)} 단위로 입력해 주세요.`
       );
       return;
     }
@@ -148,7 +149,7 @@ export function BidPanel({
       // 서버 확정 현재가로 갱신 + 다음 최소 입찰가로 입력칸 재설정
       setCurrentPriceState(newPrice);
       setBidCount((prev) => prev + 1);
-      setBidAmount(String(newPrice + MIN_BID_INCREMENT));
+      setBidAmount(String(newPrice + minBidIncrement));
       setBidSuccess(true);
       router.refresh();
     } catch (error) {
@@ -214,9 +215,12 @@ export function BidPanel({
               즉시구매로 낙찰이 확정되었습니다.
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              {/* Phase 5 — 실제로는 거래 페이지/채팅방으로 이동 */}
-              거래 페이지에서 판매자와 약속을 잡아보세요.
+              거래 내역에서 판매자와 채팅으로 약속을 잡아보세요.
             </p>
+            {/* 생성된 거래로 이동 (거래 목록에서 해당 거래의 채팅방 진입) */}
+            <Button asChild className="mt-4 w-full">
+              <Link href="/transactions">거래 내역으로 이동</Link>
+            </Button>
           </div>
         ) : (
           <>
@@ -286,7 +290,7 @@ export function BidPanel({
                       variant="outline"
                       size="icon"
                       className="shrink-0"
-                      onClick={() => stepBid(-MIN_BID_INCREMENT)}
+                      onClick={() => stepBid(-minBidIncrement)}
                       disabled={decreaseDisabled}
                       aria-label="입찰가 1,000원 감소"
                     >
@@ -318,19 +322,19 @@ export function BidPanel({
                       variant="outline"
                       size="icon"
                       className="shrink-0"
-                      onClick={() => stepBid(MIN_BID_INCREMENT)}
+                      onClick={() => stepBid(minBidIncrement)}
                       aria-label="입찰가 1,000원 증가"
                     >
                       <Plus className="size-4" aria-hidden="true" />
                     </Button>
                   </div>
-                  {/* 검증 힌트 — ISSUE-003: MIN_BID_INCREMENT 임시 정액 */}
+                  {/* 검증 힌트 — 증가폭은 DB 정책값(codes.policy.min_bid_increment) */}
                   <p id="bid-hint" className="text-xs text-muted-foreground">
                     최소{" "}
                     <span className="font-semibold text-foreground">
                       {formatPrice(minBidPrice)}
                     </span>{" "}
-                    이상 · {formatPrice(MIN_BID_INCREMENT)} 단위로 입찰
+                    이상 · {formatPrice(minBidIncrement)} 단위로 입찰
                   </p>
 
                   {/* 입찰 검증 에러 메시지 */}

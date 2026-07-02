@@ -3,7 +3,7 @@
 // 평점 남기기 모달 컴포넌트 (Client Component, T025 마크업 + T032 인터랙션 + T059 실저장)
 // Dialog로 별점(1~10, 반 별 단위) + 코멘트 입력 UI를 제공한다.
 // T059: handleSubmit 을 submit_rating RPC 호출로 교체(거래당 1회·완료 거래만, 평가 후 레벨 재계산).
-//       코멘트는 ratings 스키마에 컬럼이 없어 현재 저장되지 않는다.
+// ISSUE-016: 코멘트는 ratings.comment 컬럼 + submit_rating p_comment 인자로 저장된다(선택값).
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Star } from "lucide-react";
@@ -71,7 +71,7 @@ export function RatingModal({
     setSubmitError(null);
     setIsSubmitting(true);
     try {
-      await submitRating(transactionId, selectedScore);
+      await submitRating(transactionId, selectedScore, comment.trim() || null);
       setSubmitted(true);
       router.refresh();
     } catch (error) {

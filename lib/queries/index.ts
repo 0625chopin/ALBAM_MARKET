@@ -11,3 +11,11 @@ export {
 export type { ProfileScores } from "./profiles";
 export { fetchAuctionSummaries, fetchAuctionDetail } from "./auctions";
 export type { AuctionStatusFilterValue } from "./auctions";
+export {
+  fetchCodeGroup,
+  fetchStatusLabels,
+  fetchCategoryOptions,
+  fetchPolicies,
+} from "./codes";
+export { fetchMyPenaltyStatus } from "./penalties";
+export type { PenaltyStatus } from "./penalties";

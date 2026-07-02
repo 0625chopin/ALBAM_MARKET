@@ -3,7 +3,18 @@
 // Phase 5 실데이터 전환 시 페이지의 이 import만 Supabase 조회로 교체(컴포넌트 무수정).
 
 export { mockProfiles, getMockProfile, CURRENT_USER_ID } from "./profiles";
-export { mockCategories, getMockCategory } from "./categories";
+export {
+  fetchCodeGroup,
+  fetchStatusLabels,
+  fetchCategoryOptions,
+  fetchPolicies,
+  MOCK_PRODUCT_CONDITIONS,
+  MOCK_CATEGORY_OPTIONS,
+  MOCK_REGION_OPTIONS,
+  MOCK_PRODUCT_STATUS_LABELS,
+  MOCK_TRANSACTION_STATUS_LABELS,
+  MOCK_POLICIES,
+} from "./codes";
 export {
   mockProducts,
   mockProductImages,

@@ -7,15 +7,21 @@ import type {
   AuctionDetail,
   SellerReputation,
 } from "@/lib/types";
+import {
+  MOCK_CATEGORY_OPTIONS,
+  MOCK_PRODUCT_CONDITIONS,
+  MOCK_PRODUCT_STATUS_LABELS,
+} from "./codes";
 import { mockProfiles, getMockProfile } from "./profiles";
-import { getMockCategory } from "./categories";
 
 export const mockProducts: Product[] = [
   {
     id: "prod-1",
     sellerId: "prof-2",
     title: "빈티지 가죽 자켓 (L 사이즈)",
-    categoryId: "cat-fashion",
+    description:
+      "10년 넘게 아껴 입은 빈티지 가죽 자켓입니다. 자연스러운 사용감이 매력이며 큰 하자는 없습니다. 직거래 시 착용 확인 가능합니다.",
+    category: "fashion",
     condition: "good",
     region: "경기",
     startPrice: 20000,
@@ -29,7 +35,9 @@ export const mockProducts: Product[] = [
     id: "prod-2",
     sellerId: "prof-3",
     title: "아이폰 13 128GB 미드나이트",
-    categoryId: "cat-digital",
+    description:
+      "액정 파손 이력 없는 아이폰 13 미드나이트 색상입니다. 배터리 성능 89%, 케이스 착용해 외관 깨끗합니다. 구성품은 본체만 있습니다.",
+    category: "digital",
     condition: "like_new",
     region: "서울",
     startPrice: 300000,
@@ -43,7 +51,9 @@ export const mockProducts: Product[] = [
     id: "prod-3",
     sellerId: "prof-4",
     title: "접이식 캠핑 의자 2개 세트",
-    categoryId: "cat-sports",
+    description:
+      "캠핑 두 번 사용한 접이식 의자 2개 세트입니다. 수납 가방 포함.",
+    category: "sports",
     condition: "fair",
     region: "부산",
     startPrice: 10000,
@@ -57,7 +67,8 @@ export const mockProducts: Product[] = [
     id: "prod-4",
     sellerId: "prof-1",
     title: "원목 1인용 책상",
-    categoryId: "cat-furniture",
+    description: null,
+    category: "furniture",
     condition: "good",
     region: "서울",
     startPrice: 30000,
@@ -71,7 +82,8 @@ export const mockProducts: Product[] = [
     id: "prod-5",
     sellerId: "prof-2",
     title: "휴대용 게임 콘솔",
-    categoryId: "cat-hobby",
+    description: null,
+    category: "hobby",
     condition: "like_new",
     region: "경기",
     startPrice: 150000,
@@ -85,7 +97,8 @@ export const mockProducts: Product[] = [
     id: "prod-6",
     sellerId: "prof-3",
     title: "유아 카시트 (신생아~4세)",
-    categoryId: "cat-baby",
+    description: null,
+    category: "baby",
     condition: "good",
     region: "인천",
     startPrice: 40000,
@@ -146,6 +159,7 @@ function toAuctionSummary(product: Product): AuctionSummary {
     currentPrice: product.currentPrice,
     auctionEndsAt: product.auctionEndsAt,
     status: product.status,
+    statusLabel: MOCK_PRODUCT_STATUS_LABELS[product.status],
     region: product.region,
   };
 }
@@ -167,10 +181,19 @@ export function getMockAuctionDetail(productId: string): AuctionDetail {
     "prod-5": 0,
     "prod-6": 3,
   };
+  // 카테고리/중고등급 코드 → 라벨, 상태 라벨 (Mock 시드 기준)
+  const categoryLabel =
+    MOCK_CATEGORY_OPTIONS.find((o) => o.value === product.category)?.label ??
+    product.category;
+  const conditionLabel =
+    MOCK_PRODUCT_CONDITIONS.find((o) => o.value === product.condition)?.label ??
+    product.condition;
   return {
     ...product,
     images: getMockImages(product.id),
-    category: getMockCategory(product.categoryId),
+    categoryLabel,
+    statusLabel: MOCK_PRODUCT_STATUS_LABELS[product.status],
+    conditionLabel,
     seller: toSellerReputation(product.sellerId),
     bidCount: bidCountById[product.id] ?? 0,
   };

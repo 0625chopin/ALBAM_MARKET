@@ -14,6 +14,8 @@ import {
   mockAuctionSummaries,
   mockAuctionDetail,
   mockSellerReputations,
+  MOCK_PRODUCT_STATUS_LABELS,
+  MOCK_POLICIES,
 } from "@/lib/mocks";
 import type { AuctionSummary } from "@/lib/types";
 
@@ -113,6 +115,7 @@ export default function AuctionShowcase() {
               detail={{
                 ...mockAuctionDetail,
                 status: "won",
+                statusLabel: MOCK_PRODUCT_STATUS_LABELS.won,
                 currentPrice: 55000,
                 bidCount: 9,
               }}
@@ -159,7 +162,11 @@ export function BidPanelShowcase() {
           </h3>
           <div className="mx-auto max-w-[430px] p-4">
             {/* 빈티지 가죽 자켓 — 현재가 35,000원 / 즉시구매 80,000원 */}
-            <BidPanel currentPrice={35000} buyNowPrice={80000} />
+            <BidPanel
+              currentPrice={35000}
+              buyNowPrice={80000}
+              minBidIncrement={MOCK_POLICIES.min_bid_increment}
+            />
           </div>
         </div>
 
@@ -170,7 +177,11 @@ export function BidPanelShowcase() {
           </h3>
           <div className="mx-auto max-w-[430px] p-4">
             {/* 접이식 캠핑 의자 — 현재가 18,000원 / 즉시구매 없음 */}
-            <BidPanel currentPrice={18000} buyNowPrice={null} />
+            <BidPanel
+              currentPrice={18000}
+              buyNowPrice={null}
+              minBidIncrement={MOCK_POLICIES.min_bid_increment}
+            />
           </div>
         </div>
 
@@ -181,7 +192,12 @@ export function BidPanelShowcase() {
           </h3>
           <div className="mx-auto max-w-[430px] p-4">
             {/* 본인 등록 상품 — 입찰 영역 비활성 */}
-            <BidPanel currentPrice={55000} buyNowPrice={null} isOwner={true} />
+            <BidPanel
+              currentPrice={55000}
+              buyNowPrice={null}
+              isOwner={true}
+              minBidIncrement={MOCK_POLICIES.min_bid_increment}
+            />
           </div>
         </div>
 
@@ -196,6 +212,7 @@ export function BidPanelShowcase() {
               currentPrice={450000}
               buyNowPrice={600000}
               isLoggedIn={false}
+              minBidIncrement={MOCK_POLICIES.min_bid_increment}
             />
           </div>
         </div>

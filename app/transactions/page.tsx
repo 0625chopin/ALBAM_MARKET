@@ -7,15 +7,24 @@ import { Container } from "@/components/layout/container";
 import { TransactionCard } from "@/components/transactions/transaction-card";
 import { EmptyState } from "@/components/common/empty-state";
 import { fetchUserTransactions } from "@/lib/queries/transactions";
-import { getCurrentUserId } from "@/lib/queries";
+import { getCurrentUserId, fetchStatusLabels } from "@/lib/queries";
+import type { TransactionStatus } from "@/lib/types";
 
 export default async function TransactionsPage() {
   // 비로그인 차단
   const userId = await getCurrentUserId();
   if (!userId) redirect("/auth/login");
 
-  // 현재 사용자의 거래 목록 (실데이터)
-  const items = await fetchUserTransactions();
+  // 현재 사용자의 거래 목록 + 거래 상태 라벨(DB 공통코드) 병행 조회
+  const [items, statusLabels] = await Promise.all([
+    fetchUserTransactions(),
+    fetchStatusLabels("transaction_status"),
+  ]);
+  // StatusBadge 주입용 타입으로 좁힘 (codes.transaction_status → value→label)
+  const transactionStatusLabels = statusLabels as Record<
+    TransactionStatus,
+    string
+  >;
 
   return (
     <div className="flex flex-1 flex-col">
@@ -42,6 +51,7 @@ export default async function TransactionsPage() {
                   role={item.role}
                   counterpartNickname={item.counterpartNickname}
                   chatRoomId={item.chatRoomId}
+                  statusLabels={transactionStatusLabels}
                 />
               ))
             )}

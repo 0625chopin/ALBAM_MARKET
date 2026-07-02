@@ -24,4 +24,6 @@ export interface Rating {
   role: RatingRole;
   /** 별점 (1~10) */
   score: number;
+  /** 코멘트 (선택, 미입력 시 null) */
+  comment: string | null;
 }

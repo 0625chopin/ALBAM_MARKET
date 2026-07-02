@@ -1,8 +1,8 @@
 "use client";
 
 // 상품 내리기 버튼 (판매자 전용, T056)
-// 경매 상세에서 본인 active 상품일 때 노출한다. withdraw_product RPC를 호출하며,
-// 입찰이 있으면 서버에서 차단된다(ISSUE-006 보수적 정책).
+// 경매 상세에서 본인 active 상품일 때 노출한다. withdraw_product RPC를 호출한다.
+// ISSUE-006: 입찰이 있어도 내릴 수 있으나 패널티가 부과된다(누적 시 경매 등록 제한 — ISSUE-004).
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -54,7 +54,7 @@ export function WithdrawProductButton({
           </Button>
         }
         title="상품을 내리시겠습니까?"
-        description="진행 중인 경매를 종료하고 상품을 내립니다. 입찰이 있으면 내릴 수 없습니다."
+        description="진행 중인 경매를 종료하고 상품을 내립니다. 이미 입찰이 있는 경우 패널티가 부과되며, 패널티가 누적되면 경매 등록이 제한될 수 있습니다."
         confirmLabel="상품 내리기"
         onConfirm={handleWithdraw}
       />

@@ -2,6 +2,12 @@
 // /sample 페이지에서 AuctionForm 컴포넌트를 430px 모바일 프레임으로 전시한다.
 
 import { AuctionForm } from "@/components/auctions/auction-form";
+import {
+  MOCK_CATEGORY_OPTIONS,
+  MOCK_REGION_OPTIONS,
+  MOCK_PRODUCT_CONDITIONS,
+  MOCK_POLICIES,
+} from "@/lib/mocks";
 
 export default function AuctionFormShowcase() {
   return (
@@ -16,7 +22,12 @@ export default function AuctionFormShowcase() {
 
       {/* 430px 모바일 프레임으로 폼 전시 */}
       <div className="mx-auto max-w-[430px] rounded-lg border bg-card p-4">
-        <AuctionForm />
+        <AuctionForm
+          categories={MOCK_CATEGORY_OPTIONS}
+          regions={MOCK_REGION_OPTIONS}
+          conditions={MOCK_PRODUCT_CONDITIONS}
+          auctionDurationHours={MOCK_POLICIES.default_auction_duration_hours}
+        />
       </div>
     </section>
   );

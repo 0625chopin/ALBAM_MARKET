@@ -55,7 +55,11 @@ export function AuctionCard({ auction, className }: AuctionCardProps) {
 
         {/* 상태 배지 — 이미지 우상단에 절대 배치 */}
         <div className="absolute right-1.5 top-1.5">
-          <StatusBadge kind="product" status={auction.status} />
+          <StatusBadge
+            kind="product"
+            status={auction.status}
+            label={auction.statusLabel}
+          />
         </div>
       </div>
 
