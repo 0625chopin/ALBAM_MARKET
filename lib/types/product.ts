@@ -2,8 +2,6 @@
 // PRD 데이터 모델 products / product_images 테이블을 camelCase로 1:1 매핑하고,
 // 화면 표시에 필요한 파생 타입(AuctionSummary / AuctionDetail)을 함께 정의한다.
 
-import type { Category } from "./category";
-
 /**
  * 경매 상품 상태
  * - active: 경매중 / won: 낙찰 / failed: 유찰 / withdrawn: 내림(상품 내리기) / completed: 완료
@@ -22,8 +20,10 @@ export interface Product {
   sellerId: string;
   /** 제목 */
   title: string;
-  /** 카테고리 (categories.id) */
-  categoryId: string;
+  /** 상품 설명 (선택, 미입력 시 null) */
+  description: string | null;
+  /** 카테고리 코드 (공통코드 codes.category value, 예: "digital") */
+  category: string;
   /** 중고등급(상품 상태 텍스트) */
   condition: string;
   /** 직거래 지역 */
@@ -93,6 +93,8 @@ export interface AuctionSummary {
   auctionEndsAt: string;
   /** 경매 상태 */
   status: ProductStatus;
+  /** 경매 상태 표시 라벨 (codes.product_status label, 예: "경매중") */
+  statusLabel: string;
   /** 직거래 지역 */
   region: string;
 }
@@ -104,8 +106,12 @@ export interface AuctionSummary {
 export interface AuctionDetail extends Product {
   /** 상품 이미지 목록 */
   images: ProductImage[];
-  /** 카테고리 정보 */
-  category: Category;
+  /** 카테고리 표시 라벨 (codes.category label, 예: "디지털기기") */
+  categoryLabel: string;
+  /** 경매 상태 표시 라벨 (codes.product_status label, 예: "경매중") */
+  statusLabel: string;
+  /** 중고등급 표시 라벨 (codes.product_condition label, 예: "사용감 적음") */
+  conditionLabel: string;
   /** 판매자 평판 요약 */
   seller: SellerReputation;
   /** 누적 입찰 수 */

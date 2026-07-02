@@ -3,13 +3,9 @@
 // 표현 컴포넌트(AuctionGrid/Card/Gallery/Info/SellerReputation)는 수정하지 않는다.
 
 import { createClient } from "@/lib/supabase/server";
-import type {
-  AuctionSummary,
-  AuctionDetail,
-  Category,
-  ProductStatus,
-} from "@/lib/types";
+import type { AuctionSummary, AuctionDetail, ProductStatus } from "@/lib/types";
 import { toAuctionSummary, toAuctionDetail, toSellerReputation } from "./_map";
+import { fetchCodeGroup, fetchStatusLabels } from "./codes";
 
 /** 홈 상태 필터 값 — 실제 상품 상태 + "all"(전체) */
 export type AuctionStatusFilterValue = ProductStatus | "all";
@@ -33,9 +29,15 @@ export async function fetchAuctionSummaries(
   // "all"이 아니면 상태로 필터
   if (status !== "all") query = query.eq("status", status);
 
-  const { data, error } = await query;
+  // 상태 표시 라벨(DB 공통코드) — 프로세스 단위 캐시라 목록 조회와 병행해도 저렴
+  const [{ data, error }, statusLabels] = await Promise.all([
+    query,
+    fetchStatusLabels("product_status"),
+  ]);
   if (error || !data) return [];
-  return data.map(toAuctionSummary);
+  return data.map((row) =>
+    toAuctionSummary(row, statusLabels[row.status] ?? row.status)
+  );
 }
 
 /**
@@ -47,25 +49,28 @@ export async function fetchAuctionDetail(
 ): Promise<AuctionDetail | null> {
   const supabase = await createClient();
 
-  // 상품 + 이미지 + 카테고리(임베드)
+  // 상품 + 이미지
   const { data: product, error } = await supabase
     .from("products")
-    .select(
-      "*, product_images(id, product_id, url, is_primary), categories(id, name, slug)"
-    )
+    .select("*, product_images(id, product_id, url, is_primary)")
     .eq("id", id)
     .maybeSingle();
 
   if (error || !product) return null;
 
-  // 카테고리(단일 임베드) — 미연결 시 빈 카테고리로 폴백
-  const category: Category = product.categories
-    ? {
-        id: product.categories.id,
-        name: product.categories.name,
-        slug: product.categories.slug,
-      }
-    : { id: product.category_id, name: "미분류", slug: "etc" };
+  // 카테고리/중고등급 코드 → 공통코드 라벨, 상태 라벨(모두 프로세스 단위 캐시)
+  const [categoryOptions, conditionOptions, statusLabels] = await Promise.all([
+    fetchCodeGroup("category"),
+    fetchCodeGroup("product_condition"),
+    fetchStatusLabels("product_status"),
+  ]);
+  const categoryLabel =
+    categoryOptions.find((o) => o.value === product.category)?.label ??
+    product.category;
+  const conditionLabel =
+    conditionOptions.find((o) => o.value === product.condition)?.label ??
+    product.condition;
+  const statusLabel = statusLabels[product.status] ?? product.status;
 
   // 판매자 프로필 + 평판 평균 별점
   const { data: sellerProfile } = await supabase
@@ -100,7 +105,9 @@ export async function fetchAuctionDetail(
   return toAuctionDetail({
     product,
     images: product.product_images ?? [],
-    category,
+    categoryLabel,
+    statusLabel,
+    conditionLabel,
     seller,
     bidCount: bidCount ?? 0,
   });

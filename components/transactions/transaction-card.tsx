@@ -9,7 +9,7 @@ import { ImagePlaceholder } from "@/components/common/image-placeholder";
 import { StatusBadge } from "@/components/common/status-badge";
 import { TransactionActions } from "@/components/transactions/transaction-actions";
 import { formatPrice } from "@/lib/format";
-import type { Transaction, Product } from "@/lib/types";
+import type { Transaction, Product, TransactionStatus } from "@/lib/types";
 
 interface TransactionCardProps {
   /** 거래 데이터 */
@@ -22,6 +22,8 @@ interface TransactionCardProps {
   counterpartNickname: string;
   /** 연결된 채팅방 id (없으면 null) */
   chatRoomId: string | null;
+  /** 거래 상태 라벨 맵 value→label (DB 공통코드 codes.transaction_status 주입) */
+  statusLabels: Record<TransactionStatus, string>;
 }
 
 export function TransactionCard({
@@ -30,6 +32,7 @@ export function TransactionCard({
   role,
   counterpartNickname,
   chatRoomId,
+  statusLabels,
 }: TransactionCardProps) {
   return (
     <Card>
@@ -56,7 +59,11 @@ export function TransactionCard({
                 {role === "seller" ? "판매" : "낙찰(구매)"}
               </Badge>
               {/* 거래 상태 배지 (초기 상태 — 액션 후 갱신 상태는 액션 영역에 표시) */}
-              <StatusBadge kind="transaction" status={transaction.status} />
+              <StatusBadge
+                kind="transaction"
+                status={transaction.status}
+                label={statusLabels[transaction.status]}
+              />
             </div>
 
             {/* 확정가 */}
@@ -79,6 +86,7 @@ export function TransactionCard({
           role={role}
           counterpartNickname={counterpartNickname}
           chatRoomId={chatRoomId}
+          statusLabels={statusLabels}
         />
       </CardContent>
     </Card>

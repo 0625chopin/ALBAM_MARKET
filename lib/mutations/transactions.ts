@@ -31,15 +31,19 @@ export async function completeTransaction(
 /**
  * 상호 별점 제출 (RPC submit_rating). 거래 당사자만·완료 거래·거래당 1회.
  * 평가자 역할/상대는 서버가 거래에서 도출하고, 평가 후 상대 레벨을 재계산한다.
+ * comment 는 선택값(ISSUE-016) — 미입력 시 null 로 전달한다.
  */
 export async function submitRating(
   transactionId: string,
-  score: number
+  score: number,
+  comment: string | null = null
 ): Promise<void> {
   const supabase = createClient();
   const { error } = await supabase.rpc("submit_rating", {
     p_transaction_id: transactionId,
     p_score: score,
+    // 생성 타입은 p_comment?: string 이므로 null 은 undefined 로 전달(미입력 시 RPC 기본값 null)
+    p_comment: comment ?? undefined,
   });
   if (error) throw new Error(error.message);
 }

@@ -1,9 +1,11 @@
 // 경매 카드 그리드 컴포넌트 (RSC)
 // 경매 요약 목록을 2열 그리드로 렌더한다.
 // 430px 모바일 프레임 기준으로 grid-cols-2 고정.
-// 빈 배열이면 안내 문구 표시 (Phase 3에서 Empty 상태 전용 컴포넌트로 교체 예정).
+// 빈 배열이면 공용 EmptyState 로 안내한다.
 
+import { Gavel } from "lucide-react";
 import { AuctionCard } from "@/components/auctions/auction-card";
+import { EmptyState } from "@/components/common/empty-state";
 import type { AuctionSummary } from "@/lib/types";
 
 interface AuctionGridProps {
@@ -17,13 +19,9 @@ export function AuctionGrid({
   auctions,
   emptyMessage = "진행 중인 경매가 없습니다.",
 }: AuctionGridProps) {
-  // 빈 목록 처리 — Phase 3에서 Empty 상태 컴포넌트로 교체
+  // 빈 목록 처리 — 공용 EmptyState (아이콘 + 안내 문구)
   if (auctions.length === 0) {
-    return (
-      <p className="py-12 text-center text-sm text-muted-foreground">
-        {emptyMessage}
-      </p>
-    );
+    return <EmptyState icon={Gavel} title={emptyMessage} />;
   }
 
   return (

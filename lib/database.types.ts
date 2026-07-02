@@ -1,11 +1,10 @@
 // Supabase 생성 타입 (자동 생성물 — 직접 수정 금지)
 // 생성: Phase 4 T040-B, mcp__supabase__generate_typescript_types 결과를 그대로 기록.
-// 갱신: Phase 5 T050 재생성(profile_reputation 뷰·calc_reputation_level 함수 반영).
-// 스키마 변경 후 재생성: mcp__supabase__generate_typescript_types 로 본 파일 전체 교체.
-//
-// 네이밍: DB는 snake_case, 도메인 공용 타입(lib/types/*)은 camelCase.
-// 둘 사이 변환은 Phase 5 데이터 조회부의 매핑 레이어에서 처리한다(ISSUE-012).
-// UI 컴포넌트는 lib/types 의 camelCase 계약을 고정으로 사용한다.
+// 갱신: ISSUE-015/016(products.description, ratings.comment, submit_rating p_comment),
+//       ISSUE-004/006(penalties.penalty_type) 반영해 재생성.
+//       카테고리 공통코드 이관(categories 테이블 제거, products.category text) 반영해 재생성.
+//       ISSUE-018(스타터 groups/group_members + group 함수 4종 제거),
+//       ISSUE-014(profiles.nickname NOT NULL) 반영해 재생성.
 
 export type Json =
   | string
@@ -72,27 +71,6 @@ export type Database = {
           },
         ]
       }
-      categories: {
-        Row: {
-          created_at: string
-          id: string
-          name: string
-          slug: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          name: string
-          slug: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          name?: string
-          slug?: string
-        }
-        Relationships: []
-      }
       chat_rooms: {
         Row: {
           buyer_id: string
@@ -153,64 +131,70 @@ export type Database = {
           },
         ]
       }
-      group_members: {
-        Row: {
-          group_id: string
-          id: string
-          joined_at: string
-          role: string
-          user_id: string
-        }
-        Insert: {
-          group_id: string
-          id?: string
-          joined_at?: string
-          role?: string
-          user_id: string
-        }
-        Update: {
-          group_id?: string
-          id?: string
-          joined_at?: string
-          role?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "group_members_group_id_fkey"
-            columns: ["group_id"]
-            isOneToOne: false
-            referencedRelation: "groups"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      groups: {
+      code_groups: {
         Row: {
           created_at: string
-          created_by: string
           description: string | null
+          group_key: string
           id: string
-          invite_code: string | null
           name: string
         }
         Insert: {
           created_at?: string
-          created_by: string
           description?: string | null
+          group_key: string
           id?: string
-          invite_code?: string | null
           name: string
         }
         Update: {
           created_at?: string
-          created_by?: string
           description?: string | null
+          group_key?: string
           id?: string
-          invite_code?: string | null
           name?: string
         }
         Relationships: []
+      }
+      codes: {
+        Row: {
+          code: string
+          created_at: string
+          group_key: string
+          id: string
+          is_active: boolean
+          label: string
+          num_value: number | null
+          sort_order: number
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          group_key: string
+          id?: string
+          is_active?: boolean
+          label: string
+          num_value?: number | null
+          sort_order?: number
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          group_key?: string
+          id?: string
+          is_active?: boolean
+          label?: string
+          num_value?: number | null
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "codes_group_key_fkey"
+            columns: ["group_key"]
+            isOneToOne: false
+            referencedRelation: "code_groups"
+            referencedColumns: ["group_key"]
+          },
+        ]
       }
       messages: {
         Row: {
@@ -262,18 +246,21 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          penalty_type: string | null
           reason: string
           user_id: string
         }
         Insert: {
           created_at?: string
           id?: string
+          penalty_type?: string | null
           reason: string
           user_id: string
         }
         Update: {
           created_at?: string
           id?: string
+          penalty_type?: string | null
           reason?: string
           user_id?: string
         }
@@ -330,10 +317,11 @@ export type Database = {
         Row: {
           auction_ends_at: string
           buy_now_price: number | null
-          category_id: string
+          category: string
           condition: string
           created_at: string
           current_price: number
+          description: string | null
           id: string
           region: string
           seller_id: string
@@ -343,12 +331,13 @@ export type Database = {
           winner_id: string | null
         }
         Insert: {
-          auction_ends_at: string
+          auction_ends_at?: string
           buy_now_price?: number | null
-          category_id: string
+          category: string
           condition: string
           created_at?: string
           current_price: number
+          description?: string | null
           id?: string
           region: string
           seller_id: string
@@ -360,10 +349,11 @@ export type Database = {
         Update: {
           auction_ends_at?: string
           buy_now_price?: number | null
-          category_id?: string
+          category?: string
           condition?: string
           created_at?: string
           current_price?: number
+          description?: string | null
           id?: string
           region?: string
           seller_id?: string
@@ -373,13 +363,6 @@ export type Database = {
           winner_id?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "products_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "categories"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "products_seller_id_fkey"
             columns: ["seller_id"]
@@ -417,7 +400,7 @@ export type Database = {
           buyer_level: number
           full_name: string | null
           id: string
-          nickname: string | null
+          nickname: string
           region: string | null
           seller_level: number
           updated_at: string | null
@@ -430,7 +413,7 @@ export type Database = {
           buyer_level?: number
           full_name?: string | null
           id: string
-          nickname?: string | null
+          nickname: string
           region?: string | null
           seller_level?: number
           updated_at?: string | null
@@ -443,7 +426,7 @@ export type Database = {
           buyer_level?: number
           full_name?: string | null
           id?: string
-          nickname?: string | null
+          nickname?: string
           region?: string | null
           seller_level?: number
           updated_at?: string | null
@@ -454,6 +437,7 @@ export type Database = {
       }
       ratings: {
         Row: {
+          comment: string | null
           created_at: string
           id: string
           ratee_id: string
@@ -463,6 +447,7 @@ export type Database = {
           transaction_id: string
         }
         Insert: {
+          comment?: string | null
           created_at?: string
           id?: string
           ratee_id: string
@@ -472,6 +457,7 @@ export type Database = {
           transaction_id: string
         }
         Update: {
+          comment?: string | null
           created_at?: string
           id?: string
           ratee_id?: string
@@ -611,32 +597,24 @@ export type Database = {
         Returns: string
       }
       abandon_won_auction: { Args: { p_product_id: string }; Returns: string }
-      auto_complete_transactions: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
+      auto_complete_transactions: { Args: never; Returns: number }
       buy_now: { Args: { p_product_id: string }; Returns: string }
-      close_expired_auctions: { Args: Record<PropertyKey, never>; Returns: number }
-      complete_transaction: {
-        Args: { p_transaction_id: string }
-        Returns: undefined
-      }
       calc_reputation_level: {
         Args: { avg_score: number; completed_count: number }
         Returns: number
       }
-      has_group_role: {
-        Args: { gid: string; roles: string[] }
-        Returns: boolean
+      close_expired_auctions: { Args: never; Returns: number }
+      complete_transaction: {
+        Args: { p_transaction_id: string }
+        Returns: undefined
       }
-      is_group_member: { Args: { gid: string }; Returns: boolean }
-      join_group_by_code: { Args: { code: string }; Returns: string }
+      get_policy_int: { Args: { p_key: string }; Returns: number }
       place_bid: {
         Args: { p_amount: number; p_product_id: string }
         Returns: number
       }
       submit_rating: {
-        Args: { p_score: number; p_transaction_id: string }
+        Args: { p_comment?: string; p_score: number; p_transaction_id: string }
         Returns: undefined
       }
       withdraw_product: { Args: { p_product_id: string }; Returns: undefined }

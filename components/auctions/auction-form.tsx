@@ -24,12 +24,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { ImagePlaceholder } from "@/components/common/image-placeholder";
-import {
-  CATEGORY_OPTIONS,
-  REGION_OPTIONS,
-  PRODUCT_CONDITIONS,
-  DEFAULT_AUCTION_DURATION_HOURS,
-} from "@/lib/constants";
+import type { SelectOption } from "@/lib/types";
 import { createAuction } from "@/lib/mutations/auctions";
 
 // 이미지 최대 등록 개수 (대표 1 + 추가 5)
@@ -52,7 +47,37 @@ interface FormErrors {
   buyNowPrice?: string;
 }
 
-export function AuctionForm() {
+// ===== Props 타입 =====
+// 옵션 목록은 호출부(서버 페이지 DB 조회 / /sample Mock)가 반드시 주입한다(무폴백).
+interface AuctionFormProps {
+  /** 카테고리 옵션 (value=slug) */
+  categories: SelectOption[];
+  /** 직거래 지역 옵션 (value=코드, label=한글) */
+  regions: SelectOption[];
+  /** 중고등급 옵션 */
+  conditions: SelectOption[];
+  /** 기본 경매 진행 시간(시간) — 마감 안내 표시용 (codes.policy.default_auction_duration_hours 주입) */
+  auctionDurationHours: number;
+  /** 누적 패널티 이용 제한 여부 (ISSUE-004) — true면 등록 차단 */
+  restricted?: boolean;
+  /** 집계 기간 이내 누적 패널티 수 (안내 표시용) */
+  penaltyCount?: number;
+  /** 이용 제한 임계값(회) */
+  penaltyThreshold?: number;
+  /** 패널티 누적 집계 기간(일) */
+  penaltyWindowDays?: number;
+}
+
+export function AuctionForm({
+  categories,
+  regions,
+  conditions,
+  auctionDurationHours,
+  restricted = false,
+  penaltyCount = 0,
+  penaltyThreshold = 0,
+  penaltyWindowDays = 0,
+}: AuctionFormProps) {
   const router = useRouter();
 
   // 파일 선택 input ref — 업로드 버튼 클릭 시 시스템 파일 다이얼로그 연결용
@@ -154,6 +179,15 @@ export function AuctionForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitError(null);
+
+    // ISSUE-004: 누적 패널티 이용 제한 시 등록 차단(서버 트리거가 최종 강제, 여기선 UX 사전차단)
+    if (restricted) {
+      setSubmitError(
+        `누적 패널티로 경매 등록이 제한되었습니다. (최근 ${penaltyWindowDays}일 ${penaltyCount}건)`
+      );
+      return;
+    }
+
     const nextErrors = validate();
     setErrors(nextErrors);
 
@@ -161,12 +195,13 @@ export function AuctionForm() {
 
     // 선택값(value) → 저장용 라벨/값 변환
     const regionLabel =
-      REGION_OPTIONS.find((opt) => opt.value === region)?.label ?? region;
+      regions.find((opt) => opt.value === region)?.label ?? region;
 
     setIsSubmitting(true);
     try {
       const { productId, failedCount } = await createAuction({
         title: title.trim(),
+        description: description.trim() === "" ? null : description.trim(),
         categorySlug: category,
         regionLabel,
         condition,
@@ -200,6 +235,19 @@ export function AuctionForm() {
       aria-label="경매 등록 폼"
       noValidate
     >
+      {/* ===== 0. 이용 제한 안내 (ISSUE-004: 누적 패널티) ===== */}
+      {restricted && (
+        <div
+          className="rounded-md border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+          role="alert"
+          aria-live="polite"
+        >
+          최근 {penaltyWindowDays}일간 누적 패널티가 {penaltyCount}건(제한 기준{" "}
+          {penaltyThreshold}건)이라 경매 등록이 제한되었습니다. 기간이 지나면
+          다시 등록할 수 있습니다.
+        </div>
+      )}
+
       {/* ===== 1. 이미지 업로드 UI ===== */}
       <div className="space-y-2">
         <Label>상품 이미지</Label>
@@ -348,7 +396,7 @@ export function AuctionForm() {
             <SelectValue placeholder="카테고리 선택" />
           </SelectTrigger>
           <SelectContent>
-            {CATEGORY_OPTIONS.map((option) => (
+            {categories.map((option) => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
               </SelectItem>
@@ -374,7 +422,7 @@ export function AuctionForm() {
             <SelectValue placeholder="지역 선택" />
           </SelectTrigger>
           <SelectContent>
-            {REGION_OPTIONS.map((option) => (
+            {regions.map((option) => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
               </SelectItem>
@@ -400,7 +448,7 @@ export function AuctionForm() {
             <SelectValue placeholder="상품 상태 선택" />
           </SelectTrigger>
           <SelectContent>
-            {PRODUCT_CONDITIONS.map((option) => (
+            {conditions.map((option) => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
               </SelectItem>
@@ -458,7 +506,8 @@ export function AuctionForm() {
       </div>
 
       {/* ===== 9. 마감 안내 박스 ===== */}
-      {/* TODO: ISSUE-001 — DEFAULT_AUCTION_DURATION_HOURS 임시 상수, 추후 DB 정책값 이관 예정 */}
+      {/* 진행 시간은 DB 공통코드(codes.policy.default_auction_duration_hours) 기반.
+          실제 마감시각은 서버 트리거(set_auction_ends_at)가 채운다. */}
       <div
         className="rounded-md border bg-muted/40 px-4 py-3 text-sm text-muted-foreground"
         role="note"
@@ -466,7 +515,7 @@ export function AuctionForm() {
       >
         등록 시 자동으로{" "}
         <span className="font-semibold text-foreground">
-          {DEFAULT_AUCTION_DURATION_HOURS}시간
+          {auctionDurationHours}시간
         </span>{" "}
         후 마감됩니다.
       </div>
@@ -505,7 +554,7 @@ export function AuctionForm() {
           type="submit"
           size="lg"
           className="w-full"
-          disabled={isSubmitting}
+          disabled={isSubmitting || restricted}
           aria-busy={isSubmitting}
         >
           {isSubmitting && (

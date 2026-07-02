@@ -14,10 +14,14 @@ import { AuctionInfo } from "@/components/auctions/auction-info";
 import { SellerReputation } from "@/components/auctions/seller-reputation";
 import { BidPanel } from "@/components/auctions/bid-panel";
 import { WithdrawProductButton } from "@/components/auctions/withdraw-product-button";
-import { fetchAuctionDetail, getCurrentUserId } from "@/lib/queries";
+import {
+  fetchAuctionDetail,
+  getCurrentUserId,
+  fetchPolicies,
+} from "@/lib/queries";
 
 // ===== 상세 스켈레톤 (Suspense fallback) =====
-// Phase 3에서 실제 Skeleton 컴포넌트로 교체 예정
+// 상세 레이아웃(이미지·제목·가격) 형태에 맞춘 자체 스켈레톤.
 function AuctionDetailSkeleton() {
   return (
     <div
@@ -78,6 +82,9 @@ async function AuctionDetailContent({
   const isLoggedIn = userId !== null;
   const isOwner = userId === detail.sellerId;
 
+  // 최소 입찰 증가폭(DB 정책값) — 클라이언트 UX 사전검증용 주입
+  const policies = await fetchPolicies();
+
   return (
     // 430px 모바일 세로 스택 레이아웃 (패딩 없음, 컴포넌트가 자체 px 관리)
     <div className="flex flex-col">
@@ -95,6 +102,7 @@ async function AuctionDetailContent({
           buyNowPrice={detail.buyNowPrice}
           isOwner={isOwner}
           isLoggedIn={isLoggedIn}
+          minBidIncrement={policies.min_bid_increment}
         />
 
         {/* 판매자 본인 + 진행중일 때 상품 내리기 (T056) */}

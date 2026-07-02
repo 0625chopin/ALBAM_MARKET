@@ -3,16 +3,17 @@
 
 import { createClient } from "@/lib/supabase/client";
 import { uploadPublicImage } from "@/lib/supabase/storage";
-import { DEFAULT_AUCTION_DURATION_HOURS } from "@/lib/constants";
 
 export interface CreateAuctionInput {
   /** 제목 */
   title: string;
-  /** 카테고리 slug (CATEGORY_OPTIONS value, 예: "digital") */
+  /** 상품 설명 (미입력 시 null) */
+  description: string | null;
+  /** 카테고리 코드 (공통코드 codes.category value, 예: "digital") */
   categorySlug: string;
   /** 직거래 지역 한글 라벨 (예: "서울") */
   regionLabel: string;
-  /** 중고등급 (PRODUCT_CONDITIONS value, 예: "good") */
+  /** 중고등급 (공통코드 codes.product_condition value, 예: "good") */
   condition: string;
   /** 시작가 */
   startPrice: number;
@@ -32,9 +33,10 @@ const PRODUCT_IMAGES_BUCKET = "product-images";
 
 /**
  * 경매 상품을 등록한다.
- * (a) categories slug→id 조회 → (b) products insert(seller_id=세션 사용자, current_price=start_price,
- * auction_ends_at=now()+36h 상수) → (c) Storage 업로드(product-images/{userId}/{productId}/...) →
- * (d) product_images insert. RLS(본인 seller_id)·Storage 본인 경로 정책을 준수한다.
+ * (a) products insert(seller_id=세션 사용자, category=공통코드 코드값, current_price=start_price,
+ * auction_ends_at=DB 트리거 set_auction_ends_at 가 정책값 기반으로 자동 설정) →
+ * (b) Storage 업로드(product-images/{userId}/{productId}/...) →
+ * (c) product_images insert. RLS(본인 seller_id)·Storage 본인 경로 정책을 준수한다.
  */
 export async function createAuction(
   input: CreateAuctionInput
@@ -46,34 +48,22 @@ export async function createAuction(
   const userId = claims?.claims?.sub;
   if (!userId) throw new Error("로그인이 필요합니다.");
 
-  // 카테고리 slug → UUID
-  const { data: category, error: categoryError } = await supabase
-    .from("categories")
-    .select("id")
-    .eq("slug", input.categorySlug)
-    .single();
-  if (categoryError || !category) {
-    throw new Error("카테고리를 찾을 수 없습니다.");
-  }
-
-  // 마감 시각 = 등록 + 36시간(ISSUE-001 상수)
-  const auctionEndsAt = new Date(
-    Date.now() + DEFAULT_AUCTION_DURATION_HOURS * 60 * 60 * 1000
-  ).toISOString();
-
   // 상품 insert (현재가는 시작가로 초기화, status 기본 'active')
+  // 카테고리는 공통코드(codes.category) 코드값을 그대로 저장한다.
+  // 마감 시각(auction_ends_at)은 서버 트리거 set_auction_ends_at 가
+  // 정책값(codes.policy.default_auction_duration_hours) 기반 now()+N시간으로 채운다.
   const { data: product, error: productError } = await supabase
     .from("products")
     .insert({
       seller_id: userId,
       title: input.title,
-      category_id: category.id,
+      description: input.description,
+      category: input.categorySlug,
       condition: input.condition,
       region: input.regionLabel,
       start_price: input.startPrice,
       buy_now_price: input.buyNowPrice,
       current_price: input.startPrice,
-      auction_ends_at: auctionEndsAt,
     })
     .select("id")
     .single();
@@ -151,7 +141,8 @@ export async function buyNow(productId: string): Promise<string> {
 }
 
 /**
- * 상품 내리기 (RPC withdraw_product). 본인 active 상품·입찰 없을 때만 가능.
+ * 상품 내리기 (RPC withdraw_product). 본인 active 상품일 때 가능.
+ * ISSUE-006: 입찰이 있으면 패널티(withdraw_with_bids)를 기록한 뒤 허용한다(누적 시 ISSUE-004 등록 제한).
  */
 export async function withdrawProduct(productId: string): Promise<void> {
   const supabase = createClient();

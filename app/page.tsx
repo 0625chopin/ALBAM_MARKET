@@ -9,6 +9,7 @@ import { AuctionGrid } from "@/components/auctions/auction-grid";
 import { AuctionStatusFilter } from "@/components/auctions/auction-status-filter";
 import {
   fetchAuctionSummaries,
+  fetchStatusLabels,
   type AuctionStatusFilterValue,
 } from "@/lib/queries";
 
@@ -54,8 +55,11 @@ export default async function Home({
     ? (status as AuctionStatusFilterValue)
     : "active";
 
-  // 선택 상태의 경매 카드 요약 (Supabase 실데이터)
-  const auctions = await fetchAuctionSummaries(current);
+  // 선택 상태의 경매 카드 요약 (Supabase 실데이터) + 상태 라벨(DB 공통코드)
+  const [auctions, statusLabels] = await Promise.all([
+    fetchAuctionSummaries(current),
+    fetchStatusLabels("product_status"),
+  ]);
   const heading = STATUS_HEADINGS[current];
 
   return (
@@ -76,7 +80,7 @@ export default async function Home({
 
           {/* 상단 상태 필터 탭 */}
           <div className="mb-4">
-            <AuctionStatusFilter current={current} />
+            <AuctionStatusFilter current={current} labels={statusLabels} />
           </div>
 
           {/* 경매 카드 2열 그리드 (Supabase 실데이터) */}

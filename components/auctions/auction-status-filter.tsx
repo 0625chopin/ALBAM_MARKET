@@ -5,25 +5,37 @@
 
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { PRODUCT_STATUS_LABELS } from "@/lib/constants";
 import type { AuctionStatusFilterValue } from "@/lib/queries";
 
 // 탭 노출 순서 (전체 + 실제 상품 상태 5종)
-const FILTER_TABS: { value: AuctionStatusFilterValue; label: string }[] = [
-  { value: "all", label: "전체" },
-  { value: "active", label: PRODUCT_STATUS_LABELS.active },
-  { value: "won", label: PRODUCT_STATUS_LABELS.won },
-  { value: "failed", label: PRODUCT_STATUS_LABELS.failed },
-  { value: "withdrawn", label: PRODUCT_STATUS_LABELS.withdrawn },
-  { value: "completed", label: PRODUCT_STATUS_LABELS.completed },
+const STATUS_ORDER: Exclude<AuctionStatusFilterValue, "all">[] = [
+  "active",
+  "won",
+  "failed",
+  "withdrawn",
+  "completed",
 ];
 
 interface AuctionStatusFilterProps {
   /** 현재 선택된 상태 */
   current: AuctionStatusFilterValue;
+  /** 상태 라벨 맵 value→label (DB 공통코드 주입) */
+  labels: Record<string, string>;
 }
 
-export function AuctionStatusFilter({ current }: AuctionStatusFilterProps) {
+export function AuctionStatusFilter({
+  current,
+  labels,
+}: AuctionStatusFilterProps) {
+  // 전체 + 실제 상태 5종을 라벨 맵(DB 또는 상수)으로부터 구성
+  const FILTER_TABS: { value: AuctionStatusFilterValue; label: string }[] = [
+    { value: "all", label: "전체" },
+    ...STATUS_ORDER.map((value) => ({
+      value,
+      label: labels[value] ?? value,
+    })),
+  ];
+
   return (
     <div
       className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1"

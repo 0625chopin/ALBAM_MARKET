@@ -8,7 +8,6 @@ import { StatusBadge } from "@/components/common/status-badge";
 import { RemainingTime } from "@/components/common/remaining-time";
 import { Separator } from "@/components/ui/separator";
 import { formatPrice } from "@/lib/format";
-import { PRODUCT_CONDITIONS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import type { AuctionDetail } from "@/lib/types";
 
@@ -18,10 +17,8 @@ interface AuctionInfoProps {
 }
 
 export function AuctionInfo({ detail }: AuctionInfoProps) {
-  // 중고등급 value → label 매핑 (찾지 못하면 원본 값 표시)
-  const conditionLabel =
-    PRODUCT_CONDITIONS.find((c) => c.value === detail.condition)?.label ??
-    detail.condition;
+  // 중고등급 표시 라벨 (DB 공통코드에서 조회해 detail에 주입됨)
+  const conditionLabel = detail.conditionLabel;
 
   // 종료 상태 여부 판별 (낙찰/유찰)
   const isWon = detail.status === "won";
@@ -33,7 +30,11 @@ export function AuctionInfo({ detail }: AuctionInfoProps) {
       {/* ===== 상태 배지 + 제목 ===== */}
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <StatusBadge kind="product" status={detail.status} />
+          <StatusBadge
+            kind="product"
+            status={detail.status}
+            label={detail.statusLabel}
+          />
           {/* 종료 상태 강조 배너 (낙찰/유찰) */}
           {isEnded && (
             <span
@@ -64,7 +65,7 @@ export function AuctionInfo({ detail }: AuctionInfoProps) {
         {/* 카테고리 */}
         <span className="flex items-center gap-1">
           <Tag className="size-3 shrink-0" aria-hidden="true" />
-          {detail.category.name}
+          {detail.categoryLabel}
         </span>
 
         <span aria-hidden="true" className="select-none text-border">
@@ -114,6 +115,19 @@ export function AuctionInfo({ detail }: AuctionInfoProps) {
         )}
       </div>
 
+      {/* ===== 상품 설명 (입력된 경우에만 표시) ===== */}
+      {detail.description && detail.description.trim() !== "" && (
+        <>
+          <Separator />
+          <div className="space-y-1">
+            <p className="text-xs text-muted-foreground">상품 설명</p>
+            <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
+              {detail.description}
+            </p>
+          </div>
+        </>
+      )}
+
       <Separator />
 
       {/* ===== 경매 진행 정보: 마감 시간·입찰 수·시작가 ===== */}
@@ -146,9 +160,6 @@ export function AuctionInfo({ detail }: AuctionInfoProps) {
           </span>
         </div>
       </div>
-
-      {/* ===== 입찰 패널 슬롯 — T023에서 BidPanel 삽입 예정 ===== */}
-      {/* TODO: T023 — BidPanel(입찰 입력 + 즉시구매 버튼) 여기에 추가 */}
     </article>
   );
 }
