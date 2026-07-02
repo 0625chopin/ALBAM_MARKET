@@ -6,6 +6,7 @@
 //       ISSUE-018(스타터 groups/group_members + group 함수 4종 제거),
 //       ISSUE-014(profiles.nickname NOT NULL) 반영해 재생성.
 //       커스텀 OTP(email_verifications 테이블 + otp_find_user/cleanup_email_verifications 함수) 반영해 재생성.
+//       닉네임 중복 체크(profiles.nickname lower() UNIQUE 인덱스 + nickname_exists 함수) 반영해 재생성.
 
 export type Json =
   | string
@@ -647,6 +648,10 @@ export type Database = {
         Returns: undefined
       }
       get_policy_int: { Args: { p_key: string }; Returns: number }
+      nickname_exists: {
+        Args: { p_exclude_id?: string; p_nickname: string }
+        Returns: boolean
+      }
       otp_find_user: {
         Args: { p_email: string }
         Returns: {

@@ -1,10 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { issueAndSendOtp } from "@/lib/auth/otp-service";
+import { EMAIL_RE, validateNickname } from "@/lib/auth/validation";
 
 // Route Handler 는 기본이 Node.js 런타임이므로 별도 선언하지 않는다.
 // (이 프로젝트는 cacheComponents 를 켜 두어 runtime 세그먼트 설정과 호환되지 않음.)
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 type RequestBody = {
   email?: string;
@@ -45,11 +45,9 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    if (nickname.length === 0) {
-      return NextResponse.json(
-        { error: "닉네임을 입력해 주세요." },
-        { status: 400 }
-      );
+    const nicknameError = validateNickname(nickname);
+    if (nicknameError) {
+      return NextResponse.json({ error: nicknameError }, { status: 400 });
     }
 
     const admin = createAdminClient();
@@ -73,6 +71,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // 닉네임 중복 서버 최종 검증(실시간 확인 API 우회 방어).
+    // 미인증 유저 재요청 시 본인 프로필은 제외한다.
+    const { data: nickTaken, error: nickErr } = await admin.rpc(
+      "nickname_exists",
+      existing
+        ? { p_nickname: nickname, p_exclude_id: existing.id }
+        : { p_nickname: nickname }
+    );
+    if (nickErr) {
+      return NextResponse.json(
+        { error: "일시적인 오류가 발생했습니다." },
+        { status: 500 }
+      );
+    }
+    if (nickTaken) {
+      return NextResponse.json(
+        { error: "이미 사용 중인 닉네임입니다." },
+        { status: 409 }
+      );
+    }
+
     if (existing) {
       // 미인증 유저(가입 중 이탈 등) → 비밀번호/닉네임 갱신 후 재발급
       const { error: updErr } = await admin.auth.admin.updateUserById(
@@ -85,6 +104,9 @@ export async function POST(request: NextRequest) {
           { status: 500 }
         );
       }
+      // handle_new_user 트리거는 INSERT 시점에만 동작하므로, 재요청 때 바뀐 닉네임을
+      // 프로필에도 반영한다(트리거로는 갱신되지 않음).
+      await admin.from("profiles").update({ nickname }).eq("id", existing.id);
     } else {
       // 신규 유저 생성(이메일 미확인 상태). handle_new_user 트리거가 nickname 으로 프로필을 채운다.
       const { data: created, error: createErr } =
@@ -95,8 +117,16 @@ export async function POST(request: NextRequest) {
           user_metadata: { nickname },
         });
       if (createErr || !created.user) {
+        // 경합으로 닉네임 UNIQUE 인덱스(트리거의 profiles insert)가 위반된 경우 친절한 메시지로 변환.
+        const msg = createErr?.message ?? "";
+        if (/nickname/i.test(msg) || /duplicate key/i.test(msg)) {
+          return NextResponse.json(
+            { error: "이미 사용 중인 닉네임입니다." },
+            { status: 409 }
+          );
+        }
         return NextResponse.json(
-          { error: createErr?.message ?? "회원 생성에 실패했습니다." },
+          { error: msg || "회원 생성에 실패했습니다." },
           { status: 500 }
         );
       }
