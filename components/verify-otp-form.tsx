@@ -73,7 +73,10 @@ export function VerifyOtpForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, code: code.trim() }),
       });
-      const data = (await res.json()) as { ok?: boolean; error?: string };
+      const data = (await res.json().catch(() => ({}))) as {
+        ok?: boolean;
+        error?: string;
+      };
       if (!res.ok) {
         throw new Error(data.error ?? "인증에 실패했습니다.");
       }
@@ -102,7 +105,10 @@ export function VerifyOtpForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
-      const data = (await res.json()) as { ok?: boolean; error?: string };
+      const data = (await res.json().catch(() => ({}))) as {
+        ok?: boolean;
+        error?: string;
+      };
       if (!res.ok) {
         throw new Error(data.error ?? "재전송에 실패했습니다.");
       }

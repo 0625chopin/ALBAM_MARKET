@@ -53,7 +53,11 @@ export function SignUpForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, nickname: nickname.trim() }),
       });
-      const data = (await res.json()) as { ok?: boolean; error?: string };
+      // 서버가 빈 본문/비-JSON(예: 500)을 반환해도 안전하게 파싱한다.
+      const data = (await res.json().catch(() => ({}))) as {
+        ok?: boolean;
+        error?: string;
+      };
       if (!res.ok) {
         throw new Error(data.error ?? "회원가입 요청에 실패했습니다.");
       }
