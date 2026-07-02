@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Libre_Baskerville, Noto_Serif_KR } from "next/font/google";
+import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { BottomNavGate } from "@/components/layout/bottom-nav-gate";
 import { InAppBrowserGuard } from "@/components/in-app-browser-guard";
@@ -17,20 +17,12 @@ export const metadata: Metadata = {
   description: "알밤마켓에서 중고 물품을 경매로 사고 팔아보세요.",
 };
 
-// 본문 라틴 폰트 — globals.css의 --font-sans 스택 첫 번째(라틴 전용)
-const fontSans = Libre_Baskerville({
-  variable: "--font-libre-baskerville",
-  weight: ["400", "700"],
+// 본문 폰트 — 배포 사이트와 동일한 Geist. globals.css의 --font-sans 토큰과 연결.
+// 한글 글리프는 Geist Fallback(시스템)으로 렌더된다.
+const fontSans = Geist({
+  variable: "--font-geist-sans",
   display: "swap",
   subsets: ["latin"],
-});
-
-// 한글 serif 폰트 — 라틴에 없는 한글 글리프 폴백. CJK라 preload 비활성(용량).
-const fontSerifKr = Noto_Serif_KR({
-  variable: "--font-noto-serif-kr",
-  weight: ["400", "700"],
-  display: "swap",
-  preload: false,
 });
 
 export default function RootLayout({
@@ -40,9 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" suppressHydrationWarning>
-      <body
-        className={`${fontSans.variable} ${fontSerifKr.variable} font-sans antialiased`}
-      >
+      <body className={`${fontSans.variable} font-sans antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
