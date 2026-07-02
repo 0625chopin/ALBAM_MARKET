@@ -100,7 +100,7 @@ export default function SamplePage() {
         <Container className="py-10">
           {/* 페이지 헤더 */}
           <div className="mb-10 space-y-2">
-            <h1 className="text-3xl font-bold text-foreground">
+            <h1 className="text-foreground text-3xl font-bold">
               컴포넌트 전시장
             </h1>
             <p className="text-muted-foreground">
@@ -110,10 +110,10 @@ export default function SamplePage() {
 
           {/* 목차 */}
           <nav
-            className="mb-12 rounded-lg border bg-muted/40 p-4"
+            className="bg-muted/40 mb-12 rounded-lg border p-4"
             aria-label="섹션 목차"
           >
-            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+            <h2 className="text-muted-foreground mb-3 text-sm font-semibold tracking-wider uppercase">
               목차
             </h2>
             <ul className="flex flex-wrap gap-2">
@@ -121,7 +121,7 @@ export default function SamplePage() {
                 <li key={item.href}>
                   <a
                     href={item.href}
-                    className="rounded-md bg-background px-3 py-1.5 text-sm text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                    className="bg-background text-foreground hover:bg-accent hover:text-accent-foreground rounded-md px-3 py-1.5 text-sm transition-colors"
                   >
                     {item.label}
                   </a>
@@ -132,10 +132,10 @@ export default function SamplePage() {
 
           {/* ===== 색상 토큰 섹션 ===== */}
           <section id="colors" className="mb-16 scroll-mt-20">
-            <h2 className="mb-6 text-2xl font-bold text-foreground">
+            <h2 className="text-foreground mb-6 text-2xl font-bold">
               색상 토큰
             </h2>
-            <p className="mb-6 text-sm text-muted-foreground">
+            <p className="text-muted-foreground mb-6 text-sm">
               시맨틱 CSS 변수 기반 색상입니다. 다크모드 토글 시 자동으로
               반전됩니다.
             </p>
@@ -146,7 +146,7 @@ export default function SamplePage() {
                     className={`h-12 rounded-md ${token.bg} ${token.border ? "border" : ""}`}
                     aria-label={`${token.name} 색상`}
                   />
-                  <p className="font-mono text-xs text-muted-foreground">
+                  <p className="text-muted-foreground font-mono text-xs">
                     {token.name}
                   </p>
                 </div>
@@ -156,44 +156,44 @@ export default function SamplePage() {
 
           {/* ===== 타이포그래피 섹션 ===== */}
           <section id="typography" className="mb-16 scroll-mt-20">
-            <h2 className="mb-6 text-2xl font-bold text-foreground">
+            <h2 className="text-foreground mb-6 text-2xl font-bold">
               타이포그래피
             </h2>
             <div className="space-y-4 rounded-lg border p-6">
               <div>
-                <h1 className="text-4xl font-extrabold text-foreground">
+                <h1 className="text-foreground text-4xl font-extrabold">
                   H1 — 알밤마켓 (4xl / extrabold)
                 </h1>
               </div>
               <div>
-                <h2 className="text-3xl font-bold text-foreground">
+                <h2 className="text-foreground text-3xl font-bold">
                   H2 — 경매 목록 (3xl / bold)
                 </h2>
               </div>
               <div>
-                <h3 className="text-2xl font-semibold text-foreground">
+                <h3 className="text-foreground text-2xl font-semibold">
                   H3 — 상품 상세 (2xl / semibold)
                 </h3>
               </div>
               <div>
-                <h4 className="text-xl font-semibold text-foreground">
+                <h4 className="text-foreground text-xl font-semibold">
                   H4 — 섹션 제목 (xl / semibold)
                 </h4>
               </div>
               <div>
-                <p className="text-base text-foreground">
+                <p className="text-foreground text-base">
                   본문 텍스트 (base) — 경매 상품에 대한 설명을 이곳에
                   작성합니다. 중고 마켓의 상품 특성과 상태를 자세히 안내합니다.
                 </p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   보조 텍스트 (sm / muted-foreground) — 카테고리, 등록일, 조회수
                   등 메타 정보 표시에 사용합니다.
                 </p>
               </div>
               <div>
-                <p className="font-mono text-xs text-muted-foreground">
+                <p className="text-muted-foreground font-mono text-xs">
                   모노스페이스 (xs / mono) — 경매 ID, 타임스탬프, 코드 표시용
                 </p>
               </div>
@@ -202,11 +202,11 @@ export default function SamplePage() {
 
           {/* ===== 버튼 섹션 ===== */}
           <section id="buttons" className="mb-16 scroll-mt-20">
-            <h2 className="mb-6 text-2xl font-bold text-foreground">버튼</h2>
+            <h2 className="text-foreground mb-6 text-2xl font-bold">버튼</h2>
 
             {/* Variant 전시 */}
             <div className="mb-6 space-y-3 rounded-lg border p-6">
-              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+              <h3 className="text-muted-foreground mb-4 text-sm font-semibold tracking-wider uppercase">
                 Variant
               </h3>
               <div className="flex flex-wrap gap-3">
@@ -221,7 +221,7 @@ export default function SamplePage() {
 
             {/* Size 전시 */}
             <div className="rounded-lg border p-6">
-              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+              <h3 className="text-muted-foreground mb-4 text-sm font-semibold tracking-wider uppercase">
                 Size
               </h3>
               <div className="flex flex-wrap items-center gap-3">
@@ -237,7 +237,7 @@ export default function SamplePage() {
 
           {/* ===== 배지 섹션 ===== */}
           <section id="badges" className="mb-16 scroll-mt-20">
-            <h2 className="mb-6 text-2xl font-bold text-foreground">배지</h2>
+            <h2 className="text-foreground mb-6 text-2xl font-bold">배지</h2>
             <div className="rounded-lg border p-6">
               <div className="flex flex-wrap gap-3">
                 <Badge variant="default">Default</Badge>
@@ -257,7 +257,7 @@ export default function SamplePage() {
 
           {/* ===== 카드 섹션 ===== */}
           <section id="cards" className="mb-16 scroll-mt-20">
-            <h2 className="mb-6 text-2xl font-bold text-foreground">카드</h2>
+            <h2 className="text-foreground mb-6 text-2xl font-bold">카드</h2>
             <div className="grid grid-cols-1 gap-4">
               {/* 기본 카드 */}
               <Card>
@@ -266,7 +266,7 @@ export default function SamplePage() {
                   <CardDescription>카드 설명 텍스트입니다.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     카드 본문 영역입니다. 상품 정보, 경매 내용 등을 표시합니다.
                   </p>
                 </CardContent>
@@ -293,10 +293,10 @@ export default function SamplePage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-1">
-                    <p className="text-lg font-bold text-foreground">
+                    <p className="text-foreground text-lg font-bold">
                       현재가: 15,000원
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-muted-foreground text-xs">
                       입찰 12회 · 종료까지 2시간
                     </p>
                   </div>
@@ -316,7 +316,7 @@ export default function SamplePage() {
               {/* 컨텐츠만 있는 카드 */}
               <Card>
                 <CardContent className="pt-6">
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     컨텐츠만 있는 카드 패턴 — 헤더/푸터 없이 본문만 표시할 때
                     사용합니다.
                   </p>
@@ -327,7 +327,7 @@ export default function SamplePage() {
 
           {/* ===== 입력 필드 섹션 ===== */}
           <section id="inputs" className="mb-16 scroll-mt-20">
-            <h2 className="mb-6 text-2xl font-bold text-foreground">
+            <h2 className="text-foreground mb-6 text-2xl font-bold">
               입력 필드
             </h2>
             <div className="rounded-lg border p-6">
@@ -379,7 +379,7 @@ export default function SamplePage() {
 
               {/* 체크박스 */}
               <div className="mt-6 space-y-3">
-                <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                <h3 className="text-muted-foreground text-sm font-semibold tracking-wider uppercase">
                   체크박스
                 </h3>
                 <div className="flex items-center gap-2">
@@ -398,7 +398,7 @@ export default function SamplePage() {
                   <Checkbox id="sample-check-3" disabled />
                   <Label
                     htmlFor="sample-check-3"
-                    className="cursor-not-allowed text-muted-foreground"
+                    className="text-muted-foreground cursor-not-allowed"
                   >
                     비활성 체크박스
                   </Label>
@@ -410,10 +410,10 @@ export default function SamplePage() {
           {/* ===== 라우트 점검 섹션 (골격 검증용 임시 링크) ===== */}
           {/* TODO: Phase 2에서 실제 카드/목록 링크로 교체 후 이 섹션 제거 */}
           <section id="routes" className="mb-16 scroll-mt-20">
-            <h2 className="mb-6 text-2xl font-bold text-foreground">
+            <h2 className="text-foreground mb-6 text-2xl font-bold">
               라우트 점검
             </h2>
-            <p className="mb-6 text-sm text-muted-foreground">
+            <p className="text-muted-foreground mb-6 text-sm">
               동적 라우트는 흐름으로 진입하므로, 골격 검증용 임시 링크입니다.
               (Phase 2에서 실제 카드/목록 링크로 교체)
             </p>
@@ -459,14 +459,14 @@ export default function SamplePage() {
 
           {/* ===== 향후 추가 예정 (Phase 2) ===== */}
           <section id="components-todo" className="mb-16 scroll-mt-20">
-            <h2 className="mb-6 text-2xl font-bold text-foreground">
+            <h2 className="text-foreground mb-6 text-2xl font-bold">
               향후 추가 예정
             </h2>
-            <div className="rounded-lg border border-dashed bg-muted/20 p-8 text-center">
-              <p className="mb-4 font-semibold text-foreground">
+            <div className="bg-muted/20 rounded-lg border border-dashed p-8 text-center">
+              <p className="text-foreground mb-4 font-semibold">
                 Phase 2 도메인 컴포넌트 (개발 예정)
               </p>
-              <ul className="mx-auto max-w-md space-y-2 text-left text-sm text-muted-foreground">
+              <ul className="text-muted-foreground mx-auto max-w-md space-y-2 text-left text-sm">
                 {/* TODO: Phase 3+ 구현 시 실제 컴포넌트로 교체 */}
                 <li className="flex items-center gap-2">
                   <span className="text-muted-foreground">○</span>

@@ -261,7 +261,7 @@ export function AuctionForm({
       {/* ===== 0. 이용 제한 안내 (ISSUE-004: 누적 패널티) ===== */}
       {restricted && (
         <div
-          className="rounded-md border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+          className="border-destructive/40 bg-destructive/10 text-destructive rounded-md border px-4 py-3 text-sm"
           role="alert"
           aria-live="polite"
         >
@@ -308,7 +308,7 @@ export function AuctionForm({
               {index === 0 && (
                 <Badge
                   variant="default"
-                  className="pointer-events-none absolute left-1 top-1 text-xs"
+                  className="pointer-events-none absolute top-1 left-1 text-xs"
                 >
                   대표
                 </Badge>
@@ -319,7 +319,7 @@ export function AuctionForm({
                 type="button"
                 onClick={() => removeImage(index)}
                 aria-label={`상품 이미지 ${index + 1} 제거`}
-                className="absolute right-1 top-1 inline-flex size-5 items-center justify-center rounded-full bg-foreground/70 text-background transition-colors hover:bg-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="bg-foreground/70 text-background hover:bg-foreground focus-visible:ring-ring absolute top-1 right-1 inline-flex size-5 items-center justify-center rounded-full transition-colors focus-visible:ring-2 focus-visible:outline-none"
               >
                 <X className="size-3" aria-hidden="true" />
               </button>
@@ -333,10 +333,10 @@ export function AuctionForm({
               onClick={() => fileInputRef.current?.click()}
               className={cn(
                 "w-full overflow-hidden rounded-md transition-colors",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
+                "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:outline-none",
                 images.length === 0
-                  ? "border-2 border-dashed border-muted-foreground hover:border-ring"
-                  : "border border-dashed border-input hover:border-ring"
+                  ? "border-muted-foreground hover:border-ring border-2 border-dashed"
+                  : "border-input hover:border-ring border border-dashed"
               )}
               aria-label={
                 images.length === 0
@@ -353,7 +353,7 @@ export function AuctionForm({
         </div>
 
         {/* 이미지 등록 안내 텍스트 */}
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           첫 번째 이미지가 대표 이미지로 사용됩니다. 최대 6장까지 등록
           가능합니다.
         </p>
@@ -361,7 +361,7 @@ export function AuctionForm({
         {/* 선택 검증 안내(거부/초과) */}
         {imageNotice && (
           <p
-            className="text-xs font-medium text-destructive"
+            className="text-destructive text-xs font-medium"
             role="alert"
             aria-live="polite"
           >
@@ -386,7 +386,7 @@ export function AuctionForm({
         {errors.title && (
           <p
             id="auction-title-error"
-            className="text-xs font-medium text-destructive"
+            className="text-destructive text-xs font-medium"
             role="alert"
           >
             {errors.title}
@@ -427,7 +427,7 @@ export function AuctionForm({
           </SelectContent>
         </Select>
         {errors.category && (
-          <p className="text-xs font-medium text-destructive" role="alert">
+          <p className="text-destructive text-xs font-medium" role="alert">
             {errors.category}
           </p>
         )}
@@ -453,7 +453,7 @@ export function AuctionForm({
           </SelectContent>
         </Select>
         {errors.region && (
-          <p className="text-xs font-medium text-destructive" role="alert">
+          <p className="text-destructive text-xs font-medium" role="alert">
             {errors.region}
           </p>
         )}
@@ -479,7 +479,7 @@ export function AuctionForm({
           </SelectContent>
         </Select>
         {errors.condition && (
-          <p className="text-xs font-medium text-destructive" role="alert">
+          <p className="text-destructive text-xs font-medium" role="alert">
             {errors.condition}
           </p>
         )}
@@ -498,7 +498,7 @@ export function AuctionForm({
           aria-invalid={errors.startPrice !== undefined}
         />
         {errors.startPrice && (
-          <p className="text-xs font-medium text-destructive" role="alert">
+          <p className="text-destructive text-xs font-medium" role="alert">
             {errors.startPrice}
           </p>
         )}
@@ -518,11 +518,11 @@ export function AuctionForm({
           aria-describedby="buy-now-hint"
         />
         {/* 즉시구매가 입력 정적 힌트 */}
-        <p id="buy-now-hint" className="text-xs text-muted-foreground">
+        <p id="buy-now-hint" className="text-muted-foreground text-xs">
           즉시구매가는 시작가보다 높아야 합니다.
         </p>
         {errors.buyNowPrice && (
-          <p className="text-xs font-medium text-destructive" role="alert">
+          <p className="text-destructive text-xs font-medium" role="alert">
             {errors.buyNowPrice}
           </p>
         )}
@@ -546,9 +546,9 @@ export function AuctionForm({
           </SelectContent>
         </Select>
         {/* 선택값 기준 예상 마감 시각 안내 */}
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           등록 시점부터 선택한 시간 후 마감됩니다. 예상 마감:{" "}
-          <span className="font-medium text-foreground">
+          <span className="text-foreground font-medium">
             {formatExpectedEndAt(Number(durationHours))}
           </span>
         </p>
@@ -557,7 +557,7 @@ export function AuctionForm({
       {/* ===== 10. 제출 실패 안내 ===== */}
       {submitError && (
         <p
-          className="text-sm font-medium text-destructive"
+          className="text-destructive text-sm font-medium"
           role="alert"
           aria-live="polite"
         >
@@ -569,11 +569,11 @@ export function AuctionForm({
       {partialResult ? (
         // 상품은 등록됨 + 일부 이미지 실패 → 중복 등록 방지 위해 상세 이동 링크만 제공
         <div
-          className="space-y-3 rounded-md border bg-muted/40 px-4 py-3"
+          className="bg-muted/40 space-y-3 rounded-md border px-4 py-3"
           role="status"
           aria-live="polite"
         >
-          <p className="text-sm text-foreground">
+          <p className="text-foreground text-sm">
             상품이 등록되었습니다. 다만 이미지 {partialResult.failedCount}장
             업로드에 실패했습니다.
           </p>

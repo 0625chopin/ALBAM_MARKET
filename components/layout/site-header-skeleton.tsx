@@ -18,13 +18,13 @@ const NAV_ITEMS = [
 
 export function SiteHeaderSkeleton() {
   return (
-    <header className="flex h-16 w-full justify-center border-b border-b-foreground/10">
+    <header className="border-b-foreground/10 flex h-16 w-full justify-center border-b">
       <div className="flex w-full max-w-5xl items-center justify-between p-3 px-5 text-sm">
         {/* 좌측: 브랜드 + 네비게이션 (SiteHeader와 동일 레이아웃) */}
         <div className="flex items-center gap-6">
           <Link
             href="/"
-            className="font-bold text-foreground hover:text-foreground/80"
+            className="text-foreground hover:text-foreground/80 font-bold"
           >
             알밤마켓
           </Link>
@@ -34,7 +34,7 @@ export function SiteHeaderSkeleton() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "text-muted-foreground transition-colors hover:text-foreground"
+                  "text-muted-foreground hover:text-foreground transition-colors"
                 )}
               >
                 {item.label}

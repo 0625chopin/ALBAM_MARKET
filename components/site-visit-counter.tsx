@@ -44,9 +44,9 @@ export function SiteVisitCounter({
   }, [counterKey]);
 
   return (
-    <span className="text-sm text-muted-foreground">
+    <span className="text-muted-foreground text-sm">
       누적 방문{" "}
-      <span className="font-semibold tabular-nums text-foreground">
+      <span className="text-foreground font-semibold tabular-nums">
         {count.toLocaleString("ko-KR")}
       </span>
     </span>

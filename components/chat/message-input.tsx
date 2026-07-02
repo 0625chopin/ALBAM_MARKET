@@ -29,7 +29,7 @@ export function MessageInput({ onSend }: MessageInputProps) {
 
   return (
     <form
-      className="flex items-center gap-2 border-t bg-background px-4 py-3"
+      className="bg-background flex items-center gap-2 border-t px-4 py-3"
       onSubmit={handleSubmit}
     >
       {/* 메시지 텍스트 입력 필드 */}

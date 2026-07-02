@@ -26,7 +26,7 @@ export default async function ProfilePage() {
       <main className="flex flex-1 flex-col">
         <Container className="py-10">
           {/* 페이지 제목 */}
-          <h1 className="mb-6 text-2xl font-bold text-foreground">내 프로필</h1>
+          <h1 className="text-foreground mb-6 text-2xl font-bold">내 프로필</h1>
 
           {/* 430px 모바일 프레임 기준 콘텐츠 영역 */}
           <div className="mx-auto max-w-[430px] space-y-4">

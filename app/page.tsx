@@ -74,10 +74,10 @@ export default async function Home({
           {/* 홈 헤더 — 선택 상태에 맞는 제목 + 누적 방문 수 */}
           <div className="mb-4 flex items-start justify-between gap-4">
             <div className="space-y-1">
-              <h1 className="text-xl font-bold text-foreground">
+              <h1 className="text-foreground text-xl font-bold">
                 {heading.title}
               </h1>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 {heading.description}
               </p>
             </div>

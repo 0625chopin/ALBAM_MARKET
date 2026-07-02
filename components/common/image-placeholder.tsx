@@ -21,7 +21,7 @@ export function ImagePlaceholder({
       role="img"
       aria-label={label}
       className={cn(
-        "flex items-center justify-center bg-muted text-muted-foreground",
+        "bg-muted text-muted-foreground flex items-center justify-center",
         className
       )}
     >

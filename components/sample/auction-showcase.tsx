@@ -40,11 +40,11 @@ export default function AuctionShowcase() {
   return (
     <section id="auctions" className="mb-16 scroll-mt-20">
       {/* 섹션 제목 */}
-      <h2 className="mb-6 text-2xl font-bold text-foreground">경매 카드</h2>
-      <p className="mb-6 text-sm text-muted-foreground">
+      <h2 className="text-foreground mb-6 text-2xl font-bold">경매 카드</h2>
+      <p className="text-muted-foreground mb-6 text-sm">
         홈 화면 2열 그리드에서 사용하는 경매 상품 카드입니다. 상태 배지(경매중 ·
         낙찰 · 유찰 · 내림)와 남은 시간 표시를 확인하세요. 카드 클릭 시{" "}
-        <code className="rounded bg-muted px-1 font-mono text-xs">
+        <code className="bg-muted rounded px-1 font-mono text-xs">
           /auctions/[id]
         </code>{" "}
         상세 페이지로 이동합니다.
@@ -53,7 +53,7 @@ export default function AuctionShowcase() {
       <div className="space-y-8">
         {/* ===== 상태별 개별 카드 전시 ===== */}
         <div className="rounded-lg border p-6">
-          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          <h3 className="text-muted-foreground mb-4 text-sm font-semibold tracking-wider uppercase">
             AuctionCard — 상태별 (active · won · failed)
           </h3>
           {/* 2열 그리드로 개별 카드 비교 전시 */}
@@ -66,7 +66,7 @@ export default function AuctionShowcase() {
 
         {/* ===== AuctionGrid 전체 목록 전시 ===== */}
         <div className="rounded-lg border p-6">
-          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          <h3 className="text-muted-foreground mb-4 text-sm font-semibold tracking-wider uppercase">
             AuctionGrid — 전체 Mock 목록 (6건)
           </h3>
           <AuctionGrid auctions={mockAuctionSummaries} />
@@ -74,19 +74,19 @@ export default function AuctionShowcase() {
 
         {/* ===== 내 상품 상태 필터 전시 (F0?? 내 상품) ===== */}
         <div className="rounded-lg border p-6">
-          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          <h3 className="text-muted-foreground mb-4 text-sm font-semibold tracking-wider uppercase">
             AuctionStatusFilter — 내 상품 필터 (전체/경매중/낙찰/유찰/내림/완료)
           </h3>
-          <p className="mb-4 text-sm text-muted-foreground">
-            <code className="rounded bg-muted px-1 font-mono text-xs">
+          <p className="text-muted-foreground mb-4 text-sm">
+            <code className="bg-muted rounded px-1 font-mono text-xs">
               /my-products
             </code>{" "}
             상단 상태 필터입니다. 홈과 동일 컴포넌트를{" "}
-            <code className="rounded bg-muted px-1 font-mono text-xs">
+            <code className="bg-muted rounded px-1 font-mono text-xs">
               basePath
             </code>{" "}
             /{" "}
-            <code className="rounded bg-muted px-1 font-mono text-xs">
+            <code className="bg-muted rounded px-1 font-mono text-xs">
               defaultStatus=&quot;all&quot;
             </code>{" "}
             로 재사용하며, 로그인 사용자에게만 하단 탭이 노출됩니다.
@@ -108,7 +108,7 @@ export default function AuctionShowcase() {
 
         {/* ===== 빈 상태 전시 ===== */}
         <div className="rounded-lg border p-6">
-          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          <h3 className="text-muted-foreground mb-4 text-sm font-semibold tracking-wider uppercase">
             AuctionGrid — 빈 상태 (Empty)
           </h3>
           {/* Phase 3에서 Empty 상태 전용 컴포넌트로 교체 예정 */}
@@ -117,7 +117,7 @@ export default function AuctionShowcase() {
 
         {/* ===== 경매 상세 갤러리 전시 ===== */}
         <div className="overflow-hidden rounded-lg border">
-          <h3 className="border-b px-6 py-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          <h3 className="text-muted-foreground border-b px-6 py-4 text-sm font-semibold tracking-wider uppercase">
             AuctionGallery — 대표 이미지 + 썸네일 스크롤
           </h3>
           {/* 430px 모바일 프레임 시뮬레이션 */}
@@ -131,7 +131,7 @@ export default function AuctionShowcase() {
 
         {/* ===== 경매 상세 정보 전시 ===== */}
         <div className="overflow-hidden rounded-lg border">
-          <h3 className="border-b px-6 py-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          <h3 className="text-muted-foreground border-b px-6 py-4 text-sm font-semibold tracking-wider uppercase">
             AuctionInfo — 가격·상태·메타·마감 정보 (active 샘플)
           </h3>
           <div className="mx-auto max-w-[430px]">
@@ -141,7 +141,7 @@ export default function AuctionShowcase() {
 
         {/* ===== 낙찰/유찰 상태 전시 ===== */}
         <div className="overflow-hidden rounded-lg border">
-          <h3 className="border-b px-6 py-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          <h3 className="text-muted-foreground border-b px-6 py-4 text-sm font-semibold tracking-wider uppercase">
             AuctionInfo — 낙찰(won) 상태 강조 배너
           </h3>
           <div className="mx-auto max-w-[430px]">
@@ -160,7 +160,7 @@ export default function AuctionShowcase() {
 
         {/* ===== 판매자 신뢰 정보 전시 ===== */}
         <div className="overflow-hidden rounded-lg border">
-          <h3 className="border-b px-6 py-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          <h3 className="text-muted-foreground border-b px-6 py-4 text-sm font-semibold tracking-wider uppercase">
             SellerReputation — 판매자 신뢰 카드 (F012)
           </h3>
           {/* 판매자 샘플 여러 개 비교 */}
@@ -181,8 +181,8 @@ export function BidPanelShowcase() {
   return (
     <section id="bid" className="mb-16 scroll-mt-20">
       {/* 섹션 제목 */}
-      <h2 className="mb-6 text-2xl font-bold text-foreground">입찰 패널</h2>
-      <p className="mb-6 text-sm text-muted-foreground">
+      <h2 className="text-foreground mb-6 text-2xl font-bold">입찰 패널</h2>
+      <p className="text-muted-foreground mb-6 text-sm">
         경매 상세 페이지의 입찰 / 즉시구매 패널입니다. 로그인 여부 · 본인 상품
         여부 · 즉시구매가 유무에 따라 4가지 상태로 렌더됩니다. 입찰가
         검증·낙관적 UI·즉시구매 확인 다이얼로그가 동작합니다(T031, Mock). 실제
@@ -192,7 +192,7 @@ export function BidPanelShowcase() {
       <div className="space-y-8">
         {/* ===== 1. 일반 — 즉시구매가 있음 ===== */}
         <div className="overflow-hidden rounded-lg border">
-          <h3 className="border-b px-6 py-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          <h3 className="text-muted-foreground border-b px-6 py-4 text-sm font-semibold tracking-wider uppercase">
             BidPanel — 일반 (로그인 + 즉시구매가 있음)
           </h3>
           <div className="mx-auto max-w-[430px] p-4">
@@ -207,7 +207,7 @@ export function BidPanelShowcase() {
 
         {/* ===== 2. 일반 — 즉시구매가 없음 ===== */}
         <div className="overflow-hidden rounded-lg border">
-          <h3 className="border-b px-6 py-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          <h3 className="text-muted-foreground border-b px-6 py-4 text-sm font-semibold tracking-wider uppercase">
             BidPanel — 일반 (로그인 + 즉시구매가 없음, buyNowPrice=null)
           </h3>
           <div className="mx-auto max-w-[430px] p-4">
@@ -222,7 +222,7 @@ export function BidPanelShowcase() {
 
         {/* ===== 3. 본인 상품 — 입찰 불가 ===== */}
         <div className="overflow-hidden rounded-lg border">
-          <h3 className="border-b px-6 py-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          <h3 className="text-muted-foreground border-b px-6 py-4 text-sm font-semibold tracking-wider uppercase">
             BidPanel — 본인 상품 (isOwner=true)
           </h3>
           <div className="mx-auto max-w-[430px] p-4">
@@ -238,7 +238,7 @@ export function BidPanelShowcase() {
 
         {/* ===== 4. 비로그인 — 로그인 유도 ===== */}
         <div className="overflow-hidden rounded-lg border">
-          <h3 className="border-b px-6 py-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          <h3 className="text-muted-foreground border-b px-6 py-4 text-sm font-semibold tracking-wider uppercase">
             BidPanel — 비로그인 (isLoggedIn=false)
           </h3>
           <div className="mx-auto max-w-[430px] p-4">
@@ -254,7 +254,7 @@ export function BidPanelShowcase() {
 
         {/* ===== 5. 판매자 상품 내리기 (T056) ===== */}
         <div className="overflow-hidden rounded-lg border">
-          <h3 className="border-b px-6 py-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          <h3 className="text-muted-foreground border-b px-6 py-4 text-sm font-semibold tracking-wider uppercase">
             WithdrawProductButton — 판매자 상품 내리기 (본인 + 진행중)
           </h3>
           <div className="mx-auto max-w-[430px] p-4">

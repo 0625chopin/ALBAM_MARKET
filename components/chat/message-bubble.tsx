@@ -27,9 +27,9 @@ export function MessageBubble({ message, isMine }: MessageBubbleProps) {
           "max-w-[75%] rounded-2xl px-3 py-2 text-sm leading-relaxed",
           isMine
             ? // 내 메시지: 우측 꼭지점 약하게, primary 배색
-              "ml-auto rounded-tr-sm bg-primary text-primary-foreground"
+              "bg-primary text-primary-foreground ml-auto rounded-tr-sm"
             : // 상대 메시지: 좌측 꼭지점 약하게, muted 배색
-              "rounded-tl-sm bg-muted text-foreground"
+              "bg-muted text-foreground rounded-tl-sm"
         )}
       >
         {message.content}
@@ -38,7 +38,7 @@ export function MessageBubble({ message, isMine }: MessageBubbleProps) {
       {/* 전송 시각 (HH:MM 형식) */}
       <time
         dateTime={message.createdAt}
-        className="text-[10px] text-muted-foreground"
+        className="text-muted-foreground text-[10px]"
       >
         {formatTime(message.createdAt)}
       </time>

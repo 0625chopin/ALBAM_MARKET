@@ -48,7 +48,7 @@ export function TransactionCard({
           {/* 상품 제목 및 배지 묶음 */}
           <div className="min-w-0 flex-1 space-y-1.5">
             {/* 상품 제목 */}
-            <p className="truncate text-sm font-semibold text-foreground">
+            <p className="text-foreground truncate text-sm font-semibold">
               {product.title}
             </p>
 
@@ -67,14 +67,14 @@ export function TransactionCard({
             </div>
 
             {/* 확정가 */}
-            <p className="text-sm font-bold text-foreground">
+            <p className="text-foreground text-sm font-bold">
               {formatPrice(transaction.finalPrice)}
             </p>
           </div>
         </div>
 
         {/* 상대방 닉네임 */}
-        <p className="mt-2 text-xs text-muted-foreground">
+        <p className="text-muted-foreground mt-2 text-xs">
           {role === "seller" ? "구매자" : "판매자"}: {counterpartNickname}
         </p>
 

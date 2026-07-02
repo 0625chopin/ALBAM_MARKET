@@ -62,7 +62,7 @@ npm run check-all    # lint + format:check + typecheck 일괄 실행
 
 ### UI / 스타일링
 
-- **TailwindCSS v3.4.1** (`tailwind.config.ts`, `postcss.config.mjs`). v4 아님.
+- **TailwindCSS v4** (CSS-first). 설정은 `app/globals.css`의 `@import "tailwindcss"` + `@theme inline`(색상·radius 토큰)에 있으며, `tailwind.config.ts`는 없습니다. PostCSS는 `@tailwindcss/postcss`(`postcss.config.mjs`, autoprefixer는 v4 내장이라 미사용). 다크모드는 `@custom-variant dark (&:is(.dark *))`, 색상 토큰은 oklch 기반. 애니메이션은 `tw-animate-css`(구 `tailwindcss-animate` 대체).
 - shadcn/ui (`components.json`: new-york 스타일, `cssVariables: true`, lucide 아이콘). 컴포넌트는 `components/ui/`.
 - `cn()` 헬퍼는 `lib/utils.ts` (clsx + tailwind-merge).
 - 다크모드: `next-themes` (루트 레이아웃 `app/layout.tsx`의 `ThemeProvider`, `attribute="class"`).
@@ -81,7 +81,7 @@ npm run check-all    # lint + format:check + typecheck 일괄 실행
 | 가이드 문서 서술                          | 실제 프로젝트                                            |
 | ----------------------------------------- | -------------------------------------------------------- |
 | `src/` 디렉터리 구조                      | `src/` 없음. `app/`, `components/`, `lib/`가 루트에 위치 |
-| TailwindCSS v4                            | v3.4.1                                                   |
+| TailwindCSS v4                            | v4 (CSS-first, `@theme` / `tailwind.config.ts` 없음)     |
 | react-hook-form + zod + Server Actions 폼 | 미설치. 폼은 `useState` + Supabase 클라이언트 직접 호출  |
 | `experimental.typedRoutes`                | 미설정                                                   |
 

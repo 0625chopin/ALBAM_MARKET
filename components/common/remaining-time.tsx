@@ -29,7 +29,7 @@ export function RemainingTime({ endsAt, className }: RemainingTimeProps) {
   return (
     <div
       className={cn(
-        "flex items-center gap-1 text-xs text-muted-foreground",
+        "text-muted-foreground flex items-center gap-1 text-xs",
         className
       )}
       aria-label={`마감까지 ${timeText || "계산 중"}`}

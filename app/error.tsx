@@ -20,11 +20,11 @@ export default function Error({ error, reset }: ErrorPageProps) {
   return (
     <div className="flex flex-1 flex-col">
       {/* 서버 의존성 없는 최소 헤더 — 브랜드 링크만 (SiteHeader는 next/headers 의존으로 사용 불가) */}
-      <header className="flex h-16 w-full justify-center border-b border-b-foreground/10">
+      <header className="border-b-foreground/10 flex h-16 w-full justify-center border-b">
         <div className="flex w-full max-w-5xl items-center p-3 px-5 text-sm">
           <Link
             href="/"
-            className="font-bold text-foreground hover:text-foreground/80"
+            className="text-foreground hover:text-foreground/80 font-bold"
           >
             알밤마켓
           </Link>

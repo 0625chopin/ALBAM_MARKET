@@ -298,7 +298,7 @@ export function ProfileEditForm({
           {/* 저장 완료 피드백 */}
           {saved && (
             <p
-              className="text-center text-sm font-medium text-foreground"
+              className="text-foreground text-center text-sm font-medium"
               role="status"
               aria-live="polite"
             >
@@ -309,7 +309,7 @@ export function ProfileEditForm({
           {/* 저장 실패 피드백 */}
           {saveError && (
             <p
-              className="text-center text-sm font-medium text-destructive"
+              className="text-destructive text-center text-sm font-medium"
               role="alert"
             >
               {saveError}

@@ -33,9 +33,9 @@ export function AuctionCard({
       href={`/auctions/${auction.id}`}
       className={cn(
         // 기본 카드 스타일 — 시맨틱 색상 변수만 사용
-        "group flex flex-col overflow-hidden rounded-lg border bg-card",
+        "group bg-card flex flex-col overflow-hidden rounded-lg border",
         // hover 시 약한 섀도우 및 테두리 강조
-        "transition-all hover:border-foreground/20 hover:shadow-sm",
+        "hover:border-foreground/20 transition-all hover:shadow-sm",
         className
       )}
       aria-label={`${auction.title} — 현재가 ${formatPrice(auction.currentPrice)}`}
@@ -62,7 +62,7 @@ export function AuctionCard({
         )}
 
         {/* 상태 배지 — 이미지 우상단에 절대 배치 */}
-        <div className="absolute right-1.5 top-1.5">
+        <div className="absolute top-1.5 right-1.5">
           <StatusBadge
             kind="product"
             status={auction.status}
@@ -74,20 +74,20 @@ export function AuctionCard({
       {/* ===== 카드 본문: 제목·가격·메타 ===== */}
       <div className="flex flex-1 flex-col gap-1 p-2">
         {/* 제목: 2줄까지 표시 후 말줄임 */}
-        <p className="line-clamp-2 text-sm font-medium leading-snug text-foreground">
+        <p className="text-foreground line-clamp-2 text-sm leading-snug font-medium">
           {auction.title}
         </p>
 
         {/* 현재 최고가 + 시작가(보조) + 즉시구매가(있을 때만) */}
         <div className="space-y-0.5">
-          <p className="text-sm font-bold text-foreground">
+          <p className="text-foreground text-sm font-bold">
             {formatPrice(auction.currentPrice)}
           </p>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             시작가 {formatPrice(auction.startPrice)}
           </p>
           {auction.buyNowPrice !== null && (
-            <p className="text-xs font-medium text-primary">
+            <p className="text-primary text-xs font-medium">
               즉시구매 {formatPrice(auction.buyNowPrice)}
             </p>
           )}
@@ -97,7 +97,7 @@ export function AuctionCard({
         <div className="mt-auto flex items-center justify-between gap-1 pt-1">
           {/* 직거래 지역 */}
           <span
-            className="flex items-center gap-0.5 text-xs text-muted-foreground"
+            className="text-muted-foreground flex items-center gap-0.5 text-xs"
             aria-label={`거래 지역: ${auction.region}`}
           >
             <MapPin className="size-3 shrink-0" aria-hidden="true" />

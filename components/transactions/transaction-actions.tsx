@@ -92,7 +92,7 @@ export function TransactionActions({
       {/* 액션 결과 상태 배지 — 액션 후 갱신된 상태 노출 */}
       {lastAction && (
         <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground">변경된 상태</span>
+          <span className="text-muted-foreground text-xs">변경된 상태</span>
           <StatusBadge
             kind="transaction"
             status={status}
@@ -149,7 +149,7 @@ export function TransactionActions({
       {/* 거래완료 결과 안내 */}
       {lastAction === "completed" && (
         <p
-          className="text-xs text-muted-foreground"
+          className="text-muted-foreground text-xs"
           role="status"
           aria-live="polite"
         >
@@ -160,11 +160,11 @@ export function TransactionActions({
       {/* 낙찰 포기 결과 + 차순위 연쇄 이양 안내 (ISSUE-004/007) */}
       {lastAction === "abandoned" && (
         <div
-          className="rounded-md border bg-muted/40 px-3 py-2.5 text-xs text-muted-foreground"
+          className="bg-muted/40 text-muted-foreground rounded-md border px-3 py-2.5 text-xs"
           role="status"
           aria-live="polite"
         >
-          <p className="font-medium text-foreground">낙찰을 포기했습니다.</p>
+          <p className="text-foreground font-medium">낙찰을 포기했습니다.</p>
           <p className="mt-1">
             차순위 입찰자에게 그의 입찰가로 낙찰 기회가 즉시
             이양되었습니다(차순위가 없으면 유찰). 포기 패널티가 기록되며,
@@ -175,7 +175,7 @@ export function TransactionActions({
 
       {/* 액션 처리 실패 안내 */}
       {actionError && (
-        <p className="text-xs font-medium text-destructive" role="alert">
+        <p className="text-destructive text-xs font-medium" role="alert">
           {actionError}
         </p>
       )}

@@ -65,7 +65,7 @@ export function AuctionStatusFilter({
             aria-selected={isActive}
             className={cn(
               "shrink-0 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none",
               isActive
                 ? "border-primary bg-primary text-primary-foreground"
                 : "border-input bg-background text-muted-foreground hover:bg-muted"

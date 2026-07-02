@@ -94,12 +94,12 @@ export function InAppBrowserGuard() {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/95 p-6 text-center">
+    <div className="bg-background/95 fixed inset-0 z-[100] flex items-center justify-center p-6 text-center">
       <div className="flex max-w-sm flex-col items-center gap-4">
-        <h2 className="text-lg font-bold text-foreground">
+        <h2 className="text-foreground text-lg font-bold">
           외부 브라우저에서 열어주세요
         </h2>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           카카오톡·네이버 등 인앱 브라우저에서는 로그인이 정상적으로 유지되지
           않습니다. Chrome 또는 Safari 등 기본 브라우저로 열어주세요.
         </p>
@@ -107,12 +107,12 @@ export function InAppBrowserGuard() {
         {info.isAndroid ? (
           <button
             onClick={handleOpenExternal}
-            className="w-full rounded-md bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground"
+            className="bg-primary text-primary-foreground w-full rounded-md px-4 py-3 text-sm font-semibold"
           >
             외부 브라우저로 열기
           </button>
         ) : (
-          <div className="w-full rounded-md bg-muted p-3 text-left text-xs text-muted-foreground">
+          <div className="bg-muted text-muted-foreground w-full rounded-md p-3 text-left text-xs">
             우측 상단 <span className="font-semibold">···</span> 또는 공유
             아이콘을 눌러 <span className="font-semibold">Safari로 열기</span>를
             선택하세요.
@@ -121,7 +121,7 @@ export function InAppBrowserGuard() {
 
         <button
           onClick={handleCopy}
-          className="w-full rounded-md border border-border px-4 py-3 text-sm font-medium text-foreground"
+          className="border-border text-foreground w-full rounded-md border px-4 py-3 text-sm font-medium"
         >
           {copied ? "주소를 복사했어요" : "주소 복사하기"}
         </button>

@@ -14,8 +14,8 @@ export default function ProfileShowcase() {
   return (
     <section id="profile" className="mb-16 scroll-mt-20">
       {/* 섹션 제목 */}
-      <h2 className="mb-6 text-2xl font-bold text-foreground">프로필</h2>
-      <p className="mb-6 text-sm text-muted-foreground">
+      <h2 className="text-foreground mb-6 text-2xl font-bold">프로필</h2>
+      <p className="text-muted-foreground mb-6 text-sm">
         사용자 프로필 카드와 프로필 수정 폼 컴포넌트입니다. 430px 모바일 프레임
         기준으로 설계되었습니다.
       </p>
@@ -23,10 +23,10 @@ export default function ProfileShowcase() {
       <div className="space-y-8">
         {/* ===== ProfileCard 전시 (여러 프로필) ===== */}
         <div className="rounded-lg border p-6">
-          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          <h3 className="text-muted-foreground mb-4 text-sm font-semibold tracking-wider uppercase">
             ProfileCard — 프로필 카드 (읽기 전용)
           </h3>
-          <p className="mb-4 text-xs text-muted-foreground">
+          <p className="text-muted-foreground mb-4 text-xs">
             판매자/구매자 레벨, 평균 별점을 역할별로 표시합니다. (ISSUE-005
             확정: 레벨 산정식 calc_reputation_level. 아래 쇼케이스는 Mock
             고정값)
@@ -52,10 +52,10 @@ export default function ProfileShowcase() {
 
         {/* ===== ProfileEditForm 전시 ===== */}
         <div className="rounded-lg border p-6">
-          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          <h3 className="text-muted-foreground mb-4 text-sm font-semibold tracking-wider uppercase">
             ProfileEditForm — 프로필 수정 폼 (내 프로필 전용)
           </h3>
-          <p className="mb-4 text-xs text-muted-foreground">
+          <p className="text-muted-foreground mb-4 text-xs">
             닉네임, 직거래 지역, 아바타 변경 UI를 포함합니다. 닉네임 검증과 저장
             피드백이 동작합니다(T031, Mock 시뮬레이션). 아바타 업로드·실제
             저장은 Phase 5에서 연결됩니다.

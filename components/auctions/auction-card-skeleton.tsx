@@ -15,7 +15,7 @@ export function AuctionCardSkeleton({ className }: AuctionCardSkeletonProps) {
     <div
       className={cn(
         // AuctionCard와 동일한 카드 컨테이너 스타일
-        "flex flex-col overflow-hidden rounded-lg border bg-card",
+        "bg-card flex flex-col overflow-hidden rounded-lg border",
         className
       )}
       aria-hidden="true"

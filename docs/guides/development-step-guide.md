@@ -89,7 +89,7 @@ export function PostCard({ post }: { post: Post }) {
   return (
     <article className="rounded-lg border p-4">
       <h3 className="font-semibold">{post.title}</h3>
-      <p className="text-sm text-muted-foreground">{post.authorName}</p>
+      <p className="text-muted-foreground text-sm">{post.authorName}</p>
     </article>
   );
 }

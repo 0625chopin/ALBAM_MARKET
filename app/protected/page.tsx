@@ -22,7 +22,7 @@ export default function ProtectedPage() {
     <div className="flex w-full flex-1 flex-col gap-12">
       {/* 인증 안내 배너 */}
       <div className="w-full">
-        <div className="flex items-center gap-3 rounded-md bg-accent p-3 px-5 text-sm text-foreground">
+        <div className="bg-accent text-foreground flex items-center gap-3 rounded-md p-3 px-5 text-sm">
           <InfoIcon size="16" strokeWidth={2} />이 페이지는 인증된 사용자만
           접근할 수 있습니다.
         </div>

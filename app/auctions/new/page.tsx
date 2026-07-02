@@ -49,8 +49,8 @@ export default async function AuctionNewPage() {
         <Container className="py-10">
           {/* 페이지 헤더 */}
           <div className="mb-6 space-y-1">
-            <h1 className="text-2xl font-bold text-foreground">경매 등록</h1>
-            <p className="text-sm text-muted-foreground">
+            <h1 className="text-foreground text-2xl font-bold">경매 등록</h1>
+            <p className="text-muted-foreground text-sm">
               판매할 상품 정보를 입력하고 경매를 시작하세요.
             </p>
           </div>

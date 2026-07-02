@@ -42,7 +42,7 @@ export function BottomNav({ showMyProducts = false }: BottomNavProps) {
 
   return (
     <nav
-      className="sticky bottom-0 z-50 border-t border-t-foreground/10 bg-background"
+      className="border-t-foreground/10 bg-background sticky bottom-0 z-50 border-t"
       aria-label="주요 메뉴"
     >
       <ul className="flex items-stretch justify-around">
