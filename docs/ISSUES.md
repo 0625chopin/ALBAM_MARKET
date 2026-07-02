@@ -13,86 +13,102 @@
 
 ## 이슈 목록
 
-| ID        | 상태     | 분류   | 제목                                                                        | 비고                                                      |
-| --------- | -------- | ------ | --------------------------------------------------------------------------- | --------------------------------------------------------- |
-| ISSUE-009 | 🟢 DONE  | UI     | 모바일 헤더 메뉴(드로어/햄버거) 미구현 → 하단 BottomNav로 대체              | T033 확인, 하단 탭바가 모바일 내비 제공                   |
-| ISSUE-010 | 🔴 OPEN  | 국제화 | `app/layout.tsx` lang 속성 현재 "en" — 한국어 앱에서 "ko"로 변경 여부 결정  | 다국어 MVP 이후이므로 변경 시 ISSUES 기록                 |
-| ISSUE-011 | 🟢 DONE  | 인프라 | cacheComponents 동적 라우트 prerender — Suspense 경계 패턴                  | T012에서 해결, Phase 2 참고 패턴                          |
-| ISSUE-012 | 🟡 DEFER | 데이터 | 타입 네이밍 camelCase 확정 → 실DB(snake_case) 매핑 레이어 필요              | Phase 5(T051~) 조회부에서 처리                            |
-| ISSUE-013 | 🟢 DONE  | 인프라 | RSC에 onClick 등 이벤트 핸들러 전달 시 500 에러 — 정적/클라이언트 분리      | T025에서 해결, Phase 3 인터랙션 참고                      |
-| ISSUE-014 | 🟡 DEFER | 데이터 | `profiles.nickname` NOT NULL 제약 연기 → 회원가입 metadata 연동 후 적용     | T040-A, Phase 5(T050)에서 NOT NULL 강제                   |
-| ISSUE-015 | 🔴 OPEN  | 데이터 | `products`에 상품 설명(description) 컬럼 부재 → 등록 폼의 설명 미저장       | T052 발견, 컬럼 추가 + 타입/조회 반영 필요                |
-| ISSUE-016 | 🟡 DEFER | 평판   | 평점 코멘트(comment) UI 입력되나 미저장                                     | T060 발견, `ratings.comment`·`submit_rating` 인자 부재    |
-| ISSUE-017 | 🟢 DONE  | 인증   | 미들웨어 비로그인 보호 경로 복원(Phase 2 임시 허용 제거)                    | T062에서 해결                                             |
-| ISSUE-018 | 🟡 DEFER | 인프라 | 스타터킷 잔재(groups/group_members + group RPC 4종) anon 노출               | T062 advisor(WARN), MVP 범위 외 정리 권장                 |
-| ISSUE-019 | 🟡 DEFER | 성능   | FK 커버링 인덱스 미생성 9건 (advisor INFO)                                  | T064 performance advisor, 운영 규모 시 추가               |
-| ISSUE-001 | 🟡 DEFER | 경매   | 기본 낙찰시간 36시간 상수 → 추후 DB 관리                                    | **사용자 명시 요청**                                      |
-| ISSUE-002 | 🔴 OPEN  | 거래   | 거래완료 자동완료 대기시간 결정 및 DB화                                     | 값 제안 필요                                              |
-| ISSUE-003 | 🔴 OPEN  | 입찰   | 최소 입찰 증가폭(입찰 단위) 정책                                            | 정액/정률/구간별 검토                                     |
-| ISSUE-004 | 🔴 OPEN  | 평판   | 낙찰 포기 패널티 정책(점수/기준/제재)                                       | 신뢰도/레벨 영향 범위                                     |
-| ISSUE-005 | 🔴 OPEN  | 평판   | 판매자/구매자 레벨 산정식                                                   | 건수+별점 가중치, 레벨 임계값                             |
-| ISSUE-006 | 🔴 OPEN  | 상품   | 입찰 후 상품 내리기 제한 강도                                               | 완전 불가 vs 패널티 허용                                  |
-| ISSUE-007 | 🔴 OPEN  | 경매   | 연쇄 이양 시 차순위 수락 대기시간 적용 여부                                 | 미적용 시 즉시 이양                                       |
-| ISSUE-008 | 🟡 DEFER | 인프라 | 경매 자동 종료/자동완료 실행 메커니즘 → **pg_cron + DB 함수 확정**          | T054 자동종료 구현, 자동완료는 T058 예정                  |
-| ISSUE-020 | 🟢 DONE  | 데이터 | 타인 프로필 `/profile/[id]` 실데이터 전환 (Mock "김알밤" → Supabase)        | 2026-06-29 해결, `fetchProfile`+`fetchProfileScores` 교체 |
-| ISSUE-021 | 🟡 DEFER | 평판   | 평점 제출 시 브라우저 콘솔 `submit_rating` 400 1건 관측(데이터는 정상 저장) | 회귀테스트 발견, DB 에러 없음 — 중복요청/멱등성 추정      |
+| ID        | 상태     | 분류   | 제목                                                                        | 비고                                                                 |
+| --------- | -------- | ------ | --------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| ISSUE-009 | 🟢 DONE  | UI     | 모바일 헤더 메뉴(드로어/햄버거) 미구현 → 하단 BottomNav로 대체              | T033 확인, 하단 탭바가 모바일 내비 제공                              |
+| ISSUE-010 | 🟢 DONE  | 국제화 | `app/layout.tsx` lang 속성 "en" → "ko" 적용                                 | MVP 한국어 고정(2026-07-02), 다국어는 Phase 7(T074)                  |
+| ISSUE-011 | 🟢 DONE  | 인프라 | cacheComponents 동적 라우트 prerender — Suspense 경계 패턴                  | T012에서 해결, Phase 2 참고 패턴                                     |
+| ISSUE-012 | 🟢 DONE  | 데이터 | 타입 네이밍 camelCase 확정 → 실DB(snake_case) 매핑 레이어 필요              | `lib/queries/_map.ts` 매핑 레이어로 구현(컴포넌트 무수정)            |
+| ISSUE-013 | 🟢 DONE  | 인프라 | RSC에 onClick 등 이벤트 핸들러 전달 시 500 에러 — 정적/클라이언트 분리      | T025에서 해결, Phase 3 인터랙션 참고                                 |
+| ISSUE-014 | 🟢 DONE  | 데이터 | `profiles.nickname` NOT NULL 제약 적용                                      | 트리거 폴백 보강 + 가입 폼 닉네임 입력 + NOT NULL (2026-07-02)       |
+| ISSUE-015 | 🟢 DONE  | 데이터 | `products`에 상품 설명(description) 컬럼 부재 → 등록 폼의 설명 미저장       | 컬럼 추가 + 타입/매퍼/폼/상세표시 반영 완료                          |
+| ISSUE-016 | 🟢 DONE  | 평판   | 평점 코멘트(comment) UI 입력되나 미저장                                     | `ratings.comment`+`submit_rating` p_comment 인자 추가 완료           |
+| ISSUE-017 | 🟢 DONE  | 인증   | 미들웨어 비로그인 보호 경로 복원(Phase 2 임시 허용 제거)                    | T062에서 해결                                                        |
+| ISSUE-018 | 🟢 DONE  | 인프라 | 스타터킷 잔재(groups/group_members + group RPC 4종) anon 노출 제거          | 테이블·함수·트리거 DROP + get_policy_int anon 노출 차단 (2026-07-02) |
+| ISSUE-019 | 🟢 DONE  | 성능   | FK 커버링 인덱스 미생성 → 도메인 FK 8건 인덱스 추가                         | unindexed_foreign_keys advisor 0 (2026-07-02)                        |
+| ISSUE-001 | 🟢 DONE  | 경매   | 기본 낙찰시간 상수 → DB 공통코드 이관(단일값)                               | codes.policy로 이관, 컬럼 DEFAULT 자동설정                           |
+| ISSUE-002 | 🟢 DONE  | 거래   | 거래완료 자동완료 대기시간 결정 (저장위치는 DB 이관됨)                      | 기본 24h 확정, 24~168h DB 조정 가능(RPC 클램프)                      |
+| ISSUE-003 | 🟢 DONE  | 입찰   | 최소 입찰 증가폭 방식(정액/정률/구간) (저장위치는 DB 이관됨)                | 정액 방식 확정, 값 1,000원                                           |
+| ISSUE-004 | 🟢 DONE  | 평판   | 낙찰 포기 패널티 정책(점수/기준/제재)                                       | 이용 제한 확정: 30일 3회 누적 시 경매 등록 차단(트리거)              |
+| ISSUE-005 | 🟢 DONE  | 평판   | 판매자/구매자 레벨 산정식                                                   | 현재 산정식 확정(가중치 조정은 함수 교체로 대응)                     |
+| ISSUE-006 | 🟢 DONE  | 상품   | 입찰 후 상품 내리기 제한 강도                                               | 패널티 후 허용 확정(입찰 시 penalties 기록, 004 누적 대상)           |
+| ISSUE-007 | 🟢 DONE  | 경매   | 연쇄 이양 시 차순위 수락 대기시간 적용 여부                                 | 즉시 이양 확정(대기시간 미적용)                                      |
+| ISSUE-008 | 🟢 DONE  | 인프라 | 경매 자동 종료/자동완료 실행 메커니즘 → **pg_cron + DB 함수**               | T054/T058 구현, cron 2종(close/auto-complete) active                 |
+| ISSUE-020 | 🟢 DONE  | 데이터 | 타인 프로필 `/profile/[id]` 실데이터 전환 (Mock "김알밤" → Supabase)        | 2026-06-29 해결, `fetchProfile`+`fetchProfileScores` 교체            |
+| ISSUE-021 | 🟡 DEFER | 평판   | 평점 제출 시 브라우저 콘솔 `submit_rating` 400 1건 관측(데이터는 정상 저장) | 모달 가드 확인 완료 — 재제출(UNIQUE)/스키마캐시 추정, 재현 불가      |
+| ISSUE-022 | 🟡 DEFER | 데이터 | 고아 `product_images.url` → Storage 객체 부재로 `/_next/image` 400          | 코드 무관(테스트 데이터), 온에러 폴백 UI로 개선 가능                 |
 
 ---
 
-## ISSUE-001 · 기본 낙찰시간 36시간 상수 → 추후 DB 관리 🟡 DEFER
+## ISSUE-001 · 기본 낙찰시간 36시간 상수 → 추후 DB 관리 🟢 DONE(단일값 이관)
 
 - **배경**: 경매 진행 시간(`auction_ends_at` 계산 기준)을 현재는 **상수 36시간**으로 고정한다.
-- **현재 처리**: 코드 상수(`const DEFAULT_AUCTION_DURATION_HOURS = 36`)로 관리.
 - **개선 방향**: 추후 **DB 데이터(설정 테이블 또는 카테고리별 정책)**로 이관하여 운영 중 변경 가능하도록 한다.
+- **갱신(공통코드 이관)**: 전역 단일값을 DB 공통코드 `codes.policy.default_auction_duration_hours`로 이관 완료. `products.auction_ends_at` 컬럼 DEFAULT가 `now() + N시간`(정책값 조회 `get_policy_int`)으로 자동 설정하며, 클라이언트(`createAuction`)의 36h 계산은 제거됨. 운영 중 DB 값만 바꾸면 반영된다. (※ "카테고리별 차등 정책"은 미도입 — 필요 시 별도 확장)
 - **요청 출처**: 사용자 요구사항 원본에 명시됨 ([REQUIREMENTS_O.md](./requirements/REQUIREMENTS_O.md)).
 
-## ISSUE-002 · 거래완료 자동완료 대기시간 🔴 OPEN
+## ISSUE-002 · 거래완료 자동완료 대기시간 🟢 DONE(기본 24h 확정, DB 조정 가능)
 
 - **배경**: 구매자가 거래완료 버튼을 누르지 않을 때 일정 시간 후 **자동완료**(판매자 보호)한다.
-- **결정 필요**: 자동완료 대기 기간(예: 거래 시작 후 N일?) 기준 시점과 값.
-- **개선 방향**: 상수로 시작 후 DB 정책값으로 이관 (ISSUE-001과 동일 패턴).
+- **결정(확정, 사용자)**: 기본 대기시간을 **24시간**으로 확정. 운영 중 `codes.policy.auto_complete_wait_hours` DB 값으로 **24~168시간(1주)** 범위 내 조정 가능하도록 유지한다.
+- **반영**:
+  - DB 공통코드 `codes.policy.auto_complete_wait_hours` `num_value` 72 → **24**.
+  - RPC `auto_complete_transactions`가 `get_policy_int`로 조회한 값을 **`greatest(24, least(168, ...))` 클램프**로 감싸 범위 밖 값을 방어(폴백 24h). 마이그레이션 `resolve_issue_002_auto_complete_wait`.
+  - 클라이언트 폴백 상수 `AUTO_COMPLETE_WAIT_HOURS`(`lib/constants.ts`) 72 → 24 동기화.
+- **기준 시각(참고)**: 카운트 기준은 거래 `created_at`(낙찰 성립 시점)이다. 향후 "거래완료 확인 대기 시작 시점"으로 세분화가 필요하면 별도 이슈로 다룬다.
 
-## ISSUE-003 · 최소 입찰 증가폭(입찰 단위) 🔴 OPEN
+## ISSUE-003 · 최소 입찰 증가폭(입찰 단위) 🟢 DONE(정액 방식 1,000원 확정)
 
 - **배경**: 입찰가는 현재가 + 최소 증가폭 이상이어야 한다.
-- **결정 필요**: 정액(예: +1,000원), 정률(예: +5%), 가격 구간별 차등 중 정책 선택.
-- **Phase 3 임시 처리(T031)**: `bid-panel`의 입찰가 검증을 임시 정액 `MIN_BID_INCREMENT(1,000원)` 기준으로 동작. 정책 확정 시 `minBidPrice` 산정식만 교체.
+- **결정(확정, 사용자)**: **정액 방식**으로 확정하고 값은 **1,000원**을 유지한다. (정률/구간 방식은 채택하지 않음)
+- **반영**: 값 변경이 없으므로 DB(`codes.policy.min_bid_increment=1000`)·RPC(`place_bid`)·클라이언트 검증식 모두 무변경. 코드 주석의 "미결정" 표기만 확정 문구로 갱신(`lib/constants.ts`, `components/auctions/bid-panel.tsx`).
+- **구조(유지)**: DB 공통코드 `codes.policy.min_bid_increment` 단일 소스 → 서버 RPC `place_bid`가 `get_policy_int`로 최종 검증, 클라이언트 `bid-panel`은 `minBidIncrement` prop(`fetchPolicies` 주입)으로 UX 사전검증. 향후 금액 조정은 DB 값만 변경하면 반영된다.
 
-## ISSUE-004 · 낙찰 포기 패널티 정책 🔴 OPEN
+## ISSUE-004 · 낙찰 포기 패널티 정책 🟢 DONE(이용 제한 확정)
 
 - **배경**: 낙찰자가 경매취소(낙찰 포기) 시 포기자에게 패널티를 부과한다.
-- **결정 필요**: 제재 형태(신뢰도 점수 차감/별점 반영/레벨 하락/이용 제한)와 강도, 누적 기준.
-- **Phase 3 임시 처리(T032)**: `transaction-actions`의 낙찰 포기는 확인 다이얼로그 + 상태 전환(취소) + 차순위 이양 안내 UI만 제공. 패널티 기록/제재는 Phase 5(T055)에서 처리.
+- **결정(확정, 사용자)**: 제재 형태는 **이용 제한(누적)** 으로 확정. **최근 30일 이내(rolling window) 패널티가 3회 이상 누적되면 경매 등록(판매)을 차단**한다. (점수 차감/레벨 하락 방식은 미채택 — 향후 필요 시 별도 확장)
+- **패널티 집계 대상(통합)**: `penalties`는 user_id 단위로 집계되며, **낙찰 포기(`abandon_won`)** 와 **입찰 상품 내림(`withdraw_with_bids`, ISSUE-006)** 이 모두 누적 대상이다. 낙찰 포기 패널티는 포기한 낙찰자(구매자)에게, 상품 내림 패널티는 판매자에게 기록되지만, 제한은 이 둘을 합산해 해당 사용자의 경매 등록을 차단한다.
+- **반영**:
+  - DB: `penalties.penalty_type` 컬럼 추가(유형 구분, 카운트는 유형 무관). 공통코드 `codes.policy.penalty_restriction_threshold=3`·`penalty_window_days=30` 시드(운영 중 DB 값으로 조정 가능).
+  - DB: `products` BEFORE INSERT 트리거 `enforce_seller_penalty_limit()` 신설 — `get_policy_int`로 임계/기간 조회, 최근 N일 penalties 카운트가 임계 이상이면 등록 예외. `SECURITY DEFINER`+`search_path=''`, REST 노출 회수(트리거 전용).
+  - 클라이언트: `fetchMyPenaltyStatus`(`lib/queries/penalties.ts`) 조회 → `app/auctions/new` 서버 페이지가 폼에 주입 → `auction-form` 제한 배너 + 제출 버튼 비활성(UX 사전차단, 최종 강제는 서버 트리거). 폴백 상수 `PENALTY_RESTRICTION_THRESHOLD=3`/`PENALTY_WINDOW_DAYS=30`(`lib/constants`).
+- **검증**: 트랜잭션 롤백 테스트로 30일내 3건→등록 차단, 2건→허용, 30일 밖 3건→허용 확인. advisor ERROR 0.
 
-## ISSUE-005 · 판매자/구매자 레벨 산정식 🔴 OPEN
+## ISSUE-005 · 판매자/구매자 레벨 산정식 🟢 DONE(현재 산정식 확정)
 
 - **배경**: 레벨 = 거래 성사 건수 + 받은 별점 종합(역할별 별도 집계).
-- **결정 필요**: 건수와 별점의 가중치, 레벨 구간 임계값, 별점 반영 방식(평균/총합).
-- **Phase 4 임시 처리(T043)**: 가중치 조정이 가능한 구조로 임시 구현.
+- **결정(확정, 사용자)**: 현재 산정식 `레벨 = 1 + floor(완료건수 / 5) + 평점보너스(평균≥9 → +2, ≥7 → +1, else 0)`를 **MVP 최종 산정식으로 확정**한다. 가중치/임계값 조정이 필요하면 `calc_reputation_level` 함수만 교체하면 되는 구조를 유지한다(DB/타입 변경 없음).
+- **구현(T043/T059 유지)**: 가중치 조정이 가능한 구조로 구현되어 있다.
   - 집계 뷰 `public.profile_reputation`: 역할별(`as_seller`/`as_buyer`) 평균 별점·평가 수·완료 거래 수(`completed`/`auto_completed`)를 산출. `security_invoker=on`.
   - 임시 산정 함수 `public.calc_reputation_level(completed_count int, avg_score numeric)`:
     `level = 1 + floor(완료건수 / 5) + (평균별점 ≥ 9 → +2, ≥ 7 → +1, else 0)`.
     가중치 상수(거래 5건/별점 9·7 임계/보정 2·1)는 **정책 확정 시 본 함수만 교체**하면 된다(`search_path=''` 하드닝).
   - `profiles.seller_level`/`buyer_level` **캐시 컬럼** 재계산 동기화는 **T059에서 구현됨**: `submit_rating` RPC가 평가 직후 `profile_reputation` 역할별 평균·완료건수로 `calc_reputation_level`을 호출해 해당 레벨 컬럼을 UPDATE한다. 산정식(가중치/임계) 자체는 미결정이므로 본 이슈는 OPEN 유지(함수만 교체하면 반영됨).
 
-## ISSUE-006 · 입찰 후 상품 내리기 제한 강도 🔴 OPEN
+## ISSUE-006 · 입찰 후 상품 내리기 제한 강도 🟢 DONE(패널티 후 허용)
 
 - **배경**: 입찰 발생 후 상품 내리기는 제한한다(입찰 전에는 자유).
-- **결정 필요**: 완전 불가 vs 패널티 부과 후 허용 중 정책 선택.
-- **Phase 3 임시 처리(T032)**: `transaction-actions`의 상품 내리기는 확인 다이얼로그 + 상태 전환(취소) 후 보수적 안내만 제공. 입찰 이력 기반 제한 강도는 Phase 5(T056)에서 결정.
+- **결정(확정, 사용자)**: **패널티 부과 후 허용** 으로 확정. 입찰이 없으면 자유롭게 내릴 수 있고(패널티 없음), **입찰이 1건이라도 있으면 내릴 수 있으나 패널티(`withdraw_with_bids`)가 기록**된다. 이 패널티는 ISSUE-004의 이용 제한 누적 대상이다.
+- **반영**:
+  - DB: `withdraw_product` RPC 재정의 — 기존 "입찰 있으면 차단(exception)"을 제거하고, 입찰 존재 시 `penalties(penalty_type='withdraw_with_bids')` insert 후 `status='withdrawn'`. 본인·active 상품 검증은 유지.
+  - UI: `withdraw-product-button` 확인 다이얼로그 문구를 "입찰이 있으면 패널티 부과, 누적 시 등록 제한"으로 갱신.
+- **검증**: 사용자 가장 롤백 테스트로 입찰 있는 상품 내림 시 `status=withdrawn` + `penalties` 1건(`withdraw_with_bids`) 기록 확인.
 
-## ISSUE-007 · 연쇄 이양 시 차순위 수락 대기시간 🔴 OPEN
+## ISSUE-007 · 연쇄 이양 시 차순위 수락 대기시간 🟢 DONE(즉시 이양 확정)
 
 - **배경**: 낙찰 포기 시 차순위로 연쇄 이양된다.
-- **결정 필요**: 새 낙찰자에게 수락/거래 대기시간을 둘지, 아니면 즉시 이양 후 동일 포기 흐름만 적용할지.
-- **Phase 3 임시 처리(T032)**: 낙찰 포기 시 "차순위 입찰자에게 그의 입찰가로 이양" 흐름을 안내 UI로만 표시(즉시 이양 가정). 대기시간 적용 여부와 실제 이양 로직은 Phase 5(T055)에서 처리.
+- **결정(확정, 사용자)**: **즉시 이양** 으로 확정. 차순위 수락 대기시간은 두지 않는다. 낙찰 포기 즉시 차순위 입찰자에게 **그의 입찰가**로 낙찰이 이양되며 새 거래(pending)·채팅방이 생성된다. 차순위가 없으면 유찰(`failed`). 새 낙찰자는 동일한 포기 흐름을 다시 사용할 수 있다(연쇄).
+- **반영**: `abandon_won_auction` RPC의 차순위 즉시 이양 로직 유지(변경 없음), 포기 패널티에 `penalty_type='abandon_won'` 명시(ISSUE-004 누적 대상). UI 안내 문구를 "즉시 이양 + 패널티 누적 시 등록 제한"으로 갱신.
+- **검증**: 사용자 가장 롤백 테스트로 포기 시 차순위(그의 입찰가 2000)로 winner 교체·새 pending 거래·채팅방 생성·포기 패널티(`abandon_won`) 기록 확인.
 
-## ISSUE-008 · 경매 자동 종료/자동완료 실행 메커니즘 🟡 DEFER
+## ISSUE-008 · 경매 자동 종료/자동완료 실행 메커니즘 🟢 DONE(pg_cron)
 
 - **배경**: 36시간 만료 자동 낙찰, 거래 자동완료는 시점 도달 시 자동 실행이 필요하다.
 - **결정(확정)**: **`pg_cron` + DB 함수(plpgsql)**. Edge Function/외부 스케줄러 미사용(인프라 최소화). 모든 정산 로직이 DB 트랜잭션 내에서 원자적으로 실행된다.
 - **T054 구현(자동 종료)**: `pg_cron` 확장 활성화 + `public.close_expired_auctions()`(만료 active 경매를 낙찰 `won`/유찰 `failed` 처리, 낙찰 시 `_award_auction` 공통 함수로 거래·채팅방 생성). `cron.schedule('close-expired-auctions','* * * * *', ...)` 1분 주기 등록. `SECURITY DEFINER`+`search_path=''`, public/anon/authenticated EXECUTE 회수.
-- **잔여(T058)**: 거래 자동완료 `auto_complete_transactions()`가 동일 `pg_cron` 메커니즘을 재사용할 예정(대기시간은 ISSUE-002 상수).
+- **T058 구현(자동완료)**: `auto_complete_transactions()`가 동일 `pg_cron` 메커니즘을 재사용(대기시간은 DB 공통코드 `codes.policy.auto_complete_wait_hours`를 `get_policy_int`로 조회 — ISSUE-002). `cron.schedule('auto-complete-transactions','* * * * *', ...)` 1분 주기 등록.
+- **완료 확인(2026-07-02)**: `cron.job`에 `close-expired-auctions`·`auto-complete-transactions` 2종 active. Edge Function/외부 스케줄러 미사용 확정 → DONE.
 
 ## ISSUE-009 · 모바일 헤더 메뉴 → 하단 BottomNav로 대체 🟢 DONE
 
@@ -100,11 +116,11 @@
 - **해결(T033 확인)**: 루트 레이아웃의 하단 고정 `BottomNav`(홈/경매 등록/거래/프로필 탭바)가 모바일 내비게이션을 제공한다. 모바일(430px) 캡처에서 하단 탭바 정상 표시 확인. 햄버거 드로어는 불필요하여 도입하지 않는다.
 - **참고**: 추후 검색/필터 등 메뉴 항목이 늘어나면 헤더 드로어(Shadcn Sheet) 재검토 가능(MVP 범위 외).
 
-## ISSUE-010 · `lang` 속성 정책 (현재 "en") 🔴 OPEN
+## ISSUE-010 · `lang` 속성 정책 (현재 "en") 🟢 DONE(ko 고정)
 
 - **배경**: `app/layout.tsx`의 `<html lang="en">`이 영문으로 설정되어 있으나 알밤마켓은 한국어 서비스다.
-- **결정 필요**: `lang="ko"`로 변경할지 결정. 다국어(i18n)는 MVP 이후 범위이므로 `"ko"` 고정이 현실적이나, next-intl 등 i18n 라이브러리 도입 시 동적 처리로 변경 필요.
-- **임시 처리**: MVP 기간은 `"ko"` 고정 권장. 다국어는 Phase 7(T074)에서 결정.
+- **해결(2026-07-02)**: `<html lang="ko">`로 변경. MVP는 한국어 단일 언어이므로 정적 고정한다.
+- **향후**: 다국어(i18n) 도입 시 next-intl 등으로 `lang` 동적 처리 필요 — Phase 7(T074) 범위.
 
 ## ISSUE-011 · cacheComponents 동적 라우트 prerender Suspense 패턴 🟢 DONE
 
@@ -113,24 +129,22 @@
 - **해결(T012)**: ① 루트 레이아웃에서 `<BottomNav />`를 `<Suspense fallback={null}>`로 감쌈. ② 동적 페이지는 `params`를 Suspense 안의 async 자식에서 `await`하는 정석 패턴 적용(fallback은 non-null). 결과적으로 동적 라우트 3개가 Partial Prerender(◐)로 정상 빌드.
 - **Phase 2 참고**: 동적 데이터(params/searchParams/cookies)를 읽는 컴포넌트는 반드시 Suspense 경계 안에 두고 fallback은 비우지 말 것.
 
-## ISSUE-012 · 타입 네이밍 camelCase ↔ 실DB snake_case 매핑 🟡 DEFER
+## ISSUE-012 · 타입 네이밍 camelCase ↔ 실DB snake_case 매핑 🟢 DONE
 
 - **배경**: 도메인 공용 타입(`lib/types/*`)의 필드 네이밍을 **camelCase로 확정**(사용자 선택). 반면 PRD/Supabase 컬럼은 snake_case다.
-- **현재 처리**: Mock 단계(Phase 1~3)는 camelCase 타입으로 Mock 데이터 작성 → 문제 없음.
-- **개선 방향**: Phase 5 실데이터 전환 시 Supabase snake_case 응답을 camelCase로 변환하는 **매핑 레이어를 데이터 조회부에 추가**한다(UI 컴포넌트는 camelCase 계약 고정, 무수정 유지). `lib/supabase` 조회 함수 또는 전용 mapper에서 일괄 변환.
-- **참고**: 만약 매핑 비용을 없애려면 추후 타입을 snake_case로 재정의하는 대안도 있으나, 현재는 camelCase 유지가 결정 사항.
+- **해결(Phase 5)**: 데이터 조회부에 전용 매핑 레이어 `lib/queries/_map.ts`(`toProduct`/`toAuctionSummary`/`toAuctionDetail` 등)를 두어 Supabase snake_case 응답을 camelCase 도메인 타입으로 일괄 변환한다. UI 컴포넌트는 camelCase 계약을 고정한 채 **무수정**으로 실데이터 전환됨(홈·상세 Playwright 검증 완료).
+- **참고**: 매핑 비용 제거를 위해 타입을 snake_case로 재정의하는 대안이 있으나, camelCase 유지가 결정 사항이므로 매핑 레이어 방식으로 확정.
 
-## ISSUE-014 · `profiles.nickname` NOT NULL 제약 연기 🟡 DEFER
+## ISSUE-014 · `profiles.nickname` NOT NULL 제약 🟢 DONE
 
-- **배경**: 도메인 `Profile.nickname`은 필수 값이나, 스타터킷 `profiles`에는 이미 기존 행(테스트 계정 2개)이 존재하고 회원가입 폼이 아직 `nickname` metadata를 전달하지 않는다(Phase 5 T050에서 연동 예정).
-- **현재 처리(T040-A)**: `ALTER TABLE profiles ADD COLUMN nickname text`(**nullable**)로 추가하고, 기존 행은 `nickname > username > full_name > id 접두` 순으로 백필. `handle_new_user()`는 `raw_user_meta_data->>'nickname'`(없으면 `full_name`)으로 채우도록 `CREATE OR REPLACE` 갱신.
-- **개선 방향**: Phase 5(T050) 회원가입 폼에서 `nickname`을 `signUp` metadata로 전달하도록 연동한 뒤, `ALTER TABLE profiles ALTER COLUMN nickname SET NOT NULL`로 제약을 강제한다. (강제 전 잔여 NULL 백필 선행)
+- **배경**: 도메인 `Profile.nickname`은 필수 값이나, 스타터킷 `profiles`에는 기존 행이 있고 회원가입 폼이 `nickname` metadata를 전달하지 않아 NOT NULL을 연기했었다.
+- **해결(2026-07-02)**:
+  - 트리거 `handle_new_user()` 폴백 보강: `coalesce(nickname → full_name → 이메일 로컬파트 → '사용자_'+id 접두)`로 **어떤 가입 경로에서도 non-null 보장**(이메일 가입처럼 metadata가 없어도 안전).
+  - 회원가입 폼(`components/sign-up-form.tsx`)에 **닉네임 입력 필드 추가** + `signUp options.data.nickname` 전달.
+  - 잔여 NULL 방어 백필(당시 0건) 후 `ALTER TABLE profiles ALTER COLUMN nickname SET NOT NULL` 적용.
+  - `generate_typescript_types` 재생성으로 `profiles.nickname: string`(non-null) 반영, `check-all` 통과.
 
-## ISSUE-016 · 평점 코멘트(comment) 미저장 🟡 DEFER
-
-- **배경**: `rating-modal`은 별점과 함께 코멘트(textarea)를 입력받지만, `submit_rating(p_transaction_id, p_score)` RPC는 점수만 받고 `ratings` 테이블에도 `comment` 컬럼이 없어 코멘트가 저장되지 않는다.
-- **발견(T060)**: Phase 6 E2E 중 구매자 코멘트 입력 후 `ratings` 조회 시 `comment` 컬럼 부재 확인.
-- **개선 방향**: `ALTER TABLE ratings ADD COLUMN comment text` + `submit_rating`에 `p_comment` 인자 추가 + 뮤테이션/타입 반영. ISSUE-015(상품 description 미저장)와 동일 패턴이므로 함께 처리 권장.
+> ISSUE-016 상세는 문서 하단 「ISSUE-016 · 평점 코멘트(comment) 미저장 🟢 DONE」으로 통합됨(중복 헤더 제거).
 
 ## ISSUE-017 · 미들웨어 비로그인 보호 경로 복원 🟢 DONE
 
@@ -139,17 +153,18 @@
 - **정책 근거(PRD)**: 경매 등록·거래·채팅은 "로그인 필요", 경매 상세(`/auctions/[id]`)·타인 프로필(`/profile/[id]`)·홈·`/sample`은 공개 브라우징 허용.
 - **세션 규칙 준수**: `createServerClient`~`getClaims` 사이는 미수정, `supabaseResponse` 반환 유지(CLAUDE.md). Playwright로 차단 4종·공개 2종 재검증 완료.
 
-## ISSUE-018 · 스타터킷 잔재(groups) anon SECURITY DEFINER 노출 🟡 DEFER
+## ISSUE-018 · 스타터킷 잔재(groups) anon SECURITY DEFINER 노출 🟢 DONE
 
-- **배경**: 스타터킷의 `groups`/`group_members` 테이블과 `handle_new_group`/`has_group_role`/`is_group_member`/`join_group_by_code` 함수가 남아 있고, advisor가 anon/authenticated 역할의 SECURITY DEFINER 실행 가능을 WARN으로 보고한다.
-- **발견(T062)**: 알밤마켓 도메인과 무관한 잔재. 보안 ERROR는 아니나 노출면 축소를 위해 정리 권장.
-- **개선 방향**: MVP 범위 외. 미사용 확정 시 `DROP FUNCTION`/`DROP TABLE` 또는 `REVOKE EXECUTE FROM anon`. 알밤마켓 거래 RPC들의 authenticated 실행은 내부 `auth.uid()` 검증이 있는 의도된 설계로 별개.
+- **배경**: 스타터킷의 `groups`/`group_members` 테이블과 `handle_new_group`/`has_group_role`/`is_group_member`/`join_group_by_code` 함수가 남아 있고, advisor가 anon/authenticated의 SECURITY DEFINER 실행 가능을 WARN으로 보고했다.
+- **해결(2026-07-02)**: 두 테이블 모두 0행·외부 참조 없음(도메인 정책/FK 무관) 확인 후 `DROP TABLE ... CASCADE`(트리거 `on_group_created` 포함) + `DROP FUNCTION` 4종. 보안 WARN 8건 소거.
+  - 추가: `get_policy_int(text)`가 `PUBLIC` 기본 EXECUTE로 anon에도 노출되던 것을 `REVOKE ... FROM PUBLIC, anon` + `GRANT ... TO authenticated`로 정정(anon WARN 소거). `authenticated`는 `products.auction_ends_at` DEFAULT(=`get_policy_int(...)`) 평가에 필요하므로 유지.
+- **남는 WARN(의도)**: 도메인 거래 RPC(place_bid/buy_now/complete_transaction/abandon_won_auction/withdraw_product/submit_rating)와 get_policy_int의 `authenticated` 실행은 내부 `auth.uid()` 검증/기능 의존이 있는 의도된 설계. (`auth_leaked_password_protection`은 Auth 대시보드 설정, 별개)
 
-## ISSUE-019 · FK 커버링 인덱스 미생성 🟡 DEFER
+## ISSUE-019 · FK 커버링 인덱스 미생성 🟢 DONE
 
-- **배경**: performance advisor(INFO)가 `chat_rooms(buyer_id/seller_id)`·`messages(sender_id)`·`penalties(user_id)`·`product_images(product_id)`·`products(winner_id)`·`ratings(rater_id)`·`transactions(product_id)` 등 FK에 커버링 인덱스가 없다고 보고.
-- **발견(T064)**: 현재 데이터 규모에서는 성능 영향 미미(INFO 레벨). 일부 미사용 인덱스(`idx_products_seller_id` 등)도 데이터 적어 미사용 보고.
-- **개선 방향**: 운영 데이터 증가 시 조인·삭제 성능을 위해 FK 커버링 인덱스 추가 검토.
+- **배경**: performance advisor(INFO)가 `chat_rooms(buyer_id/seller_id)`·`messages(sender_id)`·`penalties(user_id)`·`product_images(product_id)`·`products(winner_id)`·`ratings(rater_id)`·`transactions(product_id)` FK에 커버링 인덱스가 없다고 보고.
+- **해결(2026-07-02)**: 도메인 FK 8건에 `idx_<table>_<column>` 커버링 인덱스 추가(`groups.created_by`는 ISSUE-018로 테이블째 제거되어 자동 소거). `unindexed_foreign_keys` advisor 0.
+- **참고**: 갓 생성된 인덱스는 아직 쿼리에 안 쓰여 `unused_index`(INFO)로 뜨는 게 정상이며(데이터/트래픽 증가 시 사용됨), 이는 회귀가 아니다. 기존 `idx_products_seller_id`도 동일 사유의 INFO.
 
 ## ISSUE-013 · RSC에 이벤트 핸들러 전달 금지 🟢 DONE
 
@@ -169,11 +184,21 @@
 - **배경**: 회귀테스트에서 평점 제출 시 브라우저 콘솔에 `POST /rest/v1/rpc/submit_rating 400` 1건이 관측됨.
 - **확인**: 양방향 평점은 `ratings`에 정상 저장(as_seller 9점/as_buyer 10점)되고 레벨도 재계산됨. postgres 로그에 `submit_rating` 관련 DB 에러 없음(데이터 무결성 영향 없음).
 - **추정**: 모달 제출의 중복 호출/멱등성 또는 일시적 스키마 캐시 이슈. 재현 시 네트워크 요청을 캡처해 원인 규명 권장.
+- **조사(2026-07-02)**: `rating-modal`에 이미 중복 제출 가드 존재 확인(제출 버튼 `disabled={selectedScore===0 || isSubmitting}` + 성공 후 `submitted` 뷰 전환) → 버튼 연타는 원인 아님. 남는 400은 ① **이미 평가된 거래 재제출**(`ratings` 거래당 1회 UNIQUE 위반) 또는 ② **ISSUE-016 마이그레이션 직후 PostgREST 스키마 캐시 일시 불일치**로 좁혀짐. 현재 스키마 캐시 warm 상태라 재현 불가. **데이터 무결성 영향 없음**으로 DEFER 유지.
+- **권장 하드닝(선택)**: `submit_rating`을 멱등 처리(`insert ... on conflict (transaction_id, rater_role) do nothing` 또는 사전 존재 검사)하면 재제출 400을 정상 흐름으로 흡수 가능. MVP 필수 아님.
 
-## ISSUE-015 재확인(2026-06-29 회귀테스트)
+## ISSUE-015 · 상품 설명(description) 미저장 🟢 DONE
 
-- 경매 등록 시 폼의 `상품 설명`을 입력했으나 `products`에 `description` 컬럼이 없어 미저장됨(SQL `column p.description does not exist`로 재확인). ISSUE-015 OPEN 유지.
+- **배경**: 경매 등록 폼의 `상품 설명`이 입력되나 `products`에 `description` 컬럼이 없어 미저장(SQL `column p.description does not exist`로 재확인, 2026-06-29).
+- **해결**: `ALTER TABLE products ADD COLUMN description text`(nullable). 데이터 흐름 전 계층 배선 — `CreateAuctionInput.description`+insert(`lib/mutations/auctions.ts`), `auction-form` 제출 페이로드, `Product.description` 타입, `_map.ts`(`toProduct`/`toAuctionDetail`) 매퍼, 상세 표시(`auction-info`에 "상품 설명" 렌더 영역, 값 있을 때만). `check-all` 통과.
 
-## ISSUE-016 재확인(2026-06-29 회귀테스트)
+## ISSUE-016 · 평점 코멘트(comment) 미저장 🟢 DONE
 
-- 평점 모달에서 코멘트를 입력했으나 `ratings` 테이블 컬럼은 `id, transaction_id, rater_id, ratee_id, role, score, created_at`로 `comment` 부재 → 미저장 재확인. `submit_rating(p_transaction_id, p_score)`도 코멘트 인자 없음. ISSUE-016 DEFER 유지.
+- **배경**: 평점 모달에서 코멘트를 입력하나 `ratings`에 `comment` 컬럼이 없고 `submit_rating(p_transaction_id, p_score)`에도 인자가 없어 미저장(2026-06-29 재확인).
+- **해결**: `ALTER TABLE ratings ADD COLUMN comment text`. `submit_rating`을 `(p_transaction_id, p_score, p_comment text default null)`로 재정의(insert에 comment 포함, 레벨 재계산 로직·권한(authenticated/service_role) 유지). `submitRating(transactionId, score, comment)` 뮤테이션, `rating-modal` 제출 배선(`comment.trim() || null`), `Rating.comment` 타입 반영. 롤백 테스트로 코멘트 저장 확인.
+
+## ISSUE-022 · 고아 상품 이미지 → `/_next/image` 400 🟡 DEFER
+
+- **배경**: 홈/상세에서 상품 카드 이미지가 `/_next/image?url=…supabase…/product-images/…/0.png`로 요청될 때 콘솔에 **400 Bad Request**가 관측됨(2026-07-02 미커밋 작업 빌드 검증 중 발견).
+- **원인**: `next.config.ts`의 `images.remotePatterns`(Supabase 호스트 + `/storage/v1/object/public/**`)는 정상. 원본 Storage URL 자체가 400이며, `storage.objects`(bucket `product-images`)가 **0건**으로 확인됨. 즉 `product_images.url` 행은 존재하나 실제 업로드 파일이 없다(과거 로컬 이미지 삭제 커밋 `e299eab` + P6TEST 정리 잔재로 추정되는 고아 데이터). **코드/경로 생성 로직은 정상**(데이터 바인딩·매핑 검증 통과).
+- **개선 방향(선택)**: ① 대표 이미지 로드 실패 시 `ImagePlaceholder`로 폴백하는 `onError` 처리(카드/갤러리) — UX 개선, ② 고아 `product_images` 정리 또는 실제 이미지 재업로드(테스트 데이터). MVP 필수 아님.
