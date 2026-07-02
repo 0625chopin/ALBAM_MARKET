@@ -6,7 +6,9 @@
 // T051: getMockAuctionDetail → Supabase 실 조회(fetchAuctionDetail)로 교체. 컴포넌트 무수정.
 
 import { Suspense } from "react";
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { AuctionGallery } from "@/components/auctions/auction-gallery";
@@ -105,9 +107,14 @@ async function AuctionDetailContent({
           minBidIncrement={policies.min_bid_increment}
         />
 
-        {/* 판매자 본인 + 진행중일 때 상품 내리기 (T056) */}
+        {/* 판매자 본인 + 진행중일 때 상품 정보 수정 / 상품 내리기 (T056) */}
         {isOwner && detail.status === "active" && (
-          <WithdrawProductButton productId={detail.id} />
+          <div className="space-y-2">
+            <Button asChild variant="outline" className="w-full">
+              <Link href={`/auctions/${detail.id}/edit`}>상품 정보 수정</Link>
+            </Button>
+            <WithdrawProductButton productId={detail.id} />
+          </div>
         )}
       </div>
 
