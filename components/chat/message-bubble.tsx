@@ -1,9 +1,9 @@
 // 채팅 메시지 말풍선 컴포넌트 (RSC)
 // isMine=true: 우측 정렬, primary 배경색
 // isMine=false: 좌측 정렬, muted 배경색
-import { cn } from "@/lib/utils";
-import { formatTime } from "@/lib/format";
-import type { Message } from "@/lib/types";
+import { cn } from "@0625chopin/shared/utils";
+import { formatTime } from "@0625chopin/shared/format";
+import type { Message } from "@0625chopin/shared/types";
 
 interface MessageBubbleProps {
   /** 메시지 데이터 */

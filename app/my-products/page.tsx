@@ -24,6 +24,7 @@ const VALID_STATUS: AuctionStatusFilterValue[] = [
   "failed",
   "withdrawn",
   "completed",
+  "force_closed",
 ];
 
 // 상태별 헤더 제목/설명 (판매자 시점)
@@ -45,6 +46,10 @@ const STATUS_HEADINGS: Record<
   completed: {
     title: "완료된 내 상품",
     description: "거래가 완료된 상품입니다.",
+  },
+  force_closed: {
+    title: "강제종료된 내 상품",
+    description: "관리자가 강제 종료한 상품입니다.",
   },
 };
 

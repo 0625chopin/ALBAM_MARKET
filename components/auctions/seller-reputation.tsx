@@ -2,12 +2,21 @@
 // 판매자 아바타, 닉네임, 지역, 레벨 배지, 별점을 표시한다.
 // Avatar(shadcn)로 아바타를 렌더하고, avatarUrl이 없으면 닉네임 첫 글자로 Fallback 표시.
 
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LevelBadge } from "@/components/common/level-badge";
-import { StarRating } from "@/components/common/star-rating";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from "@0625chopin/shared/ui/avatar";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@0625chopin/shared/ui/card";
+import { LevelBadge } from "@0625chopin/shared/common/level-badge";
+import { StarRating } from "@0625chopin/shared/common/star-rating";
 import { MapPin } from "lucide-react";
-import type { SellerReputation } from "@/lib/types";
+import type { SellerReputation } from "@0625chopin/shared/types";
 
 interface SellerReputationProps {
   /** 판매자 평판 요약 데이터 */

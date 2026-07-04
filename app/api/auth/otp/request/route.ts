@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createAdminClient } from "@0625chopin/shared/supabase/admin";
 import { issueAndSendOtp } from "@/lib/auth/otp-service";
 import { EMAIL_RE, validateNickname } from "@/lib/auth/validation";
 

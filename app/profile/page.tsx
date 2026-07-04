@@ -8,7 +8,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { Container } from "@/components/layout/container";
 import { ProfileCard } from "@/components/profile/profile-card";
-import { Button } from "@/components/ui/button";
+import { Button } from "@0625chopin/shared/ui/button";
 import { fetchCurrentProfile, fetchProfileScores } from "@/lib/queries";
 
 export default async function ProfilePage() {

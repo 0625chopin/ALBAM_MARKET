@@ -5,8 +5,8 @@
 // 따라서 로딩 상태에서는 동적 의존성이 없는 이 정적 스켈레톤을 사용한다.
 
 import Link from "next/link";
-import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
+import { Skeleton } from "@0625chopin/shared/ui/skeleton";
+import { cn } from "@0625chopin/shared/utils";
 
 // SiteHeader와 동일한 네비게이션 항목 (시각적 일관성 유지)
 const NAV_ITEMS = [

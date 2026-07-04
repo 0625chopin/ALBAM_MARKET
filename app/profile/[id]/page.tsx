@@ -7,7 +7,12 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { Container } from "@/components/layout/container";
 import { ProfileCard } from "@/components/profile/profile-card";
-import { fetchProfile, fetchProfileScores } from "@/lib/queries";
+import { ReportDialog } from "@/components/report/report-dialog";
+import {
+  fetchProfile,
+  fetchProfileScores,
+  getCurrentUserId,
+} from "@/lib/queries";
 
 interface ProfilePageProps {
   params: Promise<{ id: string }>;
@@ -57,12 +62,27 @@ async function ProfileContent({ params }: ProfilePageProps) {
   // 역할별 평균 별점 (profile_reputation 뷰, 평가 없으면 0)
   const { sellerAvgScore, buyerAvgScore } = await fetchProfileScores(id);
 
+  // 로그인 상태 + 본인 프로필이 아닐 때만 사용자 신고 노출 (FA050)
+  const currentUserId = await getCurrentUserId();
+  const canReport = currentUserId !== null && currentUserId !== id;
+
   return (
     // 타인 프로필: 프로필 카드만 표시 (수정 폼 미노출)
-    <ProfileCard
-      profile={profile}
-      sellerAvgScore={sellerAvgScore}
-      buyerAvgScore={buyerAvgScore}
-    />
+    <div className="space-y-4">
+      <ProfileCard
+        profile={profile}
+        sellerAvgScore={sellerAvgScore}
+        buyerAvgScore={buyerAvgScore}
+      />
+      {canReport && (
+        <ReportDialog
+          targetType="user"
+          targetId={id}
+          targetLabel={profile.nickname}
+          triggerLabel="사용자 신고"
+          triggerClassName="w-full"
+        />
+      )}
+    </div>
   );
 }

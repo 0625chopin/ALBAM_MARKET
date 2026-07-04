@@ -7,8 +7,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/supabase/client";
+import { cn } from "@0625chopin/shared/utils";
+import { createClient } from "@0625chopin/shared/supabase/client";
 import { uploadAvatar } from "@/lib/mutations/profiles";
 import { validateNickname } from "@/lib/auth/validation";
 import {
@@ -16,20 +16,32 @@ import {
   statusClass,
   type FieldStatus,
 } from "@/lib/hooks/use-availability-check";
-import { IMAGE_ALLOWED_TYPES, IMAGE_MAX_SIZE } from "@/lib/supabase/storage";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {
+  IMAGE_ALLOWED_TYPES,
+  IMAGE_MAX_SIZE,
+} from "@0625chopin/shared/supabase/storage";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from "@0625chopin/shared/ui/avatar";
+import { Button } from "@0625chopin/shared/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@0625chopin/shared/ui/card";
+import { Input } from "@0625chopin/shared/ui/input";
+import { Label } from "@0625chopin/shared/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import type { Profile, SelectOption } from "@/lib/types";
+} from "@0625chopin/shared/ui/select";
+import type { Profile, SelectOption } from "@0625chopin/shared/types";
 
 interface ProfileEditFormProps {
   /** 수정할 프로필 데이터 (초기값 바인딩용) */

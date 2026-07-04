@@ -6,7 +6,7 @@ import { SiteHeaderSkeleton } from "@/components/layout/site-header-skeleton";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { Container } from "@/components/layout/container";
 import { ProfileCardSkeleton } from "@/components/profile/profile-card-skeleton";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@0625chopin/shared/ui/skeleton";
 
 export default function ProfileLoading() {
   return (

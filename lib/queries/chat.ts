@@ -1,9 +1,9 @@
 // 채팅 조회 (Server Component 용)
 // 채팅방은 거래 당사자(판매자/구매자)만 접근 가능하다(RLS + 함수 내 재확인).
 
-import { createClient } from "@/lib/supabase/server";
-import type { Message } from "@/lib/types";
-import { toMessage } from "./_map";
+import { createClient } from "@0625chopin/shared/supabase/server";
+import type { Message } from "@0625chopin/shared/types";
+import { toMessage } from "@0625chopin/shared/queries/map";
 import { getCurrentUserId } from "./profiles";
 
 const DEFAULT_NICKNAME = "이름 없음";
@@ -13,6 +13,8 @@ export interface ChatRoomView {
   id: string;
   /** 연결된 거래 id (거래완료 버튼용) */
   transactionId: string;
+  /** 상대방 사용자 id (사용자 신고 대상) */
+  counterpartId: string;
   counterpartNickname: string;
   counterpartScore: number;
   /** 현재 사용자가 구매자인지 (거래완료 버튼 노출 조건) */
@@ -67,6 +69,7 @@ export async function fetchChatRoom(
   return {
     id: room.id,
     transactionId: room.transaction_id,
+    counterpartId,
     counterpartNickname: profile?.nickname ?? DEFAULT_NICKNAME,
     counterpartScore,
     isBuyer: room.buyer_id === userId,

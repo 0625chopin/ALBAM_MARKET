@@ -1,11 +1,11 @@
 // 경매 관련 클라이언트 변경(mutation) — Client Component 에서 호출한다.
 // 서버 전용 lib/queries/* (next/headers 의존)와 분리해 클라이언트 번들 충돌을 방지한다.
 
-import { createClient } from "@/lib/supabase/client";
+import { createClient } from "@0625chopin/shared/supabase/client";
 import {
   uploadPublicImage,
   removeStorageObjects,
-} from "@/lib/supabase/storage";
+} from "@0625chopin/shared/supabase/storage";
 
 export interface CreateAuctionInput {
   /** 제목 */

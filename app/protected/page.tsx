@@ -1,7 +1,7 @@
 // 인증 필요 페이지 — 사용자 정보 표시
 import { redirect } from "next/navigation";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@0625chopin/shared/supabase/server";
 import { InfoIcon } from "lucide-react";
 import { Suspense } from "react";
 

@@ -9,24 +9,24 @@ import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Loader2, X } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { isAllowedImageFile } from "@/lib/supabase/storage";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@0625chopin/shared/utils";
+import { isAllowedImageFile } from "@0625chopin/shared/supabase/storage";
+import { Button } from "@0625chopin/shared/ui/button";
+import { Input } from "@0625chopin/shared/ui/input";
+import { Label } from "@0625chopin/shared/ui/label";
+import { Textarea } from "@0625chopin/shared/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { ImagePlaceholder } from "@/components/common/image-placeholder";
-import type { SelectOption } from "@/lib/types";
+} from "@0625chopin/shared/ui/select";
+import { Badge } from "@0625chopin/shared/ui/badge";
+import { ImagePlaceholder } from "@0625chopin/shared/common/image-placeholder";
+import type { SelectOption } from "@0625chopin/shared/types";
 import { createAuction } from "@/lib/mutations/auctions";
-import { DEFAULT_AUCTION_DURATION_HOURS } from "@/lib/constants/auctions";
+import { DEFAULT_AUCTION_DURATION_HOURS } from "@0625chopin/shared/constants";
 
 // 이미지 최대 등록 개수 (대표 1 + 추가 5)
 const IMAGE_SLOT_COUNT = 6;

@@ -7,7 +7,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@0625chopin/shared/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -15,7 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@0625chopin/shared/ui/dialog";
 import { submitRating } from "@/lib/mutations/transactions";
 
 interface RatingModalProps {

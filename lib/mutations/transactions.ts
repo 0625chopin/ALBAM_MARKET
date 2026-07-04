@@ -1,7 +1,7 @@
 // 거래/낙찰 관련 클라이언트 변경(mutation) — Client Component 에서 호출한다.
 // 서버 전용 lib/queries/* 와 분리(브라우저 클라이언트 사용).
 
-import { createClient } from "@/lib/supabase/client";
+import { createClient } from "@0625chopin/shared/supabase/client";
 
 /**
  * 낙찰 포기 (원자적 RPC abandon_won_auction).
@@ -23,6 +23,18 @@ export async function completeTransaction(
 ): Promise<void> {
   const supabase = createClient();
   const { error } = await supabase.rpc("complete_transaction", {
+    p_transaction_id: transactionId,
+  });
+  if (error) throw new Error(error.message);
+}
+
+/**
+ * 거래 종료 (RPC end_transaction). 구매자만, 완료(completed/auto_completed) 거래.
+ * transactions.ended_at 을 기록해 종료 상태를 공유 DB로 지속한다(멱등).
+ */
+export async function endTransaction(transactionId: string): Promise<void> {
+  const supabase = createClient();
+  const { error } = await supabase.rpc("end_transaction", {
     p_transaction_id: transactionId,
   });
   if (error) throw new Error(error.message);

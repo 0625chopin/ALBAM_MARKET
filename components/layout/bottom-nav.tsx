@@ -5,7 +5,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, PlusCircle, Package, ArrowLeftRight, User } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@0625chopin/shared/utils";
 
 // 하단 탭 항목 (아이콘 + 라벨). "내 상품"은 로그인 사용자에게만 노출한다.
 const HEAD_TABS = [

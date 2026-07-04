@@ -2,15 +2,20 @@
 // 거래 목록에서 각 거래의 요약 정보를 표시한다.
 // 액션 영역(거래완료·낙찰 포기·상품 내리기·평점)은 클라이언트 인터랙션이 필요하므로
 // components/transactions/transaction-actions.tsx(Client)로 분리했다. 카드 본문은 RSC 유지.
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { ImagePlaceholder } from "@/components/common/image-placeholder";
-import { ProductImage } from "@/components/common/product-image";
-import { StatusBadge } from "@/components/common/status-badge";
+import { Badge } from "@0625chopin/shared/ui/badge";
+import { Card, CardContent } from "@0625chopin/shared/ui/card";
+import { Separator } from "@0625chopin/shared/ui/separator";
+import { ImagePlaceholder } from "@0625chopin/shared/common/image-placeholder";
+import { ProductImage } from "@0625chopin/shared/common/product-image";
+import { StatusBadge } from "@0625chopin/shared/common/status-badge";
 import { TransactionActions } from "@/components/transactions/transaction-actions";
-import { formatPrice } from "@/lib/format";
-import type { Transaction, Product, TransactionStatus } from "@/lib/types";
+import { formatPrice } from "@0625chopin/shared/format";
+import type {
+  Transaction,
+  Product,
+  ProductStatus,
+  TransactionStatus,
+} from "@0625chopin/shared/types";
 
 interface TransactionCardProps {
   /** 거래 데이터 */
@@ -27,6 +32,8 @@ interface TransactionCardProps {
   chatRoomId: string | null;
   /** 거래 상태 라벨 맵 value→label (DB 공통코드 codes.transaction_status 주입) */
   statusLabels: Record<TransactionStatus, string>;
+  /** 상품 상태 라벨 맵 value→label (DB 공통코드 codes.product_status 주입) — 유찰 표시용 */
+  productStatusLabels: Record<ProductStatus, string>;
 }
 
 export function TransactionCard({
@@ -37,7 +44,12 @@ export function TransactionCard({
   counterpartNickname,
   chatRoomId,
   statusLabels,
+  productStatusLabels,
 }: TransactionCardProps) {
+  // 경매가 유찰(failed)/강제종료(force_closed)이면 거래 상태(취소) 대신 상품 상태('유찰'/'강제종료')를 표시한다.
+  // 낙찰 포기(차순위 없음)→유찰, 관리자 경매 강제 종료→강제종료 등 판매 미성립 건의 결과를 명확히 보여준다.
+  const isSaleNotEstablished =
+    product.status === "failed" || product.status === "force_closed";
   return (
     <Card>
       <CardContent className="p-4">
@@ -69,16 +81,29 @@ export function TransactionCard({
 
             {/* 역할·상태 배지 행 */}
             <div className="flex flex-wrap items-center gap-1.5">
-              {/* 역할 배지: 판매 / 낙찰(구매) */}
+              {/* 역할 배지: 판매 / 구매(판매 미성립 시 '낙찰' 표기 제거) */}
               <Badge variant="outline" className="text-xs">
-                {role === "seller" ? "판매" : "낙찰(구매)"}
+                {role === "seller"
+                  ? "판매"
+                  : isSaleNotEstablished
+                    ? "구매"
+                    : "낙찰(구매)"}
               </Badge>
-              {/* 거래 상태 배지 (초기 상태 — 액션 후 갱신 상태는 액션 영역에 표시) */}
-              <StatusBadge
-                kind="transaction"
-                status={transaction.status}
-                label={statusLabels[transaction.status]}
-              />
+              {/* 상태 배지: 유찰/강제종료면 상품 상태 배지, 아니면 거래 상태.
+                  (액션 후 갱신 상태는 액션 영역에 별도 표시) */}
+              {isSaleNotEstablished ? (
+                <StatusBadge
+                  kind="product"
+                  status={product.status}
+                  label={productStatusLabels[product.status]}
+                />
+              ) : (
+                <StatusBadge
+                  kind="transaction"
+                  status={transaction.status}
+                  label={statusLabels[transaction.status]}
+                />
+              )}
             </div>
 
             {/* 확정가 */}
@@ -99,6 +124,7 @@ export function TransactionCard({
         <TransactionActions
           transaction={transaction}
           productStatus={product.status}
+          productTitle={product.title}
           role={role}
           counterpartNickname={counterpartNickname}
           chatRoomId={chatRoomId}

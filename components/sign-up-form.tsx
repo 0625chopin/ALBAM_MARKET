@@ -1,17 +1,17 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
+import { cn } from "@0625chopin/shared/utils";
+import { createClient } from "@0625chopin/shared/supabase/client";
+import { Button } from "@0625chopin/shared/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "@0625chopin/shared/ui/card";
+import { Input } from "@0625chopin/shared/ui/input";
+import { Label } from "@0625chopin/shared/ui/label";
 import { validateEmail, validateNickname } from "@/lib/auth/validation";
 import {
   useAvailabilityCheck,

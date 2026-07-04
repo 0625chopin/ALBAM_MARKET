@@ -8,7 +8,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { Button } from "@0625chopin/shared/ui/button";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { AuctionGallery } from "@/components/auctions/auction-gallery";
@@ -16,6 +16,7 @@ import { AuctionInfo } from "@/components/auctions/auction-info";
 import { SellerReputation } from "@/components/auctions/seller-reputation";
 import { BidPanel } from "@/components/auctions/bid-panel";
 import { WithdrawProductButton } from "@/components/auctions/withdraw-product-button";
+import { ReportDialog } from "@/components/report/report-dialog";
 import {
   fetchAuctionDetail,
   getCurrentUserId,
@@ -115,6 +116,17 @@ async function AuctionDetailContent({
             </Button>
             <WithdrawProductButton productId={detail.id} />
           </div>
+        )}
+
+        {/* 본인 상품이 아닐 때 상품 신고 (FA050) */}
+        {isLoggedIn && !isOwner && (
+          <ReportDialog
+            targetType="product"
+            targetId={detail.id}
+            targetLabel={detail.title}
+            triggerLabel="상품 신고"
+            triggerClassName="w-full"
+          />
         )}
       </div>
 

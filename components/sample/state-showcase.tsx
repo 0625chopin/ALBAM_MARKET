@@ -4,13 +4,18 @@
 // Tabs가 클라이언트 인터랙션이므로 'use client' 필요.
 
 import { Package, ShoppingBag } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@0625chopin/shared/ui/tabs";
 import { AuctionGridSkeleton } from "@/components/auctions/auction-grid-skeleton";
 import { TransactionCardSkeleton } from "@/components/transactions/transaction-card-skeleton";
 import { MessageListSkeleton } from "@/components/chat/message-list-skeleton";
 import { ProfileCardSkeleton } from "@/components/profile/profile-card-skeleton";
-import { EmptyState } from "@/components/common/empty-state";
-import { ErrorState } from "@/components/common/error-state";
+import { EmptyState } from "@0625chopin/shared/common/empty-state";
+import { ErrorState } from "@0625chopin/shared/common/error-state";
 
 export default function StateShowcase() {
   return (

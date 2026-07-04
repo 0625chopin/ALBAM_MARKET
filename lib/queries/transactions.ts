@@ -1,9 +1,9 @@
 // 거래 조회 (Server Component 용)
 // 현재 사용자가 판매자 또는 구매자로 참여한 거래를 상품/상대/채팅방 정보와 함께 반환한다.
 
-import { createClient } from "@/lib/supabase/server";
-import type { Product, Transaction } from "@/lib/types";
-import { toProduct, toTransaction } from "./_map";
+import { createClient } from "@0625chopin/shared/supabase/server";
+import type { Product, Transaction } from "@0625chopin/shared/types";
+import { toProduct, toTransaction } from "@0625chopin/shared/queries/map";
 import { getCurrentUserId } from "./profiles";
 
 const DEFAULT_NICKNAME = "이름 없음";

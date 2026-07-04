@@ -5,13 +5,13 @@
 // 표현 컴포넌트(MessageList/MessageInput/MessageBubble)는 수정하지 않는다.
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { createClient } from "@0625chopin/shared/supabase/client";
 import { sendMessage } from "@/lib/mutations/chat";
 import { MessageList } from "@/components/chat/message-list";
 import { MessageInput } from "@/components/chat/message-input";
-import { toMessage } from "@/lib/queries/_map";
-import type { Message } from "@/lib/types";
-import type { Tables } from "@/lib/database.types";
+import { toMessage } from "@0625chopin/shared/queries/map";
+import type { Message } from "@0625chopin/shared/types";
+import type { Tables } from "@0625chopin/shared/database";
 
 interface ChatThreadProps {
   /** 채팅방 id */
@@ -36,27 +36,44 @@ export function ChatThread({
   // Realtime 구독 — 이 방의 messages INSERT 수신 시 목록에 병합(id 기준 중복 제거)
   useEffect(() => {
     const supabase = createClient();
-    const channel = supabase
-      .channel(`messages:${roomId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "messages",
-          filter: `room_id=eq.${roomId}`,
-        },
-        (payload) => {
-          const row = payload.new as Tables<"messages">;
-          setMessages((prev) =>
-            prev.some((m) => m.id === row.id) ? prev : [...prev, toMessage(row)]
-          );
-        }
-      )
-      .subscribe();
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    let cancelled = false;
+
+    (async () => {
+      // Realtime 소켓을 사용자 JWT 로 인증한 뒤 구독한다(RLS 적용 필수).
+      // createBrowserClient 는 세션을 비동기 복원하므로 즉시 subscribe 하면 anon 으로 join 되어
+      // RLS(messages_select_party)가 수신자 측 신규 메시지 전달을 차단할 수 있다.
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (cancelled) return;
+      await supabase.realtime.setAuth(session?.access_token ?? null);
+
+      channel = supabase
+        .channel(`messages:${roomId}`)
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "messages",
+            filter: `room_id=eq.${roomId}`,
+          },
+          (payload) => {
+            const row = payload.new as Tables<"messages">;
+            setMessages((prev) =>
+              prev.some((m) => m.id === row.id)
+                ? prev
+                : [...prev, toMessage(row)]
+            );
+          }
+        )
+        .subscribe();
+    })();
 
     return () => {
-      supabase.removeChannel(channel);
+      cancelled = true;
+      if (channel) supabase.removeChannel(channel);
     };
   }, [roomId]);
 

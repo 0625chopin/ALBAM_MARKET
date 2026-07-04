@@ -18,7 +18,7 @@ import {
   MOCK_PRODUCT_STATUS_LABELS,
   MOCK_POLICIES,
 } from "@/lib/mocks";
-import type { AuctionSummary } from "@/lib/types";
+import type { AuctionSummary } from "@0625chopin/shared/types";
 
 export default function AuctionShowcase() {
   // 상태별 대표 카드 선택 (active·won·failed 각 1장)

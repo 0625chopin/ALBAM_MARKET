@@ -1,7 +1,7 @@
 "use client";
 
-import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
+import { createClient } from "@0625chopin/shared/supabase/client";
+import { Button } from "@0625chopin/shared/ui/button";
 
 export function LogoutButton() {
   const logout = async () => {

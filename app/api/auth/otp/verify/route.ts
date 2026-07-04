@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@0625chopin/shared/supabase/admin";
+import { createClient } from "@0625chopin/shared/supabase/server";
 import { hashOtpCode, OTP_PURPOSE_SIGNUP } from "@/lib/auth/otp";
 
 // Route Handler 는 기본이 Node.js 런타임이므로 별도 선언하지 않는다(cacheComponents 호환).

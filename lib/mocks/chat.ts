@@ -1,5 +1,5 @@
 // Mock 채팅방 + 메시지 데이터
-import type { ChatRoom, Message } from "@/lib/types";
+import type { ChatRoom, Message } from "@0625chopin/shared/types";
 
 export const mockChatRooms: ChatRoom[] = [
   // txn-1(원목 책상 낙찰): 판매자 prof-1(나) ↔ 낙찰자 prof-3

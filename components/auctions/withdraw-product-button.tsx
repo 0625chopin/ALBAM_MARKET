@@ -6,8 +6,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { ConfirmDialog } from "@/components/common/confirm-dialog";
+import { Button } from "@0625chopin/shared/ui/button";
+import { ConfirmDialog } from "@0625chopin/shared/common/confirm-dialog";
 import { withdrawProduct } from "@/lib/mutations/auctions";
 
 interface WithdrawProductButtonProps {

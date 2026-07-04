@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@0625chopin/shared/supabase/server";
 import { NextResponse } from "next/server";
 
 /**

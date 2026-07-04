@@ -6,7 +6,7 @@ import type {
   AuctionSummary,
   AuctionDetail,
   SellerReputation,
-} from "@/lib/types";
+} from "@0625chopin/shared/types";
 import {
   MOCK_CATEGORY_OPTIONS,
   MOCK_PRODUCT_CONDITIONS,

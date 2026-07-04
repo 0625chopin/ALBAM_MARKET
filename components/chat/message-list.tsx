@@ -5,7 +5,7 @@
 // 메시지가 추가되면(또는 마운트 시) 스크롤을 하단으로 이동해 최신 메시지를 노출한다.
 import { useEffect, useRef } from "react";
 import { MessageBubble } from "@/components/chat/message-bubble";
-import type { Message } from "@/lib/types";
+import type { Message } from "@0625chopin/shared/types";
 
 interface MessageListProps {
   /** 시간 오름차순 정렬된 메시지 배열 */

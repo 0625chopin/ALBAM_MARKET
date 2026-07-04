@@ -4,12 +4,12 @@
 // 낙찰(won)/유찰(failed) 상태는 강조 배너로 별도 표시한다.
 
 import { Gavel, MapPin, Tag } from "lucide-react";
-import { StatusBadge } from "@/components/common/status-badge";
-import { RemainingTime } from "@/components/common/remaining-time";
-import { Separator } from "@/components/ui/separator";
-import { formatPrice } from "@/lib/format";
-import { cn } from "@/lib/utils";
-import type { AuctionDetail } from "@/lib/types";
+import { StatusBadge } from "@0625chopin/shared/common/status-badge";
+import { RemainingTime } from "@0625chopin/shared/common/remaining-time";
+import { Separator } from "@0625chopin/shared/ui/separator";
+import { formatPrice } from "@0625chopin/shared/format";
+import { cn } from "@0625chopin/shared/utils";
+import type { AuctionDetail } from "@0625chopin/shared/types";
 
 interface AuctionInfoProps {
   /** 경매 상세 데이터 */
@@ -20,10 +20,11 @@ export function AuctionInfo({ detail }: AuctionInfoProps) {
   // 중고등급 표시 라벨 (DB 공통코드에서 조회해 detail에 주입됨)
   const conditionLabel = detail.conditionLabel;
 
-  // 종료 상태 여부 판별 (낙찰/유찰)
+  // 종료 상태 여부 판별 (낙찰/유찰/강제종료)
   const isWon = detail.status === "won";
+  const isForceClosed = detail.status === "force_closed";
   const isFailed = detail.status === "failed";
-  const isEnded = isWon || isFailed;
+  const isEnded = isWon || isFailed || isForceClosed;
 
   return (
     <article className="w-full space-y-4 px-4 py-5">
@@ -46,7 +47,7 @@ export function AuctionInfo({ detail }: AuctionInfoProps) {
               )}
               aria-live="polite"
             >
-              {isWon ? "낙찰 완료" : "유찰 종료"}
+              {isWon ? "낙찰 완료" : isForceClosed ? "강제종료" : "유찰 종료"}
             </span>
           )}
         </div>

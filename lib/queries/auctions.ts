@@ -2,9 +2,17 @@
 // Mock(lib/mocks/products)과 동일한 도메인 계약을 반환한다. 페이지는 이 함수만 호출하고
 // 표현 컴포넌트(AuctionGrid/Card/Gallery/Info/SellerReputation)는 수정하지 않는다.
 
-import { createClient } from "@/lib/supabase/server";
-import type { AuctionSummary, AuctionDetail, ProductStatus } from "@/lib/types";
-import { toAuctionSummary, toAuctionDetail, toSellerReputation } from "./_map";
+import { createClient } from "@0625chopin/shared/supabase/server";
+import type {
+  AuctionSummary,
+  AuctionDetail,
+  ProductStatus,
+} from "@0625chopin/shared/types";
+import {
+  toAuctionSummary,
+  toAuctionDetail,
+  toSellerReputation,
+} from "@0625chopin/shared/queries/map";
 import { fetchCodeGroup, fetchStatusLabels } from "./codes";
 
 /** 홈 상태 필터 값 — 실제 상품 상태 + "all"(전체) */

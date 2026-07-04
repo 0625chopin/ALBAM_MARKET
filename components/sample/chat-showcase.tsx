@@ -24,8 +24,9 @@ export default function ChatShowcase() {
       {/* 430px 모바일 프레임 내 채팅 UI 전시 — 고정 높이 flex 컬럼으로 스크롤 시연 */}
       <div className="mx-auto max-w-[430px] overflow-hidden rounded-lg border">
         <div className="flex h-96 flex-col">
-          {/* 채팅 헤더: 상대방 아바타, 닉네임, 별점 */}
+          {/* 채팅 헤더: 상대방 아바타, 닉네임, 별점, 신고 */}
           <ChatHeader
+            counterpartId={counterpart.id}
             nickname={counterpart.nickname}
             score={8.5}
             // TODO: Phase 5 — 실제 평점 데이터로 교체

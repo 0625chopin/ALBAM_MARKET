@@ -1,9 +1,9 @@
 // 프로필 카드 스켈레톤 (RSC)
 // ProfileCard 레이아웃(아바타 + 닉네임 + 지역 + 구분선 + 역할별 평판 2블록)을 본떠 로딩 상태를 표시한다.
 
-import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@0625chopin/shared/ui/skeleton";
+import { Card, CardContent, CardHeader } from "@0625chopin/shared/ui/card";
+import { Separator } from "@0625chopin/shared/ui/separator";
 
 export function ProfileCardSkeleton() {
   return (

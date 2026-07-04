@@ -9,7 +9,7 @@ import type {
   PolicyMap,
   ProductStatus,
   TransactionStatus,
-} from "@/lib/types";
+} from "@0625chopin/shared/types";
 
 // ===== Mock 시드 (DB codes 테이블 초기 시드와 동일) =====
 
@@ -76,6 +76,7 @@ export const MOCK_PRODUCT_STATUS_LABELS: Record<ProductStatus, string> = {
   failed: "유찰",
   withdrawn: "내림",
   completed: "완료",
+  force_closed: "강제종료",
 };
 
 /** 거래 상태 → 한글 라벨 맵 */
@@ -86,6 +87,15 @@ export const MOCK_TRANSACTION_STATUS_LABELS: Record<TransactionStatus, string> =
     auto_completed: "자동완료",
     canceled: "취소",
   };
+
+/** 신고 사유 옵션 — value=사유 코드, label=표시명 (DB codes.report_reason 시드와 동일, FA050) */
+export const MOCK_REPORT_REASONS: SelectOption[] = [
+  { value: "fake_info", label: "허위 상품 정보" },
+  { value: "abuse", label: "욕설·비방" },
+  { value: "no_show", label: "미거래·약속 불이행" },
+  { value: "malicious", label: "악의적 행위" },
+  { value: "prohibited", label: "금지 품목" },
+];
 
 function recordToOptions(rec: Record<string, string>): SelectOption[] {
   return Object.entries(rec).map(([value, label]) => ({ value, label }));
@@ -98,6 +108,7 @@ const CODE_GROUPS: Record<CodeGroupKey, SelectOption[]> = {
   auction_duration: MOCK_AUCTION_DURATIONS,
   product_status: recordToOptions(MOCK_PRODUCT_STATUS_LABELS),
   transaction_status: recordToOptions(MOCK_TRANSACTION_STATUS_LABELS),
+  report_reason: MOCK_REPORT_REASONS,
   policy: [],
 };
 

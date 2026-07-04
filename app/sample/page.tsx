@@ -14,8 +14,8 @@ import StateShowcase from "@/components/sample/state-showcase";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { Container } from "@/components/layout/container";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@0625chopin/shared/ui/button";
+import { Badge } from "@0625chopin/shared/ui/badge";
 import {
   Card,
   CardContent,
@@ -23,10 +23,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+} from "@0625chopin/shared/ui/card";
+import { Input } from "@0625chopin/shared/ui/input";
+import { Label } from "@0625chopin/shared/ui/label";
+import { Checkbox } from "@0625chopin/shared/ui/checkbox";
 
 // 시맨틱 컬러 토큰 스와치 정의
 const COLOR_TOKENS: Array<{ name: string; bg: string; border?: boolean }> = [

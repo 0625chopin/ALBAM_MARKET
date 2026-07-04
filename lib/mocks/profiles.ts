@@ -1,6 +1,6 @@
 // Mock 회원(프로필) 데이터
 // 실제 DB 전환(Phase 5) 시 동일 타입을 유지하고 조회부만 교체한다.
-import type { Profile } from "@/lib/types";
+import type { Profile } from "@0625chopin/shared/types";
 
 // 현재 로그인 사용자로 가정하는 프로필 id (Mock 단계 편의용)
 export const CURRENT_USER_ID = "prof-1";

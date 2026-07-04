@@ -1,5 +1,5 @@
 // Mock 입찰 데이터
-import type { Bid } from "@/lib/types";
+import type { Bid } from "@0625chopin/shared/types";
 
 export const mockBids: Bid[] = [
   {

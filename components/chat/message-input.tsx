@@ -6,8 +6,8 @@
 // Phase 5: 부모의 onSend 내부를 Supabase Realtime insert로 교체한다.
 import { useState } from "react";
 import { Send } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Input } from "@0625chopin/shared/ui/input";
+import { Button } from "@0625chopin/shared/ui/button";
 
 interface MessageInputProps {
   /** 전송 시 입력 내용을 전달받는 콜백 (없으면 표시 전용) */

@@ -2,8 +2,8 @@
 // MessageList + MessageBubble 레이아웃(좌우 정렬 말풍선)을 본떠 로딩 상태를 표시한다.
 // flex-1로 채팅 화면 가운데 영역을 가득 채운다.
 
-import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
+import { Skeleton } from "@0625chopin/shared/ui/skeleton";
+import { cn } from "@0625chopin/shared/utils";
 
 interface MessageListSkeletonProps {
   /** 추가 Tailwind 클래스 (선택) */

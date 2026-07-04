@@ -10,11 +10,11 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Minus, Plus } from "lucide-react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
+import { Card, CardContent, CardHeader } from "@0625chopin/shared/ui/card";
+import { Button } from "@0625chopin/shared/ui/button";
+import { Input } from "@0625chopin/shared/ui/input";
+import { Label } from "@0625chopin/shared/ui/label";
+import { Separator } from "@0625chopin/shared/ui/separator";
 import {
   Dialog,
   DialogContent,
@@ -22,10 +22,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { formatPrice } from "@/lib/format";
+} from "@0625chopin/shared/ui/dialog";
+import { formatPrice } from "@0625chopin/shared/format";
 import { placeBid, buyNow } from "@/lib/mutations/auctions";
-import { cn } from "@/lib/utils";
+import { cn } from "@0625chopin/shared/utils";
 
 // ===== Props 타입 =====
 interface BidPanelProps {

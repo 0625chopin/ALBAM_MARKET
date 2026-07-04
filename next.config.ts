@@ -7,6 +7,8 @@ const supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
+  // 공유 패키지(@0625chopin/shared) 소스를 Next가 컴파일 (src 소비 + "use client" 보존)
+  transpilePackages: ["@0625chopin/shared"],
   images: {
     remotePatterns: supabaseHost
       ? [

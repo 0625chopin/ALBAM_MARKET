@@ -3,7 +3,7 @@
 // 홈 로딩 화면(app/loading.tsx)과 새로고침 대기 중에 사용한다.
 
 import { AuctionCardSkeleton } from "@/components/auctions/auction-card-skeleton";
-import { cn } from "@/lib/utils";
+import { cn } from "@0625chopin/shared/utils";
 
 interface AuctionGridSkeletonProps {
   /** 렌더할 스켈레톤 카드 수 (기본값: 6) */

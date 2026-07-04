@@ -7,7 +7,7 @@
 
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
-import { ErrorState } from "@/components/common/error-state";
+import { ErrorState } from "@0625chopin/shared/common/error-state";
 
 interface ErrorPageProps {
   /** Next.js가 주입하는 에러 객체 (digest는 서버 오류 ID) */

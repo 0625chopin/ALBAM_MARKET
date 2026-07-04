@@ -6,7 +6,7 @@ import { SiteHeaderSkeleton } from "@/components/layout/site-header-skeleton";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { Container } from "@/components/layout/container";
 import { TransactionCardSkeleton } from "@/components/transactions/transaction-card-skeleton";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@0625chopin/shared/ui/skeleton";
 
 export default function TransactionsLoading() {
   return (

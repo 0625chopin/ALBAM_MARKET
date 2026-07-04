@@ -3,7 +3,7 @@
 // 이 조회는 UX 사전검증용(등록 폼 비활성/안내)이며, 최종 강제는 서버 트리거
 // enforce_seller_penalty_limit 가 products insert 시 codes.policy 를 직접 조회해 수행한다.
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@0625chopin/shared/supabase/server";
 import { getCurrentUserId } from "./profiles";
 import { fetchPolicies } from "./codes";
 

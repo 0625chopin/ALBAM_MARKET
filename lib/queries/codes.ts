@@ -7,14 +7,14 @@
 //       던진다(숫자는 원문 degrade가 불가능하고 PolicyMap이 전 키를 요구하므로 명시적 실패). 실패는
 //       캐시하지 않아 다음 요청에서 재조회한다.
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@0625chopin/shared/supabase/server";
 import type {
   SelectOption,
   CodeGroupKey,
   PolicyMap,
   PolicyKey,
-} from "@/lib/types";
-import { toSelectOption } from "./_map";
+} from "@0625chopin/shared/types";
+import { toSelectOption } from "@0625chopin/shared/queries/map";
 
 /** 프로세스 단위 그룹 캐시 (그룹키 → 성공 조회 결과 Promise). 실패는 캐시하지 않는다. */
 const groupCache = new Map<CodeGroupKey, Promise<SelectOption[]>>();

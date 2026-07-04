@@ -13,31 +13,32 @@
 
 ## 이슈 목록
 
-| ID        | 상태    | 분류   | 제목                                                                        | 비고                                                                    |
-| --------- | ------- | ------ | --------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| ISSUE-009 | 🟢 DONE | UI     | 모바일 헤더 메뉴(드로어/햄버거) 미구현 → 하단 BottomNav로 대체              | T033 확인, 하단 탭바가 모바일 내비 제공                                 |
-| ISSUE-010 | 🟢 DONE | 국제화 | `app/layout.tsx` lang 속성 "en" → "ko" 적용                                 | MVP 한국어 고정(2026-07-02), 다국어는 Phase 7(T074)                     |
-| ISSUE-011 | 🟢 DONE | 인프라 | cacheComponents 동적 라우트 prerender — Suspense 경계 패턴                  | T012에서 해결, Phase 2 참고 패턴                                        |
-| ISSUE-012 | 🟢 DONE | 데이터 | 타입 네이밍 camelCase 확정 → 실DB(snake_case) 매핑 레이어 필요              | `lib/queries/_map.ts` 매핑 레이어로 구현(컴포넌트 무수정)               |
-| ISSUE-013 | 🟢 DONE | 인프라 | RSC에 onClick 등 이벤트 핸들러 전달 시 500 에러 — 정적/클라이언트 분리      | T025에서 해결, Phase 3 인터랙션 참고                                    |
-| ISSUE-014 | 🟢 DONE | 데이터 | `profiles.nickname` NOT NULL 제약 적용                                      | 트리거 폴백 보강 + 가입 폼 닉네임 입력 + NOT NULL (2026-07-02)          |
-| ISSUE-015 | 🟢 DONE | 데이터 | `products`에 상품 설명(description) 컬럼 부재 → 등록 폼의 설명 미저장       | 컬럼 추가 + 타입/매퍼/폼/상세표시 반영 완료                             |
-| ISSUE-016 | 🟢 DONE | 평판   | 평점 코멘트(comment) UI 입력되나 미저장                                     | `ratings.comment`+`submit_rating` p_comment 인자 추가 완료              |
-| ISSUE-017 | 🟢 DONE | 인증   | 미들웨어 비로그인 보호 경로 복원(Phase 2 임시 허용 제거)                    | T062에서 해결                                                           |
-| ISSUE-018 | 🟢 DONE | 인프라 | 스타터킷 잔재(groups/group_members + group RPC 4종) anon 노출 제거          | 테이블·함수·트리거 DROP + get_policy_int anon 노출 차단 (2026-07-02)    |
-| ISSUE-019 | 🟢 DONE | 성능   | FK 커버링 인덱스 미생성 → 도메인 FK 8건 인덱스 추가                         | unindexed_foreign_keys advisor 0 (2026-07-02)                           |
-| ISSUE-001 | 🟢 DONE | 경매   | 기본 낙찰시간 상수 → DB 공통코드 이관(단일값)                               | codes.policy로 이관, 컬럼 DEFAULT 자동설정                              |
-| ISSUE-002 | 🟢 DONE | 거래   | 거래완료 자동완료 대기시간 결정 (저장위치는 DB 이관됨)                      | 기본 24h 확정, 24~168h DB 조정 가능(RPC 클램프)                         |
-| ISSUE-003 | 🟢 DONE | 입찰   | 최소 입찰 증가폭 방식(정액/정률/구간) (저장위치는 DB 이관됨)                | 정액 방식 확정, 값 1,000원                                              |
-| ISSUE-004 | 🟢 DONE | 평판   | 낙찰 포기 패널티 정책(점수/기준/제재)                                       | 이용 제한 확정: 30일 3회 누적 시 경매 등록 차단(트리거)                 |
-| ISSUE-005 | 🟢 DONE | 평판   | 판매자/구매자 레벨 산정식                                                   | 현재 산정식 확정(가중치 조정은 함수 교체로 대응)                        |
-| ISSUE-006 | 🟢 DONE | 상품   | 입찰 후 상품 내리기 제한 강도                                               | 패널티 후 허용 확정(입찰 시 penalties 기록, 004 누적 대상)              |
-| ISSUE-007 | 🟢 DONE | 경매   | 연쇄 이양 시 차순위 수락 대기시간 적용 여부                                 | 즉시 이양 확정(대기시간 미적용)                                         |
-| ISSUE-008 | 🟢 DONE | 인프라 | 경매 자동 종료/자동완료 실행 메커니즘 → **pg_cron + DB 함수**               | T054/T058 구현, cron 2종(close/auto-complete) active                    |
-| ISSUE-020 | 🟢 DONE | 데이터 | 타인 프로필 `/profile/[id]` 실데이터 전환 (Mock "김알밤" → Supabase)        | 2026-06-29 해결, `fetchProfile`+`fetchProfileScores` 교체               |
-| ISSUE-021 | 🟢 DONE | 평판   | 평점 제출 시 브라우저 콘솔 `submit_rating` 400 1건 관측(데이터는 정상 저장) | 재제출 멱등 처리(`ON CONFLICT DO NOTHING` no-op) — 롤백 테스트 통과     |
-| ISSUE-022 | 🟢 DONE | 데이터 | 고아 `product_images.url` → Storage 객체 부재로 `/_next/image` 400          | `ProductImage` onError 폴백(카드·갤러리) — 깨진 아이콘 제거             |
-| ISSUE-023 | 🟢 DONE | 경매   | 경매 진행 시간 고정(36h) → 등록자가 12시간/1~7일 선택                       | 폼 Select + `createAuction` 가 `auction_ends_at` 명시 전달 (2026-07-02) |
+| ID        | 상태    | 분류   | 제목                                                                        | 비고                                                                             |
+| --------- | ------- | ------ | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| ISSUE-009 | 🟢 DONE | UI     | 모바일 헤더 메뉴(드로어/햄버거) 미구현 → 하단 BottomNav로 대체              | T033 확인, 하단 탭바가 모바일 내비 제공                                          |
+| ISSUE-010 | 🟢 DONE | 국제화 | `app/layout.tsx` lang 속성 "en" → "ko" 적용                                 | MVP 한국어 고정(2026-07-02), 다국어는 Phase 7(T074)                              |
+| ISSUE-011 | 🟢 DONE | 인프라 | cacheComponents 동적 라우트 prerender — Suspense 경계 패턴                  | T012에서 해결, Phase 2 참고 패턴                                                 |
+| ISSUE-012 | 🟢 DONE | 데이터 | 타입 네이밍 camelCase 확정 → 실DB(snake_case) 매핑 레이어 필요              | `lib/queries/_map.ts` 매핑 레이어로 구현(컴포넌트 무수정)                        |
+| ISSUE-013 | 🟢 DONE | 인프라 | RSC에 onClick 등 이벤트 핸들러 전달 시 500 에러 — 정적/클라이언트 분리      | T025에서 해결, Phase 3 인터랙션 참고                                             |
+| ISSUE-014 | 🟢 DONE | 데이터 | `profiles.nickname` NOT NULL 제약 적용                                      | 트리거 폴백 보강 + 가입 폼 닉네임 입력 + NOT NULL (2026-07-02)                   |
+| ISSUE-015 | 🟢 DONE | 데이터 | `products`에 상품 설명(description) 컬럼 부재 → 등록 폼의 설명 미저장       | 컬럼 추가 + 타입/매퍼/폼/상세표시 반영 완료                                      |
+| ISSUE-016 | 🟢 DONE | 평판   | 평점 코멘트(comment) UI 입력되나 미저장                                     | `ratings.comment`+`submit_rating` p_comment 인자 추가 완료                       |
+| ISSUE-017 | 🟢 DONE | 인증   | 미들웨어 비로그인 보호 경로 복원(Phase 2 임시 허용 제거)                    | T062에서 해결                                                                    |
+| ISSUE-018 | 🟢 DONE | 인프라 | 스타터킷 잔재(groups/group_members + group RPC 4종) anon 노출 제거          | 테이블·함수·트리거 DROP + get_policy_int anon 노출 차단 (2026-07-02)             |
+| ISSUE-019 | 🟢 DONE | 성능   | FK 커버링 인덱스 미생성 → 도메인 FK 8건 인덱스 추가                         | unindexed_foreign_keys advisor 0 (2026-07-02)                                    |
+| ISSUE-001 | 🟢 DONE | 경매   | 기본 낙찰시간 상수 → DB 공통코드 이관(단일값)                               | codes.policy로 이관, 컬럼 DEFAULT 자동설정                                       |
+| ISSUE-002 | 🟢 DONE | 거래   | 거래완료 자동완료 대기시간 결정 (저장위치는 DB 이관됨)                      | 기본 24h 확정, 24~168h DB 조정 가능(RPC 클램프)                                  |
+| ISSUE-003 | 🟢 DONE | 입찰   | 최소 입찰 증가폭 방식(정액/정률/구간) (저장위치는 DB 이관됨)                | 정액 방식 확정, 값 1,000원                                                       |
+| ISSUE-004 | 🟢 DONE | 평판   | 낙찰 포기 패널티 정책(점수/기준/제재)                                       | 이용 제한 확정: 30일 3회 누적 시 경매 등록 차단(트리거)                          |
+| ISSUE-005 | 🟢 DONE | 평판   | 판매자/구매자 레벨 산정식                                                   | 현재 산정식 확정(가중치 조정은 함수 교체로 대응)                                 |
+| ISSUE-006 | 🟢 DONE | 상품   | 입찰 후 상품 내리기 제한 강도                                               | 패널티 후 허용 확정(입찰 시 penalties 기록, 004 누적 대상)                       |
+| ISSUE-007 | 🟢 DONE | 경매   | 연쇄 이양 시 차순위 수락 대기시간 적용 여부                                 | 즉시 이양 확정(대기시간 미적용)                                                  |
+| ISSUE-008 | 🟢 DONE | 인프라 | 경매 자동 종료/자동완료 실행 메커니즘 → **pg_cron + DB 함수**               | T054/T058 구현, cron 2종(close/auto-complete) active                             |
+| ISSUE-020 | 🟢 DONE | 데이터 | 타인 프로필 `/profile/[id]` 실데이터 전환 (Mock "김알밤" → Supabase)        | 2026-06-29 해결, `fetchProfile`+`fetchProfileScores` 교체                        |
+| ISSUE-021 | 🟢 DONE | 평판   | 평점 제출 시 브라우저 콘솔 `submit_rating` 400 1건 관측(데이터는 정상 저장) | 재제출 멱등 처리(`ON CONFLICT DO NOTHING` no-op) — 롤백 테스트 통과              |
+| ISSUE-022 | 🟢 DONE | 데이터 | 고아 `product_images.url` → Storage 객체 부재로 `/_next/image` 400          | `ProductImage` onError 폴백(카드·갤러리) — 깨진 아이콘 제거                      |
+| ISSUE-023 | 🟢 DONE | 경매   | 경매 진행 시간 고정(36h) → 등록자가 12시간/1~7일 선택                       | 폼 Select + `createAuction` 가 `auction_ends_at` 명시 전달 (2026-07-02)          |
+| ISSUE-028 | 🟢 DONE | 경매   | 강제종료(force_closed) 상태 신규 추가 — FO 표시 반영(크로스앱)              | 관리자 콘솔 강제 종료 결과. FO /transactions·/my-products·필터에 "강제종료" 노출 |
 
 ---
 
@@ -217,3 +218,15 @@
 - **원인**: `next.config.ts`의 `images.remotePatterns`(Supabase 호스트 + `/storage/v1/object/public/**`)는 정상. 원본 Storage URL 자체가 400이며, `storage.objects`(bucket `product-images`)가 **0건**으로 확인됨. 즉 `product_images.url` 행은 존재하나 실제 업로드 파일이 없다(과거 로컬 이미지 삭제 커밋 `e299eab` + P6TEST 정리 잔재로 추정되는 고아 데이터). **코드/경로 생성 로직은 정상**(데이터 바인딩·매핑 검증 통과).
 - **해결(2026-07-02)**: `ProductImage` 클라이언트 컴포넌트 신설(`components/common/product-image.tsx`) — `next/image` `onError` 시 `ImagePlaceholder`로 전환. `auction-card` 대표 이미지·`auction-gallery` 대표/썸네일에 적용해 로드 실패 시 깨진 아이콘 대신 그레이스풀 폴백. 신규 업로드 흐름은 실제 파일이 존재하므로 정상.
 - **잔여(참고)**: onError는 UI를 폴백하지만 브라우저는 실패한 원본 요청을 여전히 네트워크 400으로 기록한다(이미지 바이너리 자체가 없기 때문). 현재 `product_images` 5행은 모두 고아 **테스트 데이터**이며, 콘솔 400까지 완전 제거하려면 고아 행 정리(선택)가 필요하다 — 신규 실업로드로 대체되면 자연 소멸.
+
+## ISSUE-028 · 강제종료(force_closed) 상태 신규 추가 — FO 표시 반영(크로스앱) 🟢 DONE
+
+- **배경**: 관리자 콘솔(BO)에서 경매를 **강제 종료**하면 결과를 전용 상태 **강제종료(force_closed)** 로 남기기로 결정(BO `docs/ISSUES.md` ISSUE-027→028). 유찰(입찰 없이 마감)과 구분되며, FO에서도 이 상태를 표시해야 한다. (DB `products.status`·`codes.product_status`·`ProductStatus`(shared)에 `force_closed` 추가는 BO/DB 측에서 수행.)
+- **FO 반영(2026-07-04)**:
+  - 라벨: `codes.product_status`의 `force_closed→강제종료` 행을 `fetchStatusLabels("product_status")`가 런타임 자동 로딩(코드 변경 없이 라벨 공급). Mock 미러 `lib/mocks/codes.ts` `MOCK_PRODUCT_STATUS_LABELS`에 `force_closed:"강제종료"` 추가(Record 완전성).
+  - 상태 필터/헤더: 홈(`app/page.tsx`)·내상품(`app/my-products/page.tsx`)의 `VALID_STATUS`·`STATUS_HEADINGS`(Record 완전성)와 `components/auctions/auction-status-filter.tsx`의 `STATUS_ORDER`에 `force_closed` 추가 → "강제종료" 필터 탭.
+  - 거래 카드(`components/transactions/transaction-card.tsx`): 판정을 `product.status === "failed" || "force_closed"`로 확장 → 거래 상태(취소) 대신 상품 상태 배지(유찰/강제종료) 표시, 역할 배지 "구매". 강제 종료가 **입찰 있던 경매**면 BO가 생성한 취소 거래를 통해 /transactions에 "강제종료"로 노출된다.
+  - 채팅 차단(`transaction-actions.tsx` `canChat`)·경매 상세 종료 배너(`auction-info.tsx` `isEnded`)에 `force_closed` 포함.
+  - shared `ProductStatus`/배지 variant 변경은 `install-links` 물리 복사본이므로 FO `node_modules/@0625chopin/shared`도 재동기화됨.
+- **동작**: 입찰 있던 강제종료 → FO `/transactions`에 "강제종료". 입찰 0건(예: 676) → 거래 불가로 `/transactions` 미노출, `/my-products`(강제종료 필터)에서 "강제종료" 표시.
+- **검증**: `check-all` EXIT 0; Playwright — `/my-products?status=force_closed`에 676 "강제종료" 배지·필터 탭, `/transactions`에 강제종료 건 "강제종료" 표시(유찰과 구분) 확인.

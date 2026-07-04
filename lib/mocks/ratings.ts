@@ -1,5 +1,5 @@
 // Mock 별점/평점 데이터 (거래완료 후 상호 부여)
-import type { Rating } from "@/lib/types";
+import type { Rating } from "@0625chopin/shared/types";
 
 export const mockRatings: Rating[] = [
   // txn-2(완료): 구매자 prof-1 → 판매자 prof-3

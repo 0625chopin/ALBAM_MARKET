@@ -1,10 +1,10 @@
 // 거래 카드 스켈레톤 (RSC)
 // TransactionCard 레이아웃(썸네일 size-16 + 제목/배지 + 구분선 + 액션 버튼)을 본떠 로딩 상태를 표시한다.
 
-import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
+import { Skeleton } from "@0625chopin/shared/ui/skeleton";
+import { Card, CardContent } from "@0625chopin/shared/ui/card";
+import { Separator } from "@0625chopin/shared/ui/separator";
+import { cn } from "@0625chopin/shared/utils";
 
 interface TransactionCardSkeletonProps {
   /** 추가 Tailwind 클래스 (선택) */

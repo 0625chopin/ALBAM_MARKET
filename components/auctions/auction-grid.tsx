@@ -5,8 +5,8 @@
 
 import { Gavel } from "lucide-react";
 import { AuctionCard } from "@/components/auctions/auction-card";
-import { EmptyState } from "@/components/common/empty-state";
-import type { AuctionSummary } from "@/lib/types";
+import { EmptyState } from "@0625chopin/shared/common/empty-state";
+import type { AuctionSummary } from "@0625chopin/shared/types";
 
 interface AuctionGridProps {
   /** 렌더할 경매 요약 목록 */

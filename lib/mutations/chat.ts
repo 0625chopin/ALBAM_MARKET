@@ -1,8 +1,8 @@
 // 채팅 메시지 전송 (Client Component 용)
 
-import { createClient } from "@/lib/supabase/client";
-import type { Message } from "@/lib/types";
-import { toMessage } from "@/lib/queries/_map";
+import { createClient } from "@0625chopin/shared/supabase/client";
+import type { Message } from "@0625chopin/shared/types";
+import { toMessage } from "@0625chopin/shared/queries/map";
 
 /**
  * 메시지를 전송한다(messages insert). 당사자가 아니면 RLS 로 차단된다.

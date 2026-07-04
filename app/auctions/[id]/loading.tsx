@@ -5,7 +5,7 @@
 
 import { SiteHeaderSkeleton } from "@/components/layout/site-header-skeleton";
 import { SiteFooter } from "@/components/layout/site-footer";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@0625chopin/shared/ui/skeleton";
 
 export default function AuctionDetailLoading() {
   return (

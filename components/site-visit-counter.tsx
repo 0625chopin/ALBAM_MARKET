@@ -7,7 +7,7 @@
 //   반드시 클라이언트 마운트 시점에 트리거한다. RPC 반환값(최신 count)으로 표시를 갱신한다.
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { createClient } from "@0625chopin/shared/supabase/client";
 import type { SiteCounterKey } from "@/lib/queries";
 
 // 세션 중복 방지 키 (sessionStorage). 탭 세션 동안 카운터 key 별 1회만 증가시킨다.

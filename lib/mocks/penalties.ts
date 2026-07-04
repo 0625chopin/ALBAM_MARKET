@@ -1,5 +1,5 @@
 // Mock 패널티 데이터 (낙찰 포기/위반 기록)
-import type { Penalty } from "@/lib/types";
+import type { Penalty } from "@0625chopin/shared/types";
 
 export const mockPenalties: Penalty[] = [
   {

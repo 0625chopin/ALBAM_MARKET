@@ -5,7 +5,7 @@ import { FileSearch } from "lucide-react";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { Container } from "@/components/layout/container";
-import { EmptyState } from "@/components/common/empty-state";
+import { EmptyState } from "@0625chopin/shared/common/empty-state";
 
 export default function NotFound() {
   return (

@@ -2,9 +2,9 @@
 // Mock(lib/mocks/profiles)과 동일한 도메인 계약을 반환한다. 페이지는 이 함수만 호출하고
 // 컴포넌트는 수정하지 않는다(UI 무수정 원칙).
 
-import { createClient } from "@/lib/supabase/server";
-import type { Profile } from "@/lib/types";
-import { toProfile } from "./_map";
+import { createClient } from "@0625chopin/shared/supabase/server";
+import type { Profile } from "@0625chopin/shared/types";
+import { toProfile } from "@0625chopin/shared/queries/map";
 
 // 프로필 조회 시 공통으로 가져올 컬럼 (도메인 Profile 매핑에 필요한 최소 집합)
 const PROFILE_COLUMNS =

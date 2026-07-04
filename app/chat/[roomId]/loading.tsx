@@ -2,7 +2,7 @@
 // page.tsx 골격(430px 컨테이너 + 헤더 + 메시지 목록 + 입력바)과 동일한 구조로 스켈레톤을 렌더한다.
 // page.tsx에는 SiteHeader/SiteFooter가 없으므로 loading.tsx도 동일하게 제외.
 
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@0625chopin/shared/ui/skeleton";
 import { MessageListSkeleton } from "@/components/chat/message-list-skeleton";
 
 export default function ChatRoomLoading() {

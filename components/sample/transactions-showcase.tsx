@@ -9,8 +9,9 @@ import {
   CURRENT_USER_ID,
   getMockProfile,
   MOCK_TRANSACTION_STATUS_LABELS,
+  MOCK_PRODUCT_STATUS_LABELS,
 } from "@/lib/mocks";
-import type { Transaction } from "@/lib/types";
+import type { Transaction } from "@0625chopin/shared/types";
 
 // 전시 전용 합성 거래 — 구매자(CURRENT_USER_ID)·진행중 케이스.
 // Mock 데이터에는 구매자+진행중 거래가 없어, 거래완료/낙찰 포기 액션을 전시하기 위해 추가한다.
@@ -21,6 +22,7 @@ const buyerPendingTransaction: Transaction = {
   buyerId: CURRENT_USER_ID,
   finalPrice: 150000,
   status: "pending",
+  endedAt: null,
 };
 
 export default function TransactionsShowcase() {
@@ -83,6 +85,7 @@ export default function TransactionsShowcase() {
                 counterpartNickname={counterpartProfile.nickname}
                 chatRoomId={chatRoomId}
                 statusLabels={MOCK_TRANSACTION_STATUS_LABELS}
+                productStatusLabels={MOCK_PRODUCT_STATUS_LABELS}
               />
             );
           })}
@@ -97,6 +100,7 @@ export default function TransactionsShowcase() {
               counterpartNickname={buyerPendingCounterpart.nickname}
               chatRoomId={null}
               statusLabels={MOCK_TRANSACTION_STATUS_LABELS}
+              productStatusLabels={MOCK_PRODUCT_STATUS_LABELS}
             />
           )}
         </div>

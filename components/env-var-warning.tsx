@@ -1,6 +1,6 @@
 // 환경 변수 미설정 시 표시되는 경고 컴포넌트
-import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
+import { Badge } from "@0625chopin/shared/ui/badge";
+import { Button } from "@0625chopin/shared/ui/button";
 
 export function EnvVarWarning() {
   return (

@@ -4,12 +4,16 @@
 //            이 컴포넌트는 profiles.seller_level/buyer_level 캐시값을 표시만 한다.
 
 import { MapPin } from "lucide-react";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { StarRating } from "@/components/common/star-rating";
-import { LevelBadge } from "@/components/common/level-badge";
-import type { Profile } from "@/lib/types";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from "@0625chopin/shared/ui/avatar";
+import { Card, CardContent, CardHeader } from "@0625chopin/shared/ui/card";
+import { Separator } from "@0625chopin/shared/ui/separator";
+import { StarRating } from "@0625chopin/shared/common/star-rating";
+import { LevelBadge } from "@0625chopin/shared/common/level-badge";
+import type { Profile } from "@0625chopin/shared/types";
 
 interface ProfileCardProps {
   /** 프로필 데이터 */

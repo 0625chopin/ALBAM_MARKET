@@ -2,11 +2,11 @@
 // /sample 페이지에서 공통 컴포넌트 5종을 한 섹션으로 전시한다.
 // ImagePlaceholder / StatusBadge / StarRating / LevelBadge / RemainingTime
 
-import { ImagePlaceholder } from "@/components/common/image-placeholder";
-import { StatusBadge } from "@/components/common/status-badge";
-import { StarRating } from "@/components/common/star-rating";
-import { LevelBadge } from "@/components/common/level-badge";
-import { RemainingTime } from "@/components/common/remaining-time";
+import { ImagePlaceholder } from "@0625chopin/shared/common/image-placeholder";
+import { StatusBadge } from "@0625chopin/shared/common/status-badge";
+import { StarRating } from "@0625chopin/shared/common/star-rating";
+import { LevelBadge } from "@0625chopin/shared/common/level-badge";
+import { RemainingTime } from "@0625chopin/shared/common/remaining-time";
 import {
   MOCK_PRODUCT_STATUS_LABELS,
   MOCK_TRANSACTION_STATUS_LABELS,

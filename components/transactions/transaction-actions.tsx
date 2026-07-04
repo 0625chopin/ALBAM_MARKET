@@ -9,28 +9,32 @@
 // - ISSUE-004: 낙찰 포기자 패널티 — penalties 기록 + 누적 시 경매 등록 제한(30일 3회, 서버 트리거 강제).
 // - ISSUE-007: 차순위 수락 대기시간 — 미적용 확정(즉시 이양). 차순위 입찰자에게 그의 입찰가로 즉시 이양.
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { StatusBadge } from "@/components/common/status-badge";
-import { ConfirmDialog } from "@/components/common/confirm-dialog";
+import { Button } from "@0625chopin/shared/ui/button";
+import { StatusBadge } from "@0625chopin/shared/common/status-badge";
+import { ConfirmDialog } from "@0625chopin/shared/common/confirm-dialog";
 import { RatingModal } from "@/components/transactions/rating-modal";
+import { ReportDialog } from "@/components/report/report-dialog";
 import {
   abandonAuction,
   completeTransaction,
+  endTransaction,
 } from "@/lib/mutations/transactions";
 import type {
   ProductStatus,
   Transaction,
   TransactionStatus,
-} from "@/lib/types";
+} from "@0625chopin/shared/types";
 
 interface TransactionActionsProps {
   /** 거래 데이터 (초기 상태 바인딩용) */
   transaction: Transaction;
   /** 거래 대상 상품 상태 (채팅 가능 여부 판정용 — 유찰/내림 차단) */
   productStatus: ProductStatus;
+  /** 거래 대상 상품 제목 (상품 신고 모달 제목용) */
+  productTitle: string;
   /** 현재 사용자의 역할 */
   role: "seller" | "buyer";
   /** 거래 상대방 닉네임 (평점 모달용) */
@@ -44,6 +48,7 @@ interface TransactionActionsProps {
 export function TransactionActions({
   transaction,
   productStatus,
+  productTitle,
   role,
   counterpartNickname,
   chatRoomId,
@@ -58,6 +63,29 @@ export function TransactionActions({
   >(null);
   // 낙찰 포기 처리 에러
   const [actionError, setActionError] = useState<string | null>(null);
+  // 구매자의 "거래종료" 처리 여부 — 서버 상태(transactions.ended_at) 기반. 액션 시 낙관적 갱신.
+  const [ended, setEnded] = useState(transaction.endedAt != null);
+
+  // 외부 변경(관리자 조치 등 Realtime → router.refresh) 시 서버 prop 으로 로컬 상태 재동기화.
+  // 내 액션은 위 핸들러가 낙관적으로 먼저 갱신하고, 외부 변경은 이 effect 가 반영한다(버튼 상태 어긋남 방지).
+  useEffect(() => {
+    setStatus(transaction.status);
+    setEnded(transaction.endedAt != null);
+  }, [transaction.status, transaction.endedAt]);
+
+  // 거래 종료 처리 — 완료된 거래를 구매자가 최종 종료(RPC end_transaction, DB ended_at 기록)
+  const handleEnd = async () => {
+    setActionError(null);
+    try {
+      await endTransaction(transaction.id);
+      setEnded(true);
+      router.refresh();
+    } catch (error) {
+      setActionError(
+        error instanceof Error ? error.message : "거래 종료에 실패했습니다."
+      );
+    }
+  };
 
   // 거래 완료(completed, auto_completed) 여부
   const isCompleted = status === "completed" || status === "auto_completed";
@@ -69,7 +97,8 @@ export function TransactionActions({
     !!chatRoomId &&
     status !== "canceled" &&
     productStatus !== "failed" &&
-    productStatus !== "withdrawn";
+    productStatus !== "withdrawn" &&
+    productStatus !== "force_closed";
 
   // 거래완료 확정 (구매자) — RPC complete_transaction
   const handleComplete = async () => {
@@ -158,7 +187,45 @@ export function TransactionActions({
             counterpartNickname={counterpartNickname}
           />
         )}
+
+        {/* 상품 신고: 구매자만 (판매자는 본인 상품이라 제외). 거래 상태 무관. */}
+        {role === "buyer" && (
+          <ReportDialog
+            targetType="product"
+            targetId={transaction.productId}
+            targetLabel={productTitle}
+            triggerLabel="상품 신고"
+            triggerVariant="outline"
+            triggerSize="sm"
+          />
+        )}
+
+        {/* 거래종료: 구매자 + 거래완료 상태(상품거래 완료) + 아직 미종료 */}
+        {role === "buyer" && isCompleted && !ended && (
+          <ConfirmDialog
+            trigger={
+              <Button size="sm" variant="secondary">
+                거래종료
+              </Button>
+            }
+            title="거래를 종료하시겠습니까?"
+            description="완료된 거래를 최종 종료 처리합니다. 종료 후에도 평점은 남길 수 있습니다."
+            confirmLabel="거래종료"
+            onConfirm={handleEnd}
+          />
+        )}
       </div>
+
+      {/* 거래종료 결과 안내 */}
+      {ended && (
+        <p
+          className="text-muted-foreground text-xs"
+          role="status"
+          aria-live="polite"
+        >
+          거래가 종료되었습니다.
+        </p>
+      )}
 
       {/* 거래완료 결과 안내 */}
       {lastAction === "completed" && (

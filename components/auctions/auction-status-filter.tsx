@@ -6,16 +6,17 @@
 // - 내 상품: basePath="/my-products", defaultStatus="all"(전체)
 
 import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { cn } from "@0625chopin/shared/utils";
 import type { AuctionStatusFilterValue } from "@/lib/queries";
 
-// 탭 노출 순서 (전체 + 실제 상품 상태 5종)
+// 탭 노출 순서 (전체 + 실제 상품 상태 6종)
 const STATUS_ORDER: Exclude<AuctionStatusFilterValue, "all">[] = [
   "active",
   "won",
   "failed",
   "withdrawn",
   "completed",
+  "force_closed",
 ];
 
 interface AuctionStatusFilterProps {

@@ -2,10 +2,9 @@
 // cacheComponents 패턴: 동기 shell → Suspense → async ChatRoomContent
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@0625chopin/shared/ui/skeleton";
 import { ChatHeader } from "@/components/chat/chat-header";
 import { ChatThread } from "@/components/chat/chat-thread";
-import { CompleteTransactionButton } from "@/components/chat/complete-transaction-button";
 import { getCurrentUserId } from "@/lib/queries";
 import { fetchChatRoom, fetchMessages } from "@/lib/queries/chat";
 
@@ -78,24 +77,20 @@ async function ChatRoomContent({ params }: ChatRoomPageProps) {
 
   return (
     <>
-      {/* 채팅 헤더: 상대방 닉네임, 평점 */}
+      {/* 채팅 헤더: 상대방 닉네임, 평점, 신고 */}
       <ChatHeader
+        counterpartId={room.counterpartId}
         nickname={room.counterpartNickname}
         score={room.counterpartScore}
       />
 
-      {/* 채팅 스레드(Client): 메시지 목록 + 입력 + (구매자) 거래완료 버튼 */}
+      {/* 채팅 스레드(Client): 메시지 목록 + 입력 */}
       {/* 메시지 전송은 messages insert, 신규 메시지는 Realtime 구독으로 동기화 */}
+      {/* 거래 완료 확정은 거래 목록(/transactions)의 거래완료 버튼에서 수행한다 */}
       <ChatThread
         roomId={roomId}
         initialMessages={messages}
         currentUserId={userId}
-        beforeInput={
-          // 구매자 거래 완료 버튼 (T058) — complete_transaction RPC 연동
-          room.isBuyer ? (
-            <CompleteTransactionButton transactionId={room.transactionId} />
-          ) : null
-        }
       />
     </>
   );

@@ -15,7 +15,7 @@ import {
   type AuctionStatusFilterValue,
 } from "@/lib/queries";
 
-// 유효한 상태 필터 값 (전체 + 실제 상품 상태 5종)
+// 유효한 상태 필터 값 (전체 + 실제 상품 상태 6종)
 const VALID_STATUS: AuctionStatusFilterValue[] = [
   "all",
   "active",
@@ -23,6 +23,7 @@ const VALID_STATUS: AuctionStatusFilterValue[] = [
   "failed",
   "withdrawn",
   "completed",
+  "force_closed",
 ];
 
 // 상태별 헤더 제목/설명
@@ -42,6 +43,10 @@ const STATUS_HEADINGS: Record<
     description: "판매자가 내린 경매입니다.",
   },
   completed: { title: "완료된 경매", description: "거래가 완료된 경매입니다." },
+  force_closed: {
+    title: "강제종료된 경매",
+    description: "관리자가 강제 종료한 경매입니다.",
+  },
 };
 
 export default async function Home({

@@ -1,5 +1,5 @@
 // Mock 거래 데이터
-import type { Transaction } from "@/lib/types";
+import type { Transaction } from "@0625chopin/shared/types";
 
 export const mockTransactions: Transaction[] = [
   // 내(prof-1)가 판매자: 원목 책상 낙찰 → 진행중
@@ -10,6 +10,7 @@ export const mockTransactions: Transaction[] = [
     buyerId: "prof-3",
     finalPrice: 55000,
     status: "pending",
+    endedAt: null,
   },
   // 내(prof-1)가 구매자(낙찰자): 아이폰 거래 완료
   {
@@ -19,6 +20,7 @@ export const mockTransactions: Transaction[] = [
     buyerId: "prof-1",
     finalPrice: 450000,
     status: "completed",
+    endedAt: null,
   },
   // 내(prof-1)가 구매자: 자켓 자동완료
   {
@@ -28,6 +30,7 @@ export const mockTransactions: Transaction[] = [
     buyerId: "prof-1",
     finalPrice: 80000,
     status: "auto_completed",
+    endedAt: null,
   },
 ];
 

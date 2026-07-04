@@ -2,7 +2,7 @@
 // site_counters 테이블 → 누적 방문 수 등. 표시용 현재값만 읽고, 증가는 클라이언트에서 RPC로 수행한다.
 // 캐싱하지 않는다: 방문 수는 계속 변하므로 요청마다 최신값을 읽는다(공통코드와 다른 성격).
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@0625chopin/shared/supabase/server";
 
 /** 사이트 카운터 key (DB increment_site_counter 화이트리스트와 일치해야 함) */
 export type SiteCounterKey = "home_visits";

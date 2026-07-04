@@ -2,8 +2,8 @@
 // AuctionCard 레이아웃(aspect-square 이미지 + 제목 2줄 + 가격 + 메타)을 본떠 로딩 상태를 표시한다.
 // AuctionGridSkeleton에서 여러 개 조합하여 사용.
 
-import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
+import { Skeleton } from "@0625chopin/shared/ui/skeleton";
+import { cn } from "@0625chopin/shared/utils";
 
 interface AuctionCardSkeletonProps {
   /** 추가 Tailwind 클래스 (선택) */

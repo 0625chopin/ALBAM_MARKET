@@ -6,9 +6,9 @@
 // url이 있으면 next/image, 없으면 ImagePlaceholder로 표시한다(T052 실 이미지 연동).
 
 import { useState } from "react";
-import { ImagePlaceholder } from "@/components/common/image-placeholder";
-import { ProductImage as ProductImageView } from "@/components/common/product-image";
-import type { ProductImage } from "@/lib/types";
+import { ImagePlaceholder } from "@0625chopin/shared/common/image-placeholder";
+import { ProductImage as ProductImageView } from "@0625chopin/shared/common/product-image";
+import type { ProductImage } from "@0625chopin/shared/types";
 
 interface AuctionGalleryProps {
   /** 상품 이미지 목록 (isPrimary: true가 대표 이미지) */

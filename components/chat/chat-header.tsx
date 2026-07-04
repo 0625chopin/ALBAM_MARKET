@@ -3,17 +3,24 @@
 // 뒤로가기는 Link로 처리 — RSC이므로 onClick 이벤트 핸들러 사용 금지.
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { StarRating } from "@/components/common/star-rating";
+import { Avatar, AvatarFallback } from "@0625chopin/shared/ui/avatar";
+import { StarRating } from "@0625chopin/shared/common/star-rating";
+import { ReportDialog } from "@/components/report/report-dialog";
 
 interface ChatHeaderProps {
+  /** 상대방 사용자 id (사용자 신고 대상) */
+  counterpartId: string;
   /** 상대방 닉네임 */
   nickname: string;
   /** 상대방 평점 (0~10 범위) */
   score: number;
 }
 
-export function ChatHeader({ nickname, score }: ChatHeaderProps) {
+export function ChatHeader({
+  counterpartId,
+  nickname,
+  score,
+}: ChatHeaderProps) {
   // 아바타 폴백: 닉네임 첫 글자
   const initial = nickname.charAt(0);
 
@@ -41,6 +48,16 @@ export function ChatHeader({ nickname, score }: ChatHeaderProps) {
         {/* TODO: Phase 5 — 실제 평점 데이터로 교체 */}
         <StarRating score={score} max={10} />
       </div>
+
+      {/* 상대방 사용자 신고 (FA050) */}
+      <ReportDialog
+        targetType="user"
+        targetId={counterpartId}
+        targetLabel={nickname}
+        triggerLabel="신고"
+        triggerVariant="ghost"
+        triggerClassName="shrink-0"
+      />
     </header>
   );
 }

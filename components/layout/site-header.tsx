@@ -5,8 +5,8 @@ import { Suspense } from "react";
 import { AuthButton } from "@/components/auth-button";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { EnvVarWarning } from "@/components/env-var-warning";
-import { hasEnvVars } from "@/lib/utils";
-import { cn } from "@/lib/utils";
+import { hasEnvVars } from "@0625chopin/shared/utils";
+import { cn } from "@0625chopin/shared/utils";
 
 // 도메인 네비게이션 항목 (아직 없는 라우트는 링크만 배치)
 const NAV_ITEMS = [

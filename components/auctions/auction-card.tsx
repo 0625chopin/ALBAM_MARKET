@@ -5,13 +5,13 @@
 
 import Link from "next/link";
 import { MapPin } from "lucide-react";
-import { ImagePlaceholder } from "@/components/common/image-placeholder";
-import { ProductImage } from "@/components/common/product-image";
-import { StatusBadge } from "@/components/common/status-badge";
-import { RemainingTime } from "@/components/common/remaining-time";
-import { formatPrice } from "@/lib/format";
-import { cn } from "@/lib/utils";
-import type { AuctionSummary } from "@/lib/types";
+import { ImagePlaceholder } from "@0625chopin/shared/common/image-placeholder";
+import { ProductImage } from "@0625chopin/shared/common/product-image";
+import { StatusBadge } from "@0625chopin/shared/common/status-badge";
+import { RemainingTime } from "@0625chopin/shared/common/remaining-time";
+import { formatPrice } from "@0625chopin/shared/format";
+import { cn } from "@0625chopin/shared/utils";
+import type { AuctionSummary } from "@0625chopin/shared/types";
 
 interface AuctionCardProps {
   /** 경매 카드에 표시할 요약 데이터 */
