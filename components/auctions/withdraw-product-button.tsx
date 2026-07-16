@@ -28,8 +28,10 @@ export function WithdrawProductButton({
       await withdrawProduct(productId);
       setDone(true);
       router.refresh();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "상품 내리기에 실패했습니다.");
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "상품 내리기에 실패했습니다."
+      );
     }
   };
 

@@ -8,20 +8,13 @@ import {
   fetchAuctionSummaries,
   fetchMyProductSummaries,
   getCurrentUserId,
+  AUCTION_STATUS_VALUES,
   type AuctionStatusFilterValue,
   type AuctionSummaryPage,
 } from "@/lib/queries";
 
-// 허용되는 상태 필터 값 (전체 + 실제 상품 상태 6종). page.tsx 의 VALID_STATUS 와 동일.
-const VALID_STATUS: AuctionStatusFilterValue[] = [
-  "all",
-  "active",
-  "won",
-  "failed",
-  "withdrawn",
-  "completed",
-  "force_closed",
-];
+// 허용되는 상태 필터 값 (전체 + 실제 상품 상태 6종). AUCTION_STATUS_VALUES 를 단일 소스로 재사용한다.
+const VALID_STATUS: readonly AuctionStatusFilterValue[] = AUCTION_STATUS_VALUES;
 
 /**
  * 경매 목록의 다음 페이지를 조회한다.

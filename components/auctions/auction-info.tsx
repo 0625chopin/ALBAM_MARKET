@@ -9,12 +9,19 @@ import { RemainingTime } from "@0625chopin/shared/common/remaining-time";
 import { Separator } from "@0625chopin/shared/ui/separator";
 import { formatPrice } from "@0625chopin/shared/format";
 import { cn } from "@0625chopin/shared/utils";
-import type { AuctionDetail } from "@0625chopin/shared/types";
+import type { AuctionDetail, ProductStatus } from "@0625chopin/shared/types";
 
 interface AuctionInfoProps {
   /** 경매 상세 데이터 */
   detail: AuctionDetail;
 }
+
+// 종료 상태(낙찰/유찰/강제종료)별 배너 라벨 — 중첩 삼항 대신 매핑으로 표현한다.
+const ENDED_STATUS_LABELS: Partial<Record<ProductStatus, string>> = {
+  won: "낙찰 완료",
+  force_closed: "강제종료",
+  failed: "유찰 종료",
+};
 
 export function AuctionInfo({ detail }: AuctionInfoProps) {
   // 중고등급 표시 라벨 (DB 공통코드에서 조회해 detail에 주입됨)
@@ -47,7 +54,7 @@ export function AuctionInfo({ detail }: AuctionInfoProps) {
               )}
               aria-live="polite"
             >
-              {isWon ? "낙찰 완료" : isForceClosed ? "강제종료" : "유찰 종료"}
+              {ENDED_STATUS_LABELS[detail.status]}
             </span>
           )}
         </div>

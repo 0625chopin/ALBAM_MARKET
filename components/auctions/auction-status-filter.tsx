@@ -8,17 +8,14 @@
 import Link from "next/link";
 import { cn } from "@0625chopin/shared/utils";
 import { DragScroll } from "@/components/ui/drag-scroll";
+import { AUCTION_STATUS_VALUES } from "@/lib/queries";
 import type { AuctionStatusFilterValue } from "@/lib/queries";
 
-// 탭 노출 순서 (전체 + 실제 상품 상태 6종)
-const STATUS_ORDER: Exclude<AuctionStatusFilterValue, "all">[] = [
-  "active",
-  "won",
-  "failed",
-  "withdrawn",
-  "completed",
-  "force_closed",
-];
+// 탭 노출 순서 (실제 상품 상태 6종) — 단일 소스인 AUCTION_STATUS_VALUES 에서 "all"만 제외해 도출한다.
+const STATUS_ORDER = AUCTION_STATUS_VALUES.filter(
+  (status): status is Exclude<AuctionStatusFilterValue, "all"> =>
+    status !== "all"
+);
 
 interface AuctionStatusFilterProps {
   /** 현재 선택된 상태 */

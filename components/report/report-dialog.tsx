@@ -17,6 +17,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@0625chopin/shared/ui/dialog";
+import { Label } from "@0625chopin/shared/ui/label";
+import { Textarea } from "@0625chopin/shared/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -145,12 +147,7 @@ export function ReportDialog({
             <div className="space-y-4 py-2">
               {/* 사유 선택 */}
               <div className="space-y-2">
-                <label
-                  htmlFor="report-reason"
-                  className="text-foreground text-sm font-medium"
-                >
-                  신고 사유
-                </label>
+                <Label htmlFor="report-reason">신고 사유</Label>
                 <Select value={reason} onValueChange={setReason}>
                   <SelectTrigger id="report-reason" className="w-full">
                     <SelectValue
@@ -173,22 +170,19 @@ export function ReportDialog({
 
               {/* 상세 설명 (선택) */}
               <div className="space-y-2">
-                <label
-                  htmlFor="report-detail"
-                  className="text-foreground text-sm font-medium"
-                >
+                <Label htmlFor="report-detail">
                   상세 설명{" "}
                   <span className="text-muted-foreground font-normal">
                     (선택)
                   </span>
-                </label>
-                <textarea
+                </Label>
+                <Textarea
                   id="report-detail"
                   rows={3}
                   value={detail}
                   onChange={(e) => setDetail(e.target.value)}
                   placeholder="신고 사유를 구체적으로 작성해 주세요."
-                  className="border-input bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-ring w-full resize-none rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                  className="resize-none"
                 />
               </div>
             </div>

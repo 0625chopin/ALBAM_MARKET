@@ -13,19 +13,12 @@ import {
   fetchAuctionSummaries,
   fetchStatusLabels,
   fetchSiteCounter,
+  AUCTION_STATUS_VALUES,
   type AuctionStatusFilterValue,
 } from "@/lib/queries";
 
-// 유효한 상태 필터 값 (전체 + 실제 상품 상태 6종)
-const VALID_STATUS: AuctionStatusFilterValue[] = [
-  "all",
-  "active",
-  "won",
-  "failed",
-  "withdrawn",
-  "completed",
-  "force_closed",
-];
+// 유효한 상태 필터 값 (전체 + 실제 상품 상태 6종). AUCTION_STATUS_VALUES 를 단일 소스로 재사용한다.
+const VALID_STATUS: readonly AuctionStatusFilterValue[] = AUCTION_STATUS_VALUES;
 
 // 상태별 헤더 제목/설명
 const STATUS_HEADINGS: Record<

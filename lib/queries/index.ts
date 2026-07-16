@@ -15,6 +15,7 @@ export {
   fetchAuctionDetail,
   fetchMyBidCount,
   AUCTION_PAGE_SIZE,
+  AUCTION_STATUS_VALUES,
 } from "./auctions";
 export type { AuctionStatusFilterValue, AuctionSummaryPage } from "./auctions";
 export {

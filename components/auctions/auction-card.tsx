@@ -87,8 +87,11 @@ export function AuctionCard({
             시작가 {formatPrice(auction.startPrice)}
           </p>
           {auction.buyNowPrice !== null && (
-            // 색상: 상단 상태 필터에서 선택된 탭의 텍스트 색과 동일(text-primary-foreground)
-            <p className="text-primary-foreground text-xs font-medium">
+            // 색상: text-primary-foreground는 bg-primary 배경 위에서만 대비가 보장되는 토큰이라
+            // bg-card(카드) 배경 위에 단독으로 쓰면 라이트 모드에서 저대비가 된다.
+            // 상세 페이지의 즉시구매가(auction-info.tsx)와 동일하게 text-foreground를 사용해
+            // 라이트/다크 모드 모두에서 카드 배경과의 대비를 보장한다.
+            <p className="text-foreground text-xs font-medium">
               즉시구매 {formatPrice(auction.buyNowPrice)}
             </p>
           )}

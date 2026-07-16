@@ -25,6 +25,7 @@ import {
 } from "@0625chopin/shared/ui/dialog";
 import { formatPrice } from "@0625chopin/shared/format";
 import { placeBid, buyNow } from "@/lib/mutations/auctions";
+import { formatWithComma } from "@/lib/utils/product-form";
 import { cn } from "@0625chopin/shared/utils";
 
 // ===== Props 타입 =====
@@ -83,10 +84,6 @@ export function BidPanel({
 
   // 최소 입찰 가능 금액 = 현재가 + 최소 증가폭(DB 정책값)
   const minBidPrice = currentPriceState + minBidIncrement;
-
-  // 천 단위 콤마 포맷 (원 단위 숫자 문자열 → "35,000", 빈 값은 그대로)
-  const formatComma = (digits: string) =>
-    digits === "" ? "" : Number(digits).toLocaleString("ko-KR");
 
   // 입력 변경 — 숫자(0~9)만 남겨 raw로 저장 (표시는 콤마 포맷)
   const handleBidChange = (raw: string) => {
@@ -270,9 +267,8 @@ export function BidPanel({
                     type="number"
                     placeholder={String(minBidPrice)}
                     disabled
-                    aria-disabled="true"
                   />
-                  <Button className="w-full" disabled aria-disabled="true">
+                  <Button className="w-full" disabled>
                     입찰하기
                   </Button>
                 </div>
@@ -296,7 +292,7 @@ export function BidPanel({
                       className="shrink-0"
                       onClick={() => stepBid(-minBidIncrement)}
                       disabled={decreaseDisabled}
-                      aria-label="입찰가 1,000원 감소"
+                      aria-label={`입찰가 ${formatPrice(minBidIncrement)} 감소`}
                     >
                       <Minus className="size-4" aria-hidden="true" />
                     </Button>
@@ -307,8 +303,8 @@ export function BidPanel({
                       type="text"
                       inputMode="numeric"
                       className="text-right"
-                      placeholder={formatComma(String(minBidPrice))}
-                      value={formatComma(bidAmount)}
+                      placeholder={formatWithComma(String(minBidPrice))}
+                      value={formatWithComma(bidAmount)}
                       onChange={(e) => handleBidChange(e.target.value)}
                       aria-invalid={bidError !== null}
                       aria-describedby="bid-hint"
@@ -327,7 +323,7 @@ export function BidPanel({
                       size="icon"
                       className="shrink-0"
                       onClick={() => stepBid(minBidIncrement)}
-                      aria-label="입찰가 1,000원 증가"
+                      aria-label={`입찰가 ${formatPrice(minBidIncrement)} 증가`}
                     >
                       <Plus className="size-4" aria-hidden="true" />
                     </Button>
