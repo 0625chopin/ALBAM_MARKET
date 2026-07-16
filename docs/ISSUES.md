@@ -13,33 +13,41 @@
 
 ## 이슈 목록
 
-| ID        | 상태    | 분류   | 제목                                                                        | 비고                                                                                           |
-| --------- | ------- | ------ | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| ISSUE-009 | 🟢 DONE | UI     | 모바일 헤더 메뉴(드로어/햄버거) 미구현 → 하단 BottomNav로 대체              | T033 확인, 하단 탭바가 모바일 내비 제공                                                        |
-| ISSUE-010 | 🟢 DONE | 국제화 | `app/layout.tsx` lang 속성 "en" → "ko" 적용                                 | MVP 한국어 고정(2026-07-02), 다국어는 Phase 7(T074)                                            |
-| ISSUE-011 | 🟢 DONE | 인프라 | cacheComponents 동적 라우트 prerender — Suspense 경계 패턴                  | T012에서 해결, Phase 2 참고 패턴                                                               |
-| ISSUE-012 | 🟢 DONE | 데이터 | 타입 네이밍 camelCase 확정 → 실DB(snake_case) 매핑 레이어 필요              | `lib/queries/_map.ts` 매핑 레이어로 구현(컴포넌트 무수정)                                      |
-| ISSUE-013 | 🟢 DONE | 인프라 | RSC에 onClick 등 이벤트 핸들러 전달 시 500 에러 — 정적/클라이언트 분리      | T025에서 해결, Phase 3 인터랙션 참고                                                           |
-| ISSUE-014 | 🟢 DONE | 데이터 | `profiles.nickname` NOT NULL 제약 적용                                      | 트리거 폴백 보강 + 가입 폼 닉네임 입력 + NOT NULL (2026-07-02)                                 |
-| ISSUE-015 | 🟢 DONE | 데이터 | `products`에 상품 설명(description) 컬럼 부재 → 등록 폼의 설명 미저장       | 컬럼 추가 + 타입/매퍼/폼/상세표시 반영 완료                                                    |
-| ISSUE-016 | 🟢 DONE | 평판   | 평점 코멘트(comment) UI 입력되나 미저장                                     | `ratings.comment`+`submit_rating` p_comment 인자 추가 완료                                     |
-| ISSUE-017 | 🟢 DONE | 인증   | 미들웨어 비로그인 보호 경로 복원(Phase 2 임시 허용 제거)                    | T062에서 해결                                                                                  |
-| ISSUE-018 | 🟢 DONE | 인프라 | 스타터킷 잔재(groups/group_members + group RPC 4종) anon 노출 제거          | 테이블·함수·트리거 DROP + get_policy_int anon 노출 차단 (2026-07-02)                           |
-| ISSUE-019 | 🟢 DONE | 성능   | FK 커버링 인덱스 미생성 → 도메인 FK 8건 인덱스 추가                         | unindexed_foreign_keys advisor 0 (2026-07-02)                                                  |
-| ISSUE-001 | 🟢 DONE | 경매   | 기본 낙찰시간 상수 → DB 공통코드 이관(단일값)                               | codes.policy로 이관, 컬럼 DEFAULT 자동설정                                                     |
-| ISSUE-002 | 🟢 DONE | 거래   | 거래완료 자동완료 대기시간 결정 (저장위치는 DB 이관됨)                      | 기본 24h 확정, 24~168h DB 조정 가능(RPC 클램프)                                                |
-| ISSUE-003 | 🟢 DONE | 입찰   | 최소 입찰 증가폭 방식(정액/정률/구간) (저장위치는 DB 이관됨)                | 정액 방식 확정, 값 1,000원                                                                     |
-| ISSUE-004 | 🟢 DONE | 평판   | 낙찰 포기 패널티 정책(점수/기준/제재)                                       | 이용 제한 확정: 30일 3회 누적 시 경매 등록 차단(트리거)                                        |
-| ISSUE-005 | 🟢 DONE | 평판   | 판매자/구매자 레벨 산정식                                                   | 현재 산정식 확정(가중치 조정은 함수 교체로 대응)                                               |
-| ISSUE-006 | 🟢 DONE | 상품   | 입찰 후 상품 내리기 제한 강도                                               | 패널티 후 허용 확정(입찰 시 penalties 기록, 004 누적 대상)                                     |
-| ISSUE-007 | 🟢 DONE | 경매   | 연쇄 이양 시 차순위 수락 대기시간 적용 여부                                 | 즉시 이양 확정(대기시간 미적용)                                                                |
-| ISSUE-008 | 🟢 DONE | 인프라 | 경매 자동 종료/자동완료 실행 메커니즘 → **pg_cron + DB 함수**               | T054/T058 구현, cron 2종(close/auto-complete) active                                           |
-| ISSUE-020 | 🟢 DONE | 데이터 | 타인 프로필 `/profile/[id]` 실데이터 전환 (Mock "김알밤" → Supabase)        | 2026-06-29 해결, `fetchProfile`+`fetchProfileScores` 교체                                      |
-| ISSUE-021 | 🟢 DONE | 평판   | 평점 제출 시 브라우저 콘솔 `submit_rating` 400 1건 관측(데이터는 정상 저장) | 재제출 멱등 처리(`ON CONFLICT DO NOTHING` no-op) — 롤백 테스트 통과                            |
-| ISSUE-022 | 🟢 DONE | 데이터 | 고아 `product_images.url` → Storage 객체 부재로 `/_next/image` 400          | `ProductImage` onError 폴백(카드·갤러리) — 깨진 아이콘 제거                                    |
-| ISSUE-023 | 🟢 DONE | 경매   | 경매 진행 시간 고정(36h) → 등록자가 12시간/1~7일 선택                       | 폼 Select + `createAuction` 가 `auction_ends_at` 명시 전달 (2026-07-02)                        |
-| ISSUE-028 | 🟢 DONE | 경매   | 강제종료(force_closed) 상태 신규 추가 — FO 표시 반영(크로스앱)              | 관리자 콘솔 강제 종료 결과. FO /transactions·/my-products·필터에 "강제종료" 노출               |
-| ISSUE-029 | 🟢 DONE | 입찰   | 동시 입찰 동시성 검증 테스트 추가(동일/다른 금액)                           | place_bid FOR UPDATE 락 검증. 동일금액→정확히 1건 성공, 다른금액→최종가=최댓값(갱신 손실 없음) |
+| ID        | 상태    | 분류   | 제목                                                                        | 비고                                                                                            |
+| --------- | ------- | ------ | --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| ISSUE-009 | 🟢 DONE | UI     | 모바일 헤더 메뉴(드로어/햄버거) 미구현 → 하단 BottomNav로 대체              | T033 확인, 하단 탭바가 모바일 내비 제공                                                         |
+| ISSUE-010 | 🟢 DONE | 국제화 | `app/layout.tsx` lang 속성 "en" → "ko" 적용                                 | MVP 한국어 고정(2026-07-02), 다국어는 Phase 7(T074)                                             |
+| ISSUE-011 | 🟢 DONE | 인프라 | cacheComponents 동적 라우트 prerender — Suspense 경계 패턴                  | T012에서 해결, Phase 2 참고 패턴                                                                |
+| ISSUE-012 | 🟢 DONE | 데이터 | 타입 네이밍 camelCase 확정 → 실DB(snake_case) 매핑 레이어 필요              | `lib/queries/_map.ts` 매핑 레이어로 구현(컴포넌트 무수정)                                       |
+| ISSUE-013 | 🟢 DONE | 인프라 | RSC에 onClick 등 이벤트 핸들러 전달 시 500 에러 — 정적/클라이언트 분리      | T025에서 해결, Phase 3 인터랙션 참고                                                            |
+| ISSUE-014 | 🟢 DONE | 데이터 | `profiles.nickname` NOT NULL 제약 적용                                      | 트리거 폴백 보강 + 가입 폼 닉네임 입력 + NOT NULL (2026-07-02)                                  |
+| ISSUE-015 | 🟢 DONE | 데이터 | `products`에 상품 설명(description) 컬럼 부재 → 등록 폼의 설명 미저장       | 컬럼 추가 + 타입/매퍼/폼/상세표시 반영 완료                                                     |
+| ISSUE-016 | 🟢 DONE | 평판   | 평점 코멘트(comment) UI 입력되나 미저장                                     | `ratings.comment`+`submit_rating` p_comment 인자 추가 완료                                      |
+| ISSUE-017 | 🟢 DONE | 인증   | 미들웨어 비로그인 보호 경로 복원(Phase 2 임시 허용 제거)                    | T062에서 해결                                                                                   |
+| ISSUE-018 | 🟢 DONE | 인프라 | 스타터킷 잔재(groups/group_members + group RPC 4종) anon 노출 제거          | 테이블·함수·트리거 DROP + get_policy_int anon 노출 차단 (2026-07-02)                            |
+| ISSUE-019 | 🟢 DONE | 성능   | FK 커버링 인덱스 미생성 → 도메인 FK 8건 인덱스 추가                         | unindexed_foreign_keys advisor 0 (2026-07-02)                                                   |
+| ISSUE-001 | 🟢 DONE | 경매   | 기본 낙찰시간 상수 → DB 공통코드 이관(단일값)                               | codes.policy로 이관, 컬럼 DEFAULT 자동설정                                                      |
+| ISSUE-002 | 🟢 DONE | 거래   | 거래완료 자동완료 대기시간 결정 (저장위치는 DB 이관됨)                      | 기본 24h 확정, 24~168h DB 조정 가능(RPC 클램프)                                                 |
+| ISSUE-003 | 🟢 DONE | 입찰   | 최소 입찰 증가폭 방식(정액/정률/구간) (저장위치는 DB 이관됨)                | 정액 방식 확정, 값 1,000원                                                                      |
+| ISSUE-004 | 🟢 DONE | 평판   | 낙찰 포기 패널티 정책(점수/기준/제재)                                       | 이용 제한 확정: 30일 3회 누적 시 경매 등록 차단(트리거)                                         |
+| ISSUE-005 | 🟢 DONE | 평판   | 판매자/구매자 레벨 산정식                                                   | 현재 산정식 확정(가중치 조정은 함수 교체로 대응)                                                |
+| ISSUE-006 | 🟢 DONE | 상품   | 입찰 후 상품 내리기 제한 강도                                               | 패널티 후 허용 확정(입찰 시 penalties 기록, 004 누적 대상)                                      |
+| ISSUE-007 | 🟢 DONE | 경매   | 연쇄 이양 시 차순위 수락 대기시간 적용 여부                                 | 즉시 이양 확정(대기시간 미적용)                                                                 |
+| ISSUE-008 | 🟢 DONE | 인프라 | 경매 자동 종료/자동완료 실행 메커니즘 → **pg_cron + DB 함수**               | T054/T058 구현, cron 2종(close/auto-complete) active                                            |
+| ISSUE-020 | 🟢 DONE | 데이터 | 타인 프로필 `/profile/[id]` 실데이터 전환 (Mock "김알밤" → Supabase)        | 2026-06-29 해결, `fetchProfile`+`fetchProfileScores` 교체                                       |
+| ISSUE-021 | 🟢 DONE | 평판   | 평점 제출 시 브라우저 콘솔 `submit_rating` 400 1건 관측(데이터는 정상 저장) | 재제출 멱등 처리(`ON CONFLICT DO NOTHING` no-op) — 롤백 테스트 통과                             |
+| ISSUE-022 | 🟢 DONE | 데이터 | 고아 `product_images.url` → Storage 객체 부재로 `/_next/image` 400          | `ProductImage` onError 폴백(카드·갤러리) — 깨진 아이콘 제거                                     |
+| ISSUE-023 | 🟢 DONE | 경매   | 경매 진행 시간 고정(36h) → 등록자가 12시간/1~7일 선택                       | 폼 Select + `createAuction` 가 `auction_ends_at` 명시 전달 (2026-07-02)                         |
+| ISSUE-028 | 🟢 DONE | 경매   | 강제종료(force_closed) 상태 신규 추가 — FO 표시 반영(크로스앱)              | 관리자 콘솔 강제 종료 결과. FO /transactions·/my-products·필터에 "강제종료" 노출                |
+| ISSUE-029 | 🟢 DONE | 입찰   | 동시 입찰 동시성 검증 테스트 추가(동일/다른 금액)                           | place_bid FOR UPDATE 락 검증. 동일금액→정확히 1건 성공, 다른금액→최종가=최댓값(갱신 손실 없음)  |
+| ISSUE-030 | 🔴 OPEN | 보안   | `products` RLS 컬럼 단위 보호 공백 → 경매 공정성 우회 가능 (최우선)         | 소유자면 current_price/status/auction_ends_at/winner_id 직접 조작 가능. 2026-07-17 3인 코드리뷰 |
+| ISSUE-031 | 🔴 OPEN | 보안   | 관리자 정지(user_suspensions)가 입찰/구매/철회/등록에서 미검사              | 정지 사용자도 정상 활동 가능. RPC 초입 공통 검사 필요                                           |
+| ISSUE-032 | 🔴 OPEN | 보안   | `submitReport` 원본 Postgres 에러 메시지 노출 + 대상/URL 검증 공백          | 다른 mutation과 불일치, 스키마 정보 노출. S3(중)+S4·S5(낮)                                      |
+| ISSUE-033 | 🔴 OPEN | 성능   | 경매 상세 페이지 데이터 페칭 워터폴(직렬 await) → 병렬화                    | page.tsx 4단 + fetchAuctionDetail 5단 순차, getCurrentUserId 중복. P1~P3                        |
+| ISSUE-034 | 🔴 OPEN | 성능   | 무한스크롤 셸이 RSC 직접 import(번들 포함)·이미지 과다조회·인덱스·업로드    | P4~P7. created_at 정렬 인덱스 부재, 이미지 순차 업로드                                          |
+| ISSUE-035 | 🔴 OPEN | 스타일 | `auction-card` 즉시구매가 라이트모드 저대비(사실상 안 보임) — 실질 버그     | text-primary-foreground를 bg-card 위 단독 사용. Y1                                              |
+| ISSUE-036 | 🔴 OPEN | 스타일 | 폼/쿼리 대규모 중복 리팩터링(이미지 슬롯·summary 쿼리·상태값 목록)          | Y2·Y7. 공용 훅/컴포넌트/헬퍼 추출                                                               |
+| ISSUE-037 | 🔴 OPEN | 스타일 | 접근성·일관성 정리(aria-label·shadcn 컨벤션·cn·명명·타입가드 등)            | Y3~Y6 + 낮음 다수                                                                               |
 
 ---
 
@@ -248,3 +256,58 @@
   - **다른 금액 · 낮은 금액 먼저 락**(`… <id> 11000 12000`, 4회): 둘 다 순차 성공(체인) → `current_price=12000`·`bids=2` → PASS.
   - **다른 금액 · 높은 금액 먼저 락**(`… <id> 12000 11000`, 3회): 12000 성공 / 11000 거부("최소 입찰가 13000원 이상…") → `current_price=12000`·`bids=1` → PASS. 두 순서 모두 **최종가=최댓값(12000)**로 갱신 손실 없음 확인.
 - **관련**: [ISSUE-003](#issue-003--최소-입찰-증가폭입찰-단위--done정액-방식-1000원-확정)(최소 증가폭 정액 1,000원 정책).
+
+---
+
+## 📋 2026-07-17 · 3인 코드리뷰 통합 리포트 (경매/입찰/신고)
+
+> 보안·성능·스타일 3개 관점으로 병렬 리뷰 후 심각도순 병합. 보안 리뷰는 Supabase MCP로 실제 DB의 RLS 정책·트리거·함수 정의를 대조함.
+> 대상: `app/actions/auctions.ts`, `lib/queries·mutations/*`, `components/auctions/*`, `components/report/*`, `app/auctions/[id]/*`. 총 29건(보안 5·성능 12·스타일 14).
+
+### 총평
+
+- 입찰/즉시구매/철회 **RPC 흐름 자체는 견고** — `SECURITY DEFINER` + `auth.uid()` + `for update` 행 잠금 + 서버 상태 재검증으로 가격·타이밍 조작(TOCTOU) 방어됨.
+- 다만 **RLS 컬럼 단위 보호 공백**(ISSUE-030)이 최우선. 상세 페이지 **페칭 워터폴**(ISSUE-033), 카드 **저대비 버그**(ISSUE-035)가 뒤를 이음.
+
+### 🚨 최우선 — ISSUE-030 (보안·높음)
+
+- **S1** `products_update_own` 정책이 `auth.uid() = seller_id`만 검사, **수정 가능 컬럼 제약 없음**. UI/`updateAuction`이 `description`/`buy_now_price`만 보내도록 스스로 제한할 뿐 DB는 막지 않음.
+- 로그인 판매자가 브라우저 콘솔에서 본인 상품에 대해 직접 조작 가능:
+  - `current_price` → 낮은 현재가로 낙찰 유도 / `auction_ends_at`(UPDATE엔 유효성 트리거 없음) → 마감 조작
+  - `status='withdrawn'` → `withdraw_product` RPC 우회 → **패널티 기록(ISSUE-006) 무력화** / `winner_id` 임의 지정
+- **수정**: `with_check`에 변경금지 컬럼=기존값 조건 추가 or `BEFORE UPDATE` 트리거 화이트리스트. `current_price`/`status`/`auction_ends_at`은 RPC 전용 분리. `validate_auction_ends_at`를 `INSERT OR UPDATE`로 확장.
+- ⚠️ 정책 정의로 확정, 실제 브라우저 익스플로잇 재현은 미실시 → 침투 테스트 재검증 권장.
+
+### 🔴 높음
+
+- **P1~P3 (ISSUE-033, 성능)** — `app/auctions/[id]/page.tsx:78-93` 의존성 없는 4개 조회 순차 await(LCP 직결) → `Promise.all`. `fetchMyBidCount`가 `getCurrentUserId()` 중복 호출 → 파라미터 주입 or `react cache()`. `fetchAuctionDetail` 내부 5단 순차(`sellerProfile`↔`rep` 독립, `bidCount`는 id만 필요) → 2단계.
+- **Y1 (ISSUE-035, 스타일→실질 버그)** — `auction-card.tsx:91` `text-primary-foreground`(≈흰색)를 `bg-primary` 없이 `bg-card`(≈흰색) 위 단독 사용 → 즉시구매가 라이트모드 미표시. → `text-foreground`/`text-primary`.
+- **Y2 (ISSUE-036, 스타일)** — `auction-form`↔`auction-edit-form` 이미지 슬롯 ~100줄 복제, `fetchAuctionSummaries`↔`fetchMyProductSummaries` 40줄 중복(차이 `.eq("seller_id")` 한 줄). → 공용 훅/컴포넌트/쿼리 헬퍼.
+
+### 🟡 중간
+
+| ID          | 항목                                                              | 위치                              | 분류   |
+| ----------- | ----------------------------------------------------------------- | --------------------------------- | ------ |
+| S2(030→031) | 관리자 정지 미검사 — 정지 사용자도 활동 가능                      | RPC 4종 초입                      | 보안   |
+| S3(032)     | `submitReport` 원본 Postgres 에러 노출                            | `reports.ts:40-46`                | 보안   |
+| P4(034)     | 무한스크롤 셸(client)이 RSC `AuctionGrid` 직접 import → 번들 포함 | `auction-grid-infinite.tsx:10,83` | 성능   |
+| P5(034)     | 카드 목록 이미지 전량 임베드(대표 1장만 필요)                     | `auctions.ts:52-54,97-99`         | 성능   |
+| P6(034)     | `products.created_at` 정렬 인덱스 부재 → 복합 인덱스              | products                          | 성능   |
+| P7(034)     | 이미지 업로드 순차 처리 → 병렬화(대표 순서 유지)                  | `mutations/auctions.ts`           | 성능   |
+| Y3(037)     | 입찰 aria-label "1,000원" 하드코딩(가변 `minBidIncrement`)        | `bid-panel.tsx:299,330`           | 스타일 |
+| Y4(037)     | 저장 중 "취소" 링크 `aria-disabled` 무효                          | `auction-edit-form.tsx:415`       | 스타일 |
+| Y5(037)     | report-dialog만 네이티브 label/textarea(shadcn 이탈)              | `report-dialog.tsx`               | 스타일 |
+| Y6(037)     | 갤러리 `cn()` 미사용, 클래스 3곳 중복                             | `auction-gallery.tsx:83-101`      | 스타일 |
+| Y7(036)     | 상태값 목록 4곳 개별 정의 → 단일 소스                             | 여러 파일                         | 스타일 |
+
+### 🟢 낮음
+
+- **보안**: S4 신고 대상 존재/정합성 서버 미검증(스팸 여지) · S5 `product_images.url` 출처 미검증(임의 외부 URL 삽입 여지) — 둘 다 ISSUE-032.
+- **성능**: `router.refresh()` 재조회 비용(P1/P3 개선 시 완화) · 삭제 DB↔Storage 순차 · `count:exact` · 갤러리 lazy init · IntersectionObserver 재구성.
+- **스타일**: 타입가드 vs `as` 단언 혼용 · `formatWithComma`/`formatComma` 명명 불일치 · `catch(e)` vs `catch(error)` · `disabled`+`aria-disabled` 중복 · 중첩 삼항 · 카드 내부 죽은 `aria-label` · bid-panel 445줄 분리 권장.
+
+### ✅ 양호 (유지)
+
+- RPC 3종 서버측 재검증·행 잠금(TOCTOU 안전), `buy_now`가 서버 `buy_now_price` 직접 사용(조작 불가).
+- `loadMoreMyProducts`가 세션값 사용(IDOR 차단), enumeration 완화 메시지.
+- 목록/라벨 `Promise.all` 병렬, `codes.ts` 프로세스 캐싱, `next/image` `priority`/`sizes` 적절.
