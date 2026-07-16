@@ -42,6 +42,9 @@ export async function submitReport(input: SubmitReportInput): Promise<void> {
     if (error.code === "23505") {
       throw new Error("이미 접수된 신고가 처리 대기 중입니다.");
     }
-    throw new Error(error.message ?? "신고 접수에 실패했습니다.");
+    // ISSUE-032(S3): 그 외에는 원본 Postgres 에러 메시지를 그대로 노출하지 않는다
+    // (createAuction/updateAuction과 동일한 패턴). 원문은 콘솔에만 남긴다.
+    console.error("submitReport failed:", error);
+    throw new Error("신고 접수에 실패했습니다.");
   }
 }

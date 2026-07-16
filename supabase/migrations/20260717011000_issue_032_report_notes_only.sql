@@ -1,0 +1,81 @@
+-- ISSUE-032: 신고 관련 검증 — 제안 메모 (실행 SQL 없음, 전부 주석)
+--
+-- 이 파일은 의도적으로 아무 DDL 도 실행하지 않는다. S3(에러 메시지 노출)은 코드에서
+-- lib/mutations/reports.ts 를 수정해 처리했다(마이그레이션 불필요). 아래 S5/S4 는
+-- 확신이 부족해 강제 적용을 보류하고, 제안 SQL 초안만 주석으로 남긴다.
+--
+-- =====================================================================================
+-- S5) product_images_insert_owner with_check 에 Storage 경로 검증 추가 (선택)
+-- =====================================================================================
+-- 현재 정책은 요청자가 해당 product_id 의 seller 인지만 검사하고, url 이 실제로
+-- 본인 Storage 경로({auth.uid()}/{productId}/...)를 가리키는지는 검사하지 않는다.
+-- 즉 이론적으로는 다른 사람의 Storage 객체 URL(공개 버킷이므로 URL 자체는 알 수 있음)을
+-- product_images.url 에 그대로 insert 할 수 있다(자기 소유가 아닌 이미지를 자기 상품에 첨부).
+--
+-- 보류 이유: (1) product-images 버킷이 공개 read 이므로 실제 피해는 "타인 이미지를 도용해
+-- 자기 상품에 노출"하는 정도로 제한적이고, (2) url 문자열 포맷(Supabase Storage 공개 URL의
+-- 정확한 프리픽스/이스케이프 규칙)을 정책 표현식에서 안전하게 매칭하는지 확신이 없어
+-- 잘못 적용 시 정상 업로드(createAuction/updateAuction)가 막힐 위험이 더 크다고 판단했다.
+-- 아래는 방향성 초안이며, 실제 Storage 공개 URL 포맷을 재확인한 뒤 적용을 검토할 것.
+--
+-- alter policy product_images_insert_owner on public.products
+--   ...  (실제로는 product_images 테이블 정책)
+--
+-- drop policy if exists product_images_insert_owner on public.product_images;
+-- create policy product_images_insert_owner on public.product_images
+--   for insert to authenticated
+--   with check (
+--     exists (
+--       select 1 from public.products p
+--       where p.id = product_images.product_id
+--         and p.seller_id = (select auth.uid())
+--     )
+--     -- url 이 "{PROJECT}/storage/v1/object/public/product-images/{auth.uid()}/{product_id}/..." 형태인지 확인.
+--     -- like 패턴은 %/product-images/{uid}/% 로 단순화했으나, uid 를 text 로 캐스팅할 때
+--     -- 특수문자 이스케이프가 필요 없는지(uuid 는 안전) 및 실제 getPublicUrl() 출력 포맷과
+--     -- 정확히 일치하는지 재검증 필요.
+--     and url like ('%/product-images/' || (select auth.uid())::text || '/%')
+--   );
+--
+-- =====================================================================================
+-- S4) 신고 대상(target_id) 존재/정합성 검증 (낮음, 보류)
+-- =====================================================================================
+-- reports.target_id 는 target_type(product/user/message/rating)에 따라 다른 테이블을
+-- 가리키는 폴리모픽 컬럼이라 FK 제약을 걸 수 없다(테이블 코멘트에 명시된 설계 의도, OPEN-1).
+-- 따라서 현재는 존재하지 않는 대상이나 이미 삭제된 대상도 신고 자체는 접수된다.
+--
+-- 리스크가 낮다고 보는 이유: (1) 신고는 "잘못된 신고"라도 관리자가 reviewing/rejected 로
+-- 처리하면 그만이라 데이터 정합성보다 신고 접수 자체의 가용성이 우선이고, (2) 존재하지 않는
+-- target_id 를 신고해도 조회 화면에서 자연스럽게 걸러지거나 관리자가 판단할 수 있어
+-- 악용 시나리오의 심각도가 낮다.
+--
+-- 도입한다면 target_type 별 CASE 분기로 존재 여부만 확인하는 BEFORE INSERT 트리거가
+-- 적합해 보인다(예시, 미검증 초안):
+--
+-- create or replace function public.validate_report_target()
+-- returns trigger language plpgsql set search_path = '' as $$
+-- begin
+--   case new.target_type
+--     when 'product' then
+--       if not exists (select 1 from public.products where id = new.target_id) then
+--         raise exception '신고 대상 상품을 찾을 수 없습니다.';
+--       end if;
+--     when 'user' then
+--       if not exists (select 1 from public.profiles where id = new.target_id) then
+--         raise exception '신고 대상 사용자를 찾을 수 없습니다.';
+--       end if;
+--     when 'message' then
+--       if not exists (select 1 from public.messages where id = new.target_id) then
+--         raise exception '신고 대상 메시지를 찾을 수 없습니다.';
+--       end if;
+--     when 'rating' then
+--       if not exists (select 1 from public.ratings where id = new.target_id) then
+--         raise exception '신고 대상 평점을 찾을 수 없습니다.';
+--       end if;
+--   end case;
+--   return new;
+-- end;
+-- $$;
+-- create trigger validate_report_target_before_insert
+--   before insert on public.reports
+--   for each row execute function public.validate_report_target();
