@@ -82,32 +82,32 @@ export async function createAuction(
 
   // 이미지 업로드(공통 유틸) → 공개 URL → product_images insert (경로: {userId}/{productId}/{idx})
   // 모든 업로드는 Supabase Storage(product-images)로만 향한다. 개별 실패는 집계해 호출부에 알린다.
+  // ISSUE-034 P7: 업로드는 서로 독립(경로가 인덱스별로 달라 충돌 없음)이므로 Promise.allSettled로
+  // 병렬화한다. 단 "성공한 첫 장(원래 인덱스 순서 기준)이 대표 이미지"라는 기존 규칙을 지키기 위해,
+  // 완료 순서가 아니라 input.files와 동일한 인덱스 순서로 결과를 순회해 대표를 결정한다.
   let failedCount = 0;
   if (input.files.length > 0) {
+    const uploadOutcomes = await Promise.allSettled(
+      input.files.map((file, i) => {
+        const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+        const path = `${userId}/${product.id}/${i}.${ext}`;
+        return uploadPublicImage(PRODUCT_IMAGES_BUCKET, path, file, supabase);
+      })
+    );
+
     const imageRows: {
       product_id: string;
       url: string;
       is_primary: boolean;
     }[] = [];
-
-    for (let i = 0; i < input.files.length; i++) {
-      const file = input.files[i];
-      const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-      const path = `${userId}/${product.id}/${i}.${ext}`;
-
-      try {
-        const publicUrl = await uploadPublicImage(
-          PRODUCT_IMAGES_BUCKET,
-          path,
-          file,
-          supabase
-        );
+    for (const outcome of uploadOutcomes) {
+      if (outcome.status === "fulfilled") {
         imageRows.push({
           product_id: product.id,
-          url: publicUrl,
-          is_primary: imageRows.length === 0, // 성공한 첫 장이 대표 이미지
+          url: outcome.value,
+          is_primary: imageRows.length === 0, // 원래 인덱스 순서상 성공한 첫 장이 대표 이미지
         });
-      } catch {
+      } else {
         failedCount += 1; // 개별 이미지 실패는 집계 후 계속
       }
     }
@@ -232,37 +232,42 @@ export async function updateAuction(
     throw new Error("수정 권한이 없거나 대상을 찾을 수 없습니다.");
   }
 
-  // (b) 삭제 대상 이미지: DB 행 삭제 후 Storage 객체 제거 (경로는 공개 URL에서 추출)
+  // (b) 삭제 대상 이미지: DB 행 삭제 + Storage 객체 제거 (경로는 공개 URL에서 추출)
+  // ISSUE-034(낮음): 두 작업은 결과 의존이 없다 — paths는 삭제 전 URL에서 미리 추출하고,
+  // DB 삭제는 Storage 제거 결과를 필요로 하지 않으므로 Promise.all로 병렬화한다.
   if (input.removedImages.length > 0) {
     const removedIds = input.removedImages.map((img) => img.id);
-    await supabase.from("product_images").delete().in("id", removedIds);
-
     const paths = input.removedImages
       .map((img) => extractStoragePath(img.url))
       .filter((p): p is string => p !== null);
-    await removeStorageObjects(PRODUCT_IMAGES_BUCKET, paths, supabase);
+    await Promise.all([
+      supabase.from("product_images").delete().in("id", removedIds),
+      removeStorageObjects(PRODUCT_IMAGES_BUCKET, paths, supabase),
+    ]);
   }
 
   // (c) 새 이미지 업로드 → product_images insert (대표 여부는 (d)에서 일괄 재설정)
   // 파일명에 UUID를 사용해 등록 시의 고정 인덱스 경로({i}.ext)와의 덮어쓰기 충돌을 방지한다.
+  // ISSUE-034 P7: 업로드는 서로 독립이므로 Promise.allSettled로 병렬화한다. index는 원래
+  // input.newFiles 상의 위치를 그대로 기록해, (d)에서 input.primary.index로 찾는 로직과
+  // 완료 순서 무관하게 동일하게 동작한다.
+  const uploadOutcomes = await Promise.allSettled(
+    input.newFiles.map((file) => {
+      const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+      const path = `${userId}/${input.productId}/${crypto.randomUUID()}.${ext}`;
+      return uploadPublicImage(PRODUCT_IMAGES_BUCKET, path, file, supabase);
+    })
+  );
+
   let failedCount = 0;
   const uploadedUrls: { index: number; url: string }[] = [];
-  for (let i = 0; i < input.newFiles.length; i++) {
-    const file = input.newFiles[i];
-    const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-    const path = `${userId}/${input.productId}/${crypto.randomUUID()}.${ext}`;
-    try {
-      const publicUrl = await uploadPublicImage(
-        PRODUCT_IMAGES_BUCKET,
-        path,
-        file,
-        supabase
-      );
-      uploadedUrls.push({ index: i, url: publicUrl });
-    } catch {
+  uploadOutcomes.forEach((outcome, i) => {
+    if (outcome.status === "fulfilled") {
+      uploadedUrls.push({ index: i, url: outcome.value });
+    } else {
       failedCount += 1; // 개별 실패는 집계 후 계속
     }
-  }
+  });
   if (uploadedUrls.length > 0) {
     await supabase.from("product_images").insert(
       uploadedUrls.map((u) => ({

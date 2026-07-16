@@ -77,20 +77,24 @@ async function AuctionDetailContent({
   // 동적 라우트 파라미터 취득
   const { id } = await params;
 
-  // Supabase 실 조회 (미존재 id는 404)
-  const detail = await fetchAuctionDetail(id);
+  // ISSUE-033 P1: 서로 의존성 없는 4개 조회를 병렬화(워터폴 제거, LCP 직결).
+  // fetchMyBidCount 는 detail.id 대신 라우트 파라미터 id 를 그대로 사용한다
+  // (fetchAuctionDetail 은 `.eq("id", id)` 로 조회하므로 detail.id === id 이고,
+  // detail 확정을 기다리지 않고도 바로 호출할 수 있다).
+  // fetchMyBidCount 내부에서도 getCurrentUserId() 를 호출하지만, 해당 함수가
+  // React cache() 로 감싸져 있어(lib/queries/profiles.ts) 동일 요청 내 중복 호출은
+  // dedupe 된다 — 별도 인자 전달 없이도 getClaims() 가 두 번 실행되지 않는다.
+  const [detail, userId, policies, myBidCount] = await Promise.all([
+    fetchAuctionDetail(id),
+    getCurrentUserId(),
+    fetchPolicies(),
+    fetchMyBidCount(id),
+  ]);
   if (!detail) notFound();
 
   // 세션 기반 입찰 패널 상태 (본인 상품/로그인 여부)
-  const userId = await getCurrentUserId();
   const isLoggedIn = userId !== null;
   const isOwner = userId === detail.sellerId;
-
-  // 최소 입찰 증가폭(DB 정책값) — 클라이언트 UX 사전검증용 주입
-  const policies = await fetchPolicies();
-
-  // 내 누적 입찰 횟수 — BidPanel "내 입찰 N회" 초기값(재진입 시 1부터 리셋되지 않도록)
-  const myBidCount = await fetchMyBidCount(detail.id);
 
   return (
     // 430px 모바일 세로 스택 레이아웃 (패딩 없음, 컴포넌트가 자체 px 관리)

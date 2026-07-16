@@ -20,6 +20,21 @@ import { getCurrentUserId } from "./profiles";
 export type AuctionStatusFilterValue = ProductStatus | "all";
 
 /**
+ * 유효한 상태 필터 값 전체 목록 (전체 + 실제 상품 상태 6종).
+ * 상태 필터 탭 구성, 서버 액션의 입력 검증(VALID_STATUS) 등 여러 곳에서 동일한 목록이
+ * 필요할 때 이 상수를 재사용해 중복 정의를 피한다.
+ */
+export const AUCTION_STATUS_VALUES: readonly AuctionStatusFilterValue[] = [
+  "all",
+  "active",
+  "won",
+  "failed",
+  "withdrawn",
+  "completed",
+  "force_closed",
+];
+
+/**
  * 홈/목록 카드 한 페이지(무한 스크롤 단위) 크기.
  * 이 값만 조정하면 초기 로딩·추가 로딩 개수가 함께 바뀐다.
  */
@@ -53,6 +68,12 @@ export async function fetchAuctionSummaries(
       "id, title, start_price, current_price, buy_now_price, auction_ends_at, status, region, product_images(url, is_primary)"
     )
     .order("created_at", { ascending: false })
+    // ISSUE-034 P5: product_images 전량 대신 대표 이미지 1장만 임베드.
+    // is_primary desc 로 정렬해 limit(1) 하면 "대표 지정 이미지 → (없으면) 첫 이미지" 순으로
+    // 뽑히므로 toAuctionSummary 의 `images.find(is_primary) ?? images[0]` 폴백과 동치다.
+    // 이미지가 0장인 상품은 여전히 product_images: [] 로 포함된다(inner join 아님 — 배제 없음).
+    .order("is_primary", { ascending: false, foreignTable: "product_images" })
+    .limit(1, { foreignTable: "product_images" })
     .range(from, to);
 
   // "all"이 아니면 상태로 필터
@@ -99,6 +120,9 @@ export async function fetchMyProductSummaries(
     )
     .eq("seller_id", sellerId)
     .order("created_at", { ascending: false })
+    // ISSUE-034 P5: fetchAuctionSummaries 와 동일하게 대표 이미지 1장만 임베드(N+1/과다전송 방지).
+    .order("is_primary", { ascending: false, foreignTable: "product_images" })
+    .limit(1, { foreignTable: "product_images" })
     .range(from, to);
 
   // "all"이 아니면 상태로 필터
@@ -124,28 +148,42 @@ export async function fetchMyProductSummaries(
 
 /**
  * 경매 상세. 미존재 시 null.
- * 상품(이미지·카테고리 임베드) → 판매자 프로필 → 평판 평균 별점 → 입찰 수 순으로 조합한다.
+ *
+ * ISSUE-033 P3: 서로 의존성 없는 조회를 2단계로 묶어 워터폴을 줄인다.
+ *   - 1단계(모두 `id` 파라미터만 필요, product 확정 전에도 조회 가능):
+ *     상품+이미지, 카테고리/중고등급/상태 라벨(공통코드), 누적 입찰 수.
+ *   - 2단계(product.seller_id 확보 후에만 가능, 서로는 독립): 판매자 프로필, 평판 평균 별점.
  */
 export async function fetchAuctionDetail(
   id: string
 ): Promise<AuctionDetail | null> {
   const supabase = await createClient();
 
-  // 상품 + 이미지
-  const { data: product, error } = await supabase
-    .from("products")
-    .select("*, product_images(id, product_id, url, is_primary)")
-    .eq("id", id)
-    .maybeSingle();
-
-  if (error || !product) return null;
-
-  // 카테고리/중고등급 코드 → 공통코드 라벨, 상태 라벨(모두 프로세스 단위 캐시)
-  const [categoryOptions, conditionOptions, statusLabels] = await Promise.all([
+  // 1단계: 상품+이미지 / 카테고리·중고등급 옵션(프로세스 단위 캐시) / 상태 라벨 / 누적 입찰 수
+  const [
+    { data: product, error },
+    categoryOptions,
+    conditionOptions,
+    statusLabels,
+    { count: bidCount },
+  ] = await Promise.all([
+    supabase
+      .from("products")
+      .select("*, product_images(id, product_id, url, is_primary)")
+      .eq("id", id)
+      .maybeSingle(),
     fetchCodeGroup("category"),
     fetchCodeGroup("product_condition"),
     fetchStatusLabels("product_status"),
+    // 누적 입찰 수(행 본문 없이 count만) — product_id는 파라미터 id와 동일하므로 product 확정을 기다릴 필요 없음
+    supabase
+      .from("bids")
+      .select("*", { count: "exact", head: true })
+      .eq("product_id", id),
   ]);
+
+  if (error || !product) return null;
+
   const categoryLabel =
     categoryOptions.find((o) => o.value === product.category)?.label ??
     product.category;
@@ -154,18 +192,19 @@ export async function fetchAuctionDetail(
     product.condition;
   const statusLabel = statusLabels[product.status] ?? product.status;
 
-  // 판매자 프로필 + 평판 평균 별점
-  const { data: sellerProfile } = await supabase
-    .from("profiles")
-    .select("id, nickname, avatar_url, region, seller_level")
-    .eq("id", product.seller_id)
-    .maybeSingle();
-
-  const { data: rep } = await supabase
-    .from("profile_reputation")
-    .select("seller_avg_score")
-    .eq("profile_id", product.seller_id)
-    .maybeSingle();
+  // 2단계: product.seller_id 확보 후 판매자 프로필 + 평판 평균 별점 (서로 독립이라 병렬화)
+  const [{ data: sellerProfile }, { data: rep }] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("id, nickname, avatar_url, region, seller_level")
+      .eq("id", product.seller_id)
+      .maybeSingle(),
+    supabase
+      .from("profile_reputation")
+      .select("seller_avg_score")
+      .eq("profile_id", product.seller_id)
+      .maybeSingle(),
+  ]);
 
   const seller = toSellerReputation(
     sellerProfile ?? {
@@ -177,12 +216,6 @@ export async function fetchAuctionDetail(
     },
     rep?.seller_avg_score ?? 0
   );
-
-  // 누적 입찰 수 (행 본문 없이 count 만)
-  const { count: bidCount } = await supabase
-    .from("bids")
-    .select("*", { count: "exact", head: true })
-    .eq("product_id", id);
 
   return toAuctionDetail({
     product,
