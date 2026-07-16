@@ -7,8 +7,9 @@ import { redirect } from "next/navigation";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { Container } from "@/components/layout/container";
-import { AuctionGrid } from "@/components/auctions/auction-grid";
+import { AuctionGridInfinite } from "@/components/auctions/auction-grid-infinite";
 import { AuctionStatusFilter } from "@/components/auctions/auction-status-filter";
+import { loadMoreMyProducts } from "@/app/actions/auctions";
 import {
   getCurrentUserId,
   fetchMyProductSummaries,
@@ -70,8 +71,8 @@ export default async function MyProductsPage({
     ? (status as AuctionStatusFilterValue)
     : "all";
 
-  // 본인 상품 요약(Supabase 실데이터) + 상태 라벨(DB 공통코드)
-  const [products, statusLabels] = await Promise.all([
+  // 본인 상품 요약 첫 페이지(Supabase 실데이터, 무한 스크롤 단위) + 상태 라벨(DB 공통코드)
+  const [firstPage, statusLabels] = await Promise.all([
     fetchMyProductSummaries(userId, current),
     fetchStatusLabels("product_status"),
   ]);
@@ -103,9 +104,12 @@ export default async function MyProductsPage({
             />
           </div>
 
-          {/* 내 상품 카드 2열 그리드 (Supabase 실데이터) */}
-          <AuctionGrid
-            auctions={products}
+          {/* 내 상품 카드 2열 그리드 — 무한 스크롤 (첫 페이지는 서버 렌더, 이후 Server Action 로딩) */}
+          {/* status 를 바인딩한 Server Action 을 loadPage 로 주입 (seller_id 는 서버 세션에서 확인) */}
+          <AuctionGridInfinite
+            loadPage={loadMoreMyProducts.bind(null, current)}
+            initialAuctions={firstPage.items}
+            initialHasMore={firstPage.hasMore}
             emptyMessage={`${heading.title}이 없습니다.`}
           />
         </Container>

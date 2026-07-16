@@ -19,20 +19,40 @@ import { fetchCodeGroup, fetchStatusLabels } from "./codes";
 export type AuctionStatusFilterValue = ProductStatus | "all";
 
 /**
- * 홈/목록 카드 요약 목록.
+ * 홈/목록 카드 한 페이지(무한 스크롤 단위) 크기.
+ * 이 값만 조정하면 초기 로딩·추가 로딩 개수가 함께 바뀐다.
+ */
+export const AUCTION_PAGE_SIZE = 6;
+
+/** 카드 요약 한 페이지 조회 결과 — 항목 + 다음 페이지 존재 여부 */
+export interface AuctionSummaryPage {
+  items: AuctionSummary[];
+  hasMore: boolean;
+}
+
+/**
+ * 홈/목록 카드 요약 한 페이지.
  * 대표 이미지를 단일 조인 select 로 함께 가져와 N+1 을 회피한다(최신 등록순).
+ * 무한 스크롤을 위해 `AUCTION_PAGE_SIZE` 단위로 페이지네이션한다.
+ * 다음 페이지 존재 여부(hasMore)는 한 개 더 조회(pageSize + 1)해 판단한다.
  * @param status "all"이면 전체, 그 외 특정 상태만 조회(기본 "all").
+ * @param page 0부터 시작하는 페이지 번호(기본 0 — 첫 페이지).
  */
 export async function fetchAuctionSummaries(
-  status: AuctionStatusFilterValue = "all"
-): Promise<AuctionSummary[]> {
+  status: AuctionStatusFilterValue = "all",
+  page = 0
+): Promise<AuctionSummaryPage> {
   const supabase = await createClient();
+  const from = page * AUCTION_PAGE_SIZE;
+  // range 는 양끝 포함(inclusive)이므로 pageSize + 1 개를 조회해 hasMore 를 판단한다.
+  const to = from + AUCTION_PAGE_SIZE;
   let query = supabase
     .from("products")
     .select(
       "id, title, start_price, current_price, buy_now_price, auction_ends_at, status, region, product_images(url, is_primary)"
     )
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .range(from, to);
 
   // "all"이 아니면 상태로 필터
   if (status !== "all") query = query.eq("status", status);
@@ -42,30 +62,43 @@ export async function fetchAuctionSummaries(
     query,
     fetchStatusLabels("product_status"),
   ]);
-  if (error || !data) return [];
-  return data.map((row) =>
-    toAuctionSummary(row, statusLabels[row.status] ?? row.status)
-  );
+  if (error || !data) return { items: [], hasMore: false };
+
+  // pageSize 를 초과해 조회됐다면 다음 페이지가 존재한다. 초과분은 잘라낸다.
+  const hasMore = data.length > AUCTION_PAGE_SIZE;
+  const rows = hasMore ? data.slice(0, AUCTION_PAGE_SIZE) : data;
+  return {
+    items: rows.map((row) =>
+      toAuctionSummary(row, statusLabels[row.status] ?? row.status)
+    ),
+    hasMore,
+  };
 }
 
 /**
- * 내가 올린 상품 요약 목록 (판매자 본인 상품).
- * fetchAuctionSummaries 와 동일한 요약 계약을 반환하되 seller_id 로 필터한다.
+ * 내가 올린 상품 요약 한 페이지 (판매자 본인 상품).
+ * fetchAuctionSummaries 와 동일한 페이지네이션 계약을 반환하되 seller_id 로 필터한다.
  * @param sellerId 판매자(로그인 사용자) id
  * @param status "all"이면 전체, 그 외 특정 상태만 조회(기본 "all").
+ * @param page 0부터 시작하는 페이지 번호(기본 0 — 첫 페이지).
  */
 export async function fetchMyProductSummaries(
   sellerId: string,
-  status: AuctionStatusFilterValue = "all"
-): Promise<AuctionSummary[]> {
+  status: AuctionStatusFilterValue = "all",
+  page = 0
+): Promise<AuctionSummaryPage> {
   const supabase = await createClient();
+  const from = page * AUCTION_PAGE_SIZE;
+  // range 는 양끝 포함(inclusive)이므로 pageSize + 1 개를 조회해 hasMore 를 판단한다.
+  const to = from + AUCTION_PAGE_SIZE;
   let query = supabase
     .from("products")
     .select(
       "id, title, start_price, current_price, buy_now_price, auction_ends_at, status, region, product_images(url, is_primary)"
     )
     .eq("seller_id", sellerId)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .range(from, to);
 
   // "all"이 아니면 상태로 필터
   if (status !== "all") query = query.eq("status", status);
@@ -75,10 +108,17 @@ export async function fetchMyProductSummaries(
     query,
     fetchStatusLabels("product_status"),
   ]);
-  if (error || !data) return [];
-  return data.map((row) =>
-    toAuctionSummary(row, statusLabels[row.status] ?? row.status)
-  );
+  if (error || !data) return { items: [], hasMore: false };
+
+  // pageSize 를 초과해 조회됐다면 다음 페이지가 존재한다. 초과분은 잘라낸다.
+  const hasMore = data.length > AUCTION_PAGE_SIZE;
+  const rows = hasMore ? data.slice(0, AUCTION_PAGE_SIZE) : data;
+  return {
+    items: rows.map((row) =>
+      toAuctionSummary(row, statusLabels[row.status] ?? row.status)
+    ),
+    hasMore,
+  };
 }
 
 /**
