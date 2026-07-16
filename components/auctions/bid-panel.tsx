@@ -420,7 +420,7 @@ export function BidPanel({
                 낙찰이 확정됩니다. 진행하시겠습니까?
               </DialogDescription>
             </DialogHeader>
-            <DialogFooter className="gap-2 sm:gap-0">
+            <DialogFooter className="gap-2">
               <Button
                 variant="outline"
                 onClick={() => setBuyNowOpen(false)}
