@@ -5,9 +5,10 @@
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { Container } from "@/components/layout/container";
-import { AuctionGrid } from "@/components/auctions/auction-grid";
+import { AuctionGridInfinite } from "@/components/auctions/auction-grid-infinite";
 import { AuctionStatusFilter } from "@/components/auctions/auction-status-filter";
 import { SiteVisitCounter } from "@/components/site-visit-counter";
+import { loadMoreAuctions } from "@/app/actions/auctions";
 import {
   fetchAuctionSummaries,
   fetchStatusLabels,
@@ -62,8 +63,9 @@ export default async function Home({
     ? (status as AuctionStatusFilterValue)
     : "active";
 
-  // 선택 상태의 경매 카드 요약 (Supabase 실데이터) + 상태 라벨(DB 공통코드) + 누적 방문 수
-  const [auctions, statusLabels, visitCount] = await Promise.all([
+  // 선택 상태의 경매 카드 요약 첫 페이지 (Supabase 실데이터, 무한 스크롤 단위)
+  // + 상태 라벨(DB 공통코드) + 누적 방문 수
+  const [firstPage, statusLabels, visitCount] = await Promise.all([
     fetchAuctionSummaries(current),
     fetchStatusLabels("product_status"),
     fetchSiteCounter("home_visits"),
@@ -94,9 +96,12 @@ export default async function Home({
             <AuctionStatusFilter current={current} labels={statusLabels} />
           </div>
 
-          {/* 경매 카드 2열 그리드 (Supabase 실데이터) */}
-          <AuctionGrid
-            auctions={auctions}
+          {/* 경매 카드 2열 그리드 — 무한 스크롤 (첫 페이지는 서버 렌더, 이후 Server Action 로딩) */}
+          {/* status 를 바인딩한 Server Action 을 loadPage 로 주입 */}
+          <AuctionGridInfinite
+            loadPage={loadMoreAuctions.bind(null, current)}
+            initialAuctions={firstPage.items}
+            initialHasMore={firstPage.hasMore}
             emptyMessage={`${heading.title}가 없습니다.`}
           />
         </Container>

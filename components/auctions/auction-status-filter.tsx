@@ -7,6 +7,7 @@
 
 import Link from "next/link";
 import { cn } from "@0625chopin/shared/utils";
+import { DragScroll } from "@/components/ui/drag-scroll";
 import type { AuctionStatusFilterValue } from "@/lib/queries";
 
 // 탭 노출 순서 (전체 + 실제 상품 상태 6종)
@@ -46,8 +47,8 @@ export function AuctionStatusFilter({
   ];
 
   return (
-    <div
-      className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1"
+    <DragScroll
+      className="-mx-1 flex gap-2 px-1 pb-1"
       role="tablist"
       aria-label="경매 상태 필터"
     >
@@ -76,6 +77,6 @@ export function AuctionStatusFilter({
           </Link>
         );
       })}
-    </div>
+    </DragScroll>
   );
 }

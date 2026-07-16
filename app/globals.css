@@ -4,3 +4,12 @@
 
 /* 공유 패키지 컴포넌트(@0625chopin/shared)의 Tailwind 클래스 스캔 (node_modules 기본 제외) */
 @source "../node_modules/@0625chopin/shared/src";
+
+/* 스크롤바를 숨기는 유틸리티 (가로 드래그 스크롤 등에 사용). 스크롤 기능은 유지하고 시각적 스크롤바만 감춘다. */
+@utility scrollbar-none {
+  -ms-overflow-style: none; /* IE, 구 Edge */
+  scrollbar-width: none; /* Firefox */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, 신 Edge */
+  }
+}

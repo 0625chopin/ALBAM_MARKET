@@ -13,8 +13,9 @@ export {
   fetchAuctionSummaries,
   fetchMyProductSummaries,
   fetchAuctionDetail,
+  AUCTION_PAGE_SIZE,
 } from "./auctions";
-export type { AuctionStatusFilterValue } from "./auctions";
+export type { AuctionStatusFilterValue, AuctionSummaryPage } from "./auctions";
 export {
   fetchCodeGroup,
   fetchStatusLabels,
