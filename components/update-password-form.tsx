@@ -12,6 +12,7 @@ import {
 } from "@0625chopin/shared/ui/card";
 import { Input } from "@0625chopin/shared/ui/input";
 import { Label } from "@0625chopin/shared/ui/label";
+import { getAuthErrorMessage } from "@/lib/auth/error-messages";
 import { useState } from "react";
 
 export function UpdatePasswordForm({
@@ -35,7 +36,7 @@ export function UpdatePasswordForm({
       // 로그인/로그아웃과 동일하게 전체 리로드로 클라이언트 캐시를 초기화한다.
       window.location.href = "/";
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
+      setError(getAuthErrorMessage(error));
     } finally {
       setIsLoading(false);
     }

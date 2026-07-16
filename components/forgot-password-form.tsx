@@ -12,6 +12,7 @@ import {
 } from "@0625chopin/shared/ui/card";
 import { Input } from "@0625chopin/shared/ui/input";
 import { Label } from "@0625chopin/shared/ui/label";
+import { getAuthErrorMessage } from "@/lib/auth/error-messages";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -38,7 +39,7 @@ export function ForgotPasswordForm({
       if (error) throw error;
       setSuccess(true);
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
+      setError(getAuthErrorMessage(error));
     } finally {
       setIsLoading(false);
     }

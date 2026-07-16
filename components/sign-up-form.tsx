@@ -18,6 +18,7 @@ import {
   statusClass,
   type FieldStatus,
 } from "@/lib/hooks/use-availability-check";
+import { getAuthErrorMessage } from "@/lib/auth/error-messages";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -104,7 +105,7 @@ export function SignUpForm({
       // 발송된 6자리 코드를 입력받기 위해 인증 화면으로 이동(이메일 전달)
       router.push(`/auth/verify-otp?email=${encodeURIComponent(email)}`);
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "오류가 발생했습니다.");
+      setError(getAuthErrorMessage(error));
     } finally {
       setIsLoading(false);
     }
@@ -126,7 +127,7 @@ export function SignUpForm({
       if (error) throw error;
       // 성공 시 브라우저가 Google 동의 화면으로 리다이렉트되므로 별도 처리 불필요
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
+      setError(getAuthErrorMessage(error));
       setIsLoading(false);
     }
   };
