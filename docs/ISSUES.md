@@ -13,33 +13,33 @@
 
 ## 이슈 목록
 
-| ID        | 상태    | 분류   | 제목                                                                        | 비고                                                                             |
-| --------- | ------- | ------ | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| ISSUE-009 | 🟢 DONE | UI     | 모바일 헤더 메뉴(드로어/햄버거) 미구현 → 하단 BottomNav로 대체              | T033 확인, 하단 탭바가 모바일 내비 제공                                          |
-| ISSUE-010 | 🟢 DONE | 국제화 | `app/layout.tsx` lang 속성 "en" → "ko" 적용                                 | MVP 한국어 고정(2026-07-02), 다국어는 Phase 7(T074)                              |
-| ISSUE-011 | 🟢 DONE | 인프라 | cacheComponents 동적 라우트 prerender — Suspense 경계 패턴                  | T012에서 해결, Phase 2 참고 패턴                                                 |
-| ISSUE-012 | 🟢 DONE | 데이터 | 타입 네이밍 camelCase 확정 → 실DB(snake_case) 매핑 레이어 필요              | `lib/queries/_map.ts` 매핑 레이어로 구현(컴포넌트 무수정)                        |
-| ISSUE-013 | 🟢 DONE | 인프라 | RSC에 onClick 등 이벤트 핸들러 전달 시 500 에러 — 정적/클라이언트 분리      | T025에서 해결, Phase 3 인터랙션 참고                                             |
-| ISSUE-014 | 🟢 DONE | 데이터 | `profiles.nickname` NOT NULL 제약 적용                                      | 트리거 폴백 보강 + 가입 폼 닉네임 입력 + NOT NULL (2026-07-02)                   |
-| ISSUE-015 | 🟢 DONE | 데이터 | `products`에 상품 설명(description) 컬럼 부재 → 등록 폼의 설명 미저장       | 컬럼 추가 + 타입/매퍼/폼/상세표시 반영 완료                                      |
-| ISSUE-016 | 🟢 DONE | 평판   | 평점 코멘트(comment) UI 입력되나 미저장                                     | `ratings.comment`+`submit_rating` p_comment 인자 추가 완료                       |
-| ISSUE-017 | 🟢 DONE | 인증   | 미들웨어 비로그인 보호 경로 복원(Phase 2 임시 허용 제거)                    | T062에서 해결                                                                    |
-| ISSUE-018 | 🟢 DONE | 인프라 | 스타터킷 잔재(groups/group_members + group RPC 4종) anon 노출 제거          | 테이블·함수·트리거 DROP + get_policy_int anon 노출 차단 (2026-07-02)             |
-| ISSUE-019 | 🟢 DONE | 성능   | FK 커버링 인덱스 미생성 → 도메인 FK 8건 인덱스 추가                         | unindexed_foreign_keys advisor 0 (2026-07-02)                                    |
-| ISSUE-001 | 🟢 DONE | 경매   | 기본 낙찰시간 상수 → DB 공통코드 이관(단일값)                               | codes.policy로 이관, 컬럼 DEFAULT 자동설정                                       |
-| ISSUE-002 | 🟢 DONE | 거래   | 거래완료 자동완료 대기시간 결정 (저장위치는 DB 이관됨)                      | 기본 24h 확정, 24~168h DB 조정 가능(RPC 클램프)                                  |
-| ISSUE-003 | 🟢 DONE | 입찰   | 최소 입찰 증가폭 방식(정액/정률/구간) (저장위치는 DB 이관됨)                | 정액 방식 확정, 값 1,000원                                                       |
-| ISSUE-004 | 🟢 DONE | 평판   | 낙찰 포기 패널티 정책(점수/기준/제재)                                       | 이용 제한 확정: 30일 3회 누적 시 경매 등록 차단(트리거)                          |
-| ISSUE-005 | 🟢 DONE | 평판   | 판매자/구매자 레벨 산정식                                                   | 현재 산정식 확정(가중치 조정은 함수 교체로 대응)                                 |
-| ISSUE-006 | 🟢 DONE | 상품   | 입찰 후 상품 내리기 제한 강도                                               | 패널티 후 허용 확정(입찰 시 penalties 기록, 004 누적 대상)                       |
-| ISSUE-007 | 🟢 DONE | 경매   | 연쇄 이양 시 차순위 수락 대기시간 적용 여부                                 | 즉시 이양 확정(대기시간 미적용)                                                  |
-| ISSUE-008 | 🟢 DONE | 인프라 | 경매 자동 종료/자동완료 실행 메커니즘 → **pg_cron + DB 함수**               | T054/T058 구현, cron 2종(close/auto-complete) active                             |
-| ISSUE-020 | 🟢 DONE | 데이터 | 타인 프로필 `/profile/[id]` 실데이터 전환 (Mock "김알밤" → Supabase)        | 2026-06-29 해결, `fetchProfile`+`fetchProfileScores` 교체                        |
-| ISSUE-021 | 🟢 DONE | 평판   | 평점 제출 시 브라우저 콘솔 `submit_rating` 400 1건 관측(데이터는 정상 저장) | 재제출 멱등 처리(`ON CONFLICT DO NOTHING` no-op) — 롤백 테스트 통과              |
-| ISSUE-022 | 🟢 DONE | 데이터 | 고아 `product_images.url` → Storage 객체 부재로 `/_next/image` 400          | `ProductImage` onError 폴백(카드·갤러리) — 깨진 아이콘 제거                      |
-| ISSUE-023 | 🟢 DONE | 경매   | 경매 진행 시간 고정(36h) → 등록자가 12시간/1~7일 선택                       | 폼 Select + `createAuction` 가 `auction_ends_at` 명시 전달 (2026-07-02)          |
-| ISSUE-028 | 🟢 DONE | 경매   | 강제종료(force_closed) 상태 신규 추가 — FO 표시 반영(크로스앱)              | 관리자 콘솔 강제 종료 결과. FO /transactions·/my-products·필터에 "강제종료" 노출 |
-| ISSUE-029 | 🟢 DONE | 입찰   | 동시·동일금액 입찰 동시성 검증 테스트 추가                                  | place_bid FOR UPDATE 락 검증 스크립트 — 동시 동일금액 시 정확히 1건만 성공 확인  |
+| ID        | 상태    | 분류   | 제목                                                                        | 비고                                                                                           |
+| --------- | ------- | ------ | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| ISSUE-009 | 🟢 DONE | UI     | 모바일 헤더 메뉴(드로어/햄버거) 미구현 → 하단 BottomNav로 대체              | T033 확인, 하단 탭바가 모바일 내비 제공                                                        |
+| ISSUE-010 | 🟢 DONE | 국제화 | `app/layout.tsx` lang 속성 "en" → "ko" 적용                                 | MVP 한국어 고정(2026-07-02), 다국어는 Phase 7(T074)                                            |
+| ISSUE-011 | 🟢 DONE | 인프라 | cacheComponents 동적 라우트 prerender — Suspense 경계 패턴                  | T012에서 해결, Phase 2 참고 패턴                                                               |
+| ISSUE-012 | 🟢 DONE | 데이터 | 타입 네이밍 camelCase 확정 → 실DB(snake_case) 매핑 레이어 필요              | `lib/queries/_map.ts` 매핑 레이어로 구현(컴포넌트 무수정)                                      |
+| ISSUE-013 | 🟢 DONE | 인프라 | RSC에 onClick 등 이벤트 핸들러 전달 시 500 에러 — 정적/클라이언트 분리      | T025에서 해결, Phase 3 인터랙션 참고                                                           |
+| ISSUE-014 | 🟢 DONE | 데이터 | `profiles.nickname` NOT NULL 제약 적용                                      | 트리거 폴백 보강 + 가입 폼 닉네임 입력 + NOT NULL (2026-07-02)                                 |
+| ISSUE-015 | 🟢 DONE | 데이터 | `products`에 상품 설명(description) 컬럼 부재 → 등록 폼의 설명 미저장       | 컬럼 추가 + 타입/매퍼/폼/상세표시 반영 완료                                                    |
+| ISSUE-016 | 🟢 DONE | 평판   | 평점 코멘트(comment) UI 입력되나 미저장                                     | `ratings.comment`+`submit_rating` p_comment 인자 추가 완료                                     |
+| ISSUE-017 | 🟢 DONE | 인증   | 미들웨어 비로그인 보호 경로 복원(Phase 2 임시 허용 제거)                    | T062에서 해결                                                                                  |
+| ISSUE-018 | 🟢 DONE | 인프라 | 스타터킷 잔재(groups/group_members + group RPC 4종) anon 노출 제거          | 테이블·함수·트리거 DROP + get_policy_int anon 노출 차단 (2026-07-02)                           |
+| ISSUE-019 | 🟢 DONE | 성능   | FK 커버링 인덱스 미생성 → 도메인 FK 8건 인덱스 추가                         | unindexed_foreign_keys advisor 0 (2026-07-02)                                                  |
+| ISSUE-001 | 🟢 DONE | 경매   | 기본 낙찰시간 상수 → DB 공통코드 이관(단일값)                               | codes.policy로 이관, 컬럼 DEFAULT 자동설정                                                     |
+| ISSUE-002 | 🟢 DONE | 거래   | 거래완료 자동완료 대기시간 결정 (저장위치는 DB 이관됨)                      | 기본 24h 확정, 24~168h DB 조정 가능(RPC 클램프)                                                |
+| ISSUE-003 | 🟢 DONE | 입찰   | 최소 입찰 증가폭 방식(정액/정률/구간) (저장위치는 DB 이관됨)                | 정액 방식 확정, 값 1,000원                                                                     |
+| ISSUE-004 | 🟢 DONE | 평판   | 낙찰 포기 패널티 정책(점수/기준/제재)                                       | 이용 제한 확정: 30일 3회 누적 시 경매 등록 차단(트리거)                                        |
+| ISSUE-005 | 🟢 DONE | 평판   | 판매자/구매자 레벨 산정식                                                   | 현재 산정식 확정(가중치 조정은 함수 교체로 대응)                                               |
+| ISSUE-006 | 🟢 DONE | 상품   | 입찰 후 상품 내리기 제한 강도                                               | 패널티 후 허용 확정(입찰 시 penalties 기록, 004 누적 대상)                                     |
+| ISSUE-007 | 🟢 DONE | 경매   | 연쇄 이양 시 차순위 수락 대기시간 적용 여부                                 | 즉시 이양 확정(대기시간 미적용)                                                                |
+| ISSUE-008 | 🟢 DONE | 인프라 | 경매 자동 종료/자동완료 실행 메커니즘 → **pg_cron + DB 함수**               | T054/T058 구현, cron 2종(close/auto-complete) active                                           |
+| ISSUE-020 | 🟢 DONE | 데이터 | 타인 프로필 `/profile/[id]` 실데이터 전환 (Mock "김알밤" → Supabase)        | 2026-06-29 해결, `fetchProfile`+`fetchProfileScores` 교체                                      |
+| ISSUE-021 | 🟢 DONE | 평판   | 평점 제출 시 브라우저 콘솔 `submit_rating` 400 1건 관측(데이터는 정상 저장) | 재제출 멱등 처리(`ON CONFLICT DO NOTHING` no-op) — 롤백 테스트 통과                            |
+| ISSUE-022 | 🟢 DONE | 데이터 | 고아 `product_images.url` → Storage 객체 부재로 `/_next/image` 400          | `ProductImage` onError 폴백(카드·갤러리) — 깨진 아이콘 제거                                    |
+| ISSUE-023 | 🟢 DONE | 경매   | 경매 진행 시간 고정(36h) → 등록자가 12시간/1~7일 선택                       | 폼 Select + `createAuction` 가 `auction_ends_at` 명시 전달 (2026-07-02)                        |
+| ISSUE-028 | 🟢 DONE | 경매   | 강제종료(force_closed) 상태 신규 추가 — FO 표시 반영(크로스앱)              | 관리자 콘솔 강제 종료 결과. FO /transactions·/my-products·필터에 "강제종료" 노출               |
+| ISSUE-029 | 🟢 DONE | 입찰   | 동시 입찰 동시성 검증 테스트 추가(동일/다른 금액)                           | place_bid FOR UPDATE 락 검증. 동일금액→정확히 1건 성공, 다른금액→최종가=최댓값(갱신 손실 없음) |
 
 ---
 
