@@ -13,5 +13,5 @@ export function LogoutButton() {
     window.location.href = "/";
   };
 
-  return <Button onClick={logout}>Logout</Button>;
+  return <Button onClick={logout}>로그아웃</Button>;
 }
