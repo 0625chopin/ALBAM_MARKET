@@ -136,8 +136,8 @@ export function SignUpForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Sign up</CardTitle>
-          <CardDescription>Create a new account</CardDescription>
+          <CardTitle className="text-2xl">회원가입</CardTitle>
+          <CardDescription>새 계정을 만드세요</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSignUp}>
@@ -160,7 +160,7 @@ export function SignUpForm({
                 )}
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">이메일</Label>
                 <Input
                   id="email"
                   type="email"
@@ -178,7 +178,7 @@ export function SignUpForm({
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">비밀번호</Label>
                 </div>
                 <Input
                   id="password"
@@ -190,7 +190,7 @@ export function SignUpForm({
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
-                  <Label htmlFor="repeat-password">Repeat Password</Label>
+                  <Label htmlFor="repeat-password">비밀번호 확인</Label>
                 </div>
                 <Input
                   id="repeat-password"
@@ -212,12 +212,12 @@ export function SignUpForm({
                   emailStatus === "unavailable"
                 }
               >
-                {isLoading ? "Creating an account..." : "Sign up"}
+                {isLoading ? "계정 생성 중..." : "회원가입"}
               </Button>
 
               <div className="relative text-center text-sm">
                 <span className="bg-card text-muted-foreground relative z-10 px-2">
-                  Or continue with
+                  또는 다음으로 계속하기
                 </span>
                 <div className="border-border absolute inset-0 top-1/2 z-0 border-t" />
               </div>
@@ -255,9 +255,9 @@ export function SignUpForm({
               </Button>
             </div>
             <div className="mt-4 text-center text-sm">
-              Already have an account?{" "}
+              이미 계정이 있으신가요?{" "}
               <Link href="/auth/login" className="underline underline-offset-4">
-                Login
+                로그인
               </Link>
             </div>
           </form>
