@@ -13,6 +13,7 @@ export {
   fetchAuctionSummaries,
   fetchMyProductSummaries,
   fetchAuctionDetail,
+  fetchMyBidCount,
   AUCTION_PAGE_SIZE,
 } from "./auctions";
 export type { AuctionStatusFilterValue, AuctionSummaryPage } from "./auctions";

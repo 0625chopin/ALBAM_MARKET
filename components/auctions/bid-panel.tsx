@@ -41,6 +41,8 @@ interface BidPanelProps {
   isLoggedIn?: boolean;
   /** 최소 입찰 증가폭(원) — DB 공통코드(codes.policy.min_bid_increment) 주입 */
   minBidIncrement: number;
+  /** 이 상품에 대한 내 누적 입찰 횟수 초기값 (서버 조회, 기본값: 0) */
+  initialMyBidCount?: number;
   /** 추가 클래스 */
   className?: string;
 }
@@ -53,6 +55,7 @@ export function BidPanel({
   isOwner = false,
   isLoggedIn = true,
   minBidIncrement,
+  initialMyBidCount = 0,
   className,
 }: BidPanelProps) {
   const router = useRouter();
@@ -63,8 +66,9 @@ export function BidPanel({
   );
   // 현재가 — 입찰 성공 시 서버 확정가(place_bid 반환)로 즉시 갱신
   const [currentPriceState, setCurrentPriceState] = useState(currentPrice);
-  // 이 세션에서 내가 입찰한 횟수 (성공 시 +1, 표시용)
-  const [bidCount, setBidCount] = useState(0);
+  // 내 누적 입찰 횟수 (서버 조회값에서 시작, 입찰 성공 시 +1, 표시용)
+  // 페이지 재진입/새로고침 시에도 실제 누적값에서 이어지도록 서버 초기값을 사용한다.
+  const [bidCount, setBidCount] = useState(initialMyBidCount);
   // 입찰가 검증 에러 메시지 (없으면 null)
   const [bidError, setBidError] = useState<string | null>(null);
   // 입찰 성공 메시지 표시 여부

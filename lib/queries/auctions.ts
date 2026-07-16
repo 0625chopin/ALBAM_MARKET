@@ -14,6 +14,7 @@ import {
   toSellerReputation,
 } from "@0625chopin/shared/queries/map";
 import { fetchCodeGroup, fetchStatusLabels } from "./codes";
+import { getCurrentUserId } from "./profiles";
 
 /** 홈 상태 필터 값 — 실제 상품 상태 + "all"(전체) */
 export type AuctionStatusFilterValue = ProductStatus | "all";
@@ -192,4 +193,24 @@ export async function fetchAuctionDetail(
     seller,
     bidCount: bidCount ?? 0,
   });
+}
+
+/**
+ * 현재 로그인 사용자가 특정 상품에 입찰한 누적 횟수.
+ * BidPanel 의 "내 입찰 N회 반영됨" 초기값으로 주입해, 페이지 재진입/새로고침 후에도
+ * 세션 카운터가 1부터 다시 시작하지 않고 실제 누적값에서 이어지도록 한다.
+ * 비로그인 시 0.
+ */
+export async function fetchMyBidCount(productId: string): Promise<number> {
+  const userId = await getCurrentUserId();
+  if (!userId) return 0;
+
+  const supabase = await createClient();
+  const { count } = await supabase
+    .from("bids")
+    .select("*", { count: "exact", head: true })
+    .eq("product_id", productId)
+    .eq("bidder_id", userId);
+
+  return count ?? 0;
 }

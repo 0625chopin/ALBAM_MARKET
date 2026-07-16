@@ -21,6 +21,7 @@ import {
   fetchAuctionDetail,
   getCurrentUserId,
   fetchPolicies,
+  fetchMyBidCount,
 } from "@/lib/queries";
 
 // ===== 상세 스켈레톤 (Suspense fallback) =====
@@ -88,6 +89,9 @@ async function AuctionDetailContent({
   // 최소 입찰 증가폭(DB 정책값) — 클라이언트 UX 사전검증용 주입
   const policies = await fetchPolicies();
 
+  // 내 누적 입찰 횟수 — BidPanel "내 입찰 N회" 초기값(재진입 시 1부터 리셋되지 않도록)
+  const myBidCount = await fetchMyBidCount(detail.id);
+
   return (
     // 430px 모바일 세로 스택 레이아웃 (패딩 없음, 컴포넌트가 자체 px 관리)
     <div className="flex flex-col">
@@ -106,6 +110,7 @@ async function AuctionDetailContent({
           isOwner={isOwner}
           isLoggedIn={isLoggedIn}
           minBidIncrement={policies.min_bid_increment}
+          initialMyBidCount={myBidCount}
         />
 
         {/* 판매자 본인 + 진행중일 때 상품 정보 수정 / 상품 내리기 (T056) */}
