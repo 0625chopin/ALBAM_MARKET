@@ -237,8 +237,14 @@
 - **배경**: "동시에 같은 제품·같은 금액으로 입찰 시도 시 처리 로직"을 확인 요청받음. 조사 결과 **로직은 이미 올바르게 구현**되어 있어 수정은 불필요했고, 그 불변식을 재현 가능한 스크립트로 검증하기로 함.
 - **처리 로직(확인)**: 입찰은 원격 Supabase RPC `place_bid`가 원자적으로 처리한다. `SELECT * FROM products WHERE id = ? FOR UPDATE`로 **상품 행에 비관적 락**을 걸어 동일 상품 입찰을 직렬화하고, 락 획득 후 `p_amount >= current_price + min_bid_increment(codes.policy, 기본 1000)`으로 최소가를 **재검증**한다. 저장소의 `lib/mutations/auctions.ts::placeBid`·`components/auctions/bid-panel.tsx`는 얇은 호출/UX 사전검증 래퍼일 뿐이다(최종 판정은 서버 RPC).
 - **동시·동일금액 시나리오**: 두 세션이 같은 금액 X로 동시 입찰 → 먼저 락을 잡은 1건만 성공(현재가=X 갱신) → 뒤 트랜잭션은 락 해제 후 **갱신된 현재가(=X)를 다시 읽어** `X < X + 1000`이므로 `최소 입찰가 …원 이상으로 입찰해 주세요.` 예외로 거부된다. 이중 낙찰·갱신 손실(lost update)·데드락 없음. `bids`에는 amount unique 제약이 없으며 방어는 전적으로 이 **락 + 재검증** 조합에 의존한다.
+- **다른 금액 동시 입찰(추가 시나리오)**: 두 세션이 서로 다른 금액을 동시 입찰하면 락 획득 순서에 따라 결과가 갈리지만, `FOR UPDATE` 락이 상품 행에 걸려 직렬화되므로 아래 불변식은 **순서와 무관하게 항상 성립**한다.
+  - 성공한 입찰들은 "이전 현재가 + 증가폭 이상" 조건으로 **엄격히 증가하는 체인**을 이룬다 → **최종 현재가 == 성공 입찰 중 최댓값**(낮은 입찰이 높은 입찰을 덮어쓰는 **갱신 손실 없음**).
+  - 뒤로 밀린 입찰은 반드시 `최소 입찰가 …원 이상…` 사유로 거부되며, DB **입찰 건수 == 성공 건수**(거부 건은 미삽입).
 - **추가한 검증 도구**:
-  - `scripts/verify-concurrent-bid.mjs`(`test-smtp.mjs`의 `loadEnv(.env.local)` 패턴 재사용) — 두 개의 독립 인증 클라이언트가 `Promise.allSettled`로 같은 상품·같은 금액 `place_bid`를 **동시 발사**한 뒤, "성공 정확히 1건 + `최소 입찰가` 거부 정확히 1건"을 단언(PASS→exit 0 / 이중낙찰 등→FAIL exit 1). productId·amount 인자화로 재사용 가능. FOR UPDATE 락은 상품 행에 걸리므로 두 입찰자가 다른 사용자든 같은 사용자 2세션이든 검증 메커니즘은 동일(테스트 계정 2개 제약상 seller=A, 입찰자=B의 2세션).
+  - `scripts/verify-concurrent-bid.mjs`(`test-smtp.mjs`의 `loadEnv(.env.local)` 패턴 재사용) — 두 개의 독립 인증 클라이언트가 `Promise.allSettled`로 같은 상품에 `place_bid`를 **동시 발사**하고, 이후 `products.current_price`·`bids` 건수를 **자체 read-back**(SELECT public)으로 확인해 불변식을 단언(PASS→exit 0 / 이중낙찰 등→FAIL exit 1). 인자로 시나리오 전환: `<productId> <amount>`(동일 금액) / `<productId> <amount1> <amount2>`(다른 금액). FOR UPDATE 락은 상품 행에 걸리므로 두 입찰자가 다른 사용자든 같은 사용자 2세션이든 검증 메커니즘은 동일(테스트 계정 2개 제약상 seller=A, 입찰자=B의 2세션).
   - `package.json`에 `test:bid-concurrency` 스크립트 추가.
-- **검증(end-to-end, 2026-07-16)**: MCP로 활성 테스트 상품(seller A, 현재가 10000) 생성 → `node scripts/verify-concurrent-bid.mjs <id> 11000` → **세션1 성공(11000) / 세션2 거부("최소 입찰가 12000원 이상…") → PASS**. DB 재확인 `bids=1건`·`current_price=11000`·`status=active`. 정리(teardown)는 `bids`/`products`에 **DELETE RLS 정책이 없어** MCP(RLS 우회)로 수행. `prettier`/`eslint` 통과.
+- **검증(end-to-end, 2026-07-16)**: MCP로 활성 테스트 상품(seller A, 현재가 10000) 생성 후 실행. teardown은 `bids`/`products`에 **DELETE RLS 정책이 없어** MCP(RLS 우회)로 수행. `prettier`/`eslint` 통과.
+  - **동일 금액**(`… <id> 11000`): 세션1 성공(11000) / 세션2 거부("최소 입찰가 12000원 이상…") → PASS. DB `bids=1`·`current_price=11000`.
+  - **다른 금액 · 낮은 금액 먼저 락**(`… <id> 11000 12000`, 4회): 둘 다 순차 성공(체인) → `current_price=12000`·`bids=2` → PASS.
+  - **다른 금액 · 높은 금액 먼저 락**(`… <id> 12000 11000`, 3회): 12000 성공 / 11000 거부("최소 입찰가 13000원 이상…") → `current_price=12000`·`bids=1` → PASS. 두 순서 모두 **최종가=최댓값(12000)**로 갱신 손실 없음 확인.
 - **관련**: [ISSUE-003](#issue-003--최소-입찰-증가폭입찰-단위--done정액-방식-1000원-확정)(최소 증가폭 정액 1,000원 정책).

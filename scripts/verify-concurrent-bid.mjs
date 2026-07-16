@@ -1,19 +1,27 @@
-// 동시 입찰(같은 제품·같은 금액) 동시성 검증 스크립트
+// 동시 입찰 동시성 검증 스크립트 (같은 제품, 동일/다른 금액)
 //
-// 목적: 두 개의 인증된 Supabase 클라이언트가 "동시에" 같은 상품·같은 금액으로
-//       place_bid RPC 를 호출했을 때, 정확히 1건만 성공하고 나머지 1건은
-//       "최소 입찰가 …원 이상으로 입찰해 주세요." 예외로 거부되는지 검증한다.
-//       (입찰 로직 자체는 place_bid RPC 의 SELECT ... FOR UPDATE 비관적 락 +
-//        락 획득 후 최소가 재검증으로 이미 보호되어 있다. 이 스크립트는 그
-//        불변식을 재현 가능하게 확인하는 용도다.)
+// 목적: 두 개의 인증된 Supabase 클라이언트가 "동시에" 같은 상품에 입찰했을 때
+//       place_bid RPC 의 동시성 처리(SELECT ... FOR UPDATE 비관적 락 + 락 획득 후
+//       최소가 재검증)가 불변식을 지키는지 검증한다. 입찰 로직 자체는 이미
+//       보호되어 있고, 이 스크립트는 그 불변식을 재현 가능하게 확인하는 용도다.
 //
-// 실행: node scripts/verify-concurrent-bid.mjs <productId> <amount>
-//       예) node scripts/verify-concurrent-bid.mjs 8f3c... 11000
+//   [동일 금액] 두 세션이 같은 금액 X → 정확히 1건만 성공, 나머지는
+//              "최소 입찰가 …원 이상으로 입찰해 주세요." 예외로 거부.
+//   [다른 금액] 두 세션이 서로 다른 금액 → 성공한 입찰들은 락 직렬화로 엄격히
+//              증가하는 체인을 이루므로 "최종 현재가 == 성공 입찰 중 최댓값"
+//              (갱신 손실 없음). 거부되는 건은 반드시 "최소 입찰가" 사유.
+//
+// 실행:
+//   동일 금액: node scripts/verify-concurrent-bid.mjs <productId> <amount>
+//   다른 금액: node scripts/verify-concurrent-bid.mjs <productId> <amount1> <amount2>
+//   예) node scripts/verify-concurrent-bid.mjs 8f3c... 11000
+//       node scripts/verify-concurrent-bid.mjs 8f3c... 11000 12000
 //
 // 사전 준비(정리 포함)는 Supabase MCP(execute_sql, RLS 우회)로 실행자가 수행한다.
 //   - Setup: 활성 테스트 상품 생성(seller 는 입찰자와 달라야 함), 현재가 확인.
 //   - Teardown: bids/products 에 DELETE RLS 정책이 없어 클라이언트로 못 지우므로 MCP 로 정리.
-// 이 스크립트는 상품을 만들거나 지우지 않는다. 오직 "동시 입찰 2건 발사 + 결과 분류"만 한다.
+// 이 스크립트는 상품을 만들거나 지우지 않는다. "동시 입찰 2건 발사 + 결과/DB 검증"만 한다.
+// (최종 현재가 read-back 은 products/bids 의 SELECT public 정책으로 허용됨.)
 //
 // 입찰자 계정: 기본값은 테스트 계정 B. BID_TEST_EMAIL / BID_TEST_PASSWORD 로 오버라이드 가능.
 //   FOR UPDATE 락은 "상품 행"에 걸리므로, 두 입찰자가 서로 다른 사용자든 같은 사용자의
@@ -56,23 +64,30 @@ const BIDDER_EMAIL = process.env.BID_TEST_EMAIL || "0625chopin@gmail.com";
 const BIDDER_PASSWORD = process.env.BID_TEST_PASSWORD || "qwer1234";
 
 // ===== 인자 파싱 =====
+// argv[3]=세션1 금액, argv[4]=세션2 금액(생략 시 동일 금액 시나리오)
 const productId = process.argv[2];
-const amount = Number(process.argv[3]);
+const amount1 = Number(process.argv[3]);
+const amount2 =
+  process.argv[4] !== undefined ? Number(process.argv[4]) : amount1;
+const sameAmount = amount1 === amount2;
 
 function fail(message) {
   console.error(`\n❌ ${message}`);
   process.exit(1);
 }
 
+const won = (v) => Number.isInteger(v) && v > 0;
+
 if (!SUPABASE_URL || !SUPABASE_KEY) {
   fail(
     "환경변수가 부족합니다. .env.local 에 NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY 를 설정하세요."
   );
 }
-if (!productId || !Number.isInteger(amount) || amount <= 0) {
+if (!productId || !won(amount1) || !won(amount2)) {
   fail(
-    "사용법: node scripts/verify-concurrent-bid.mjs <productId> <amount>\n" +
-      "  예) node scripts/verify-concurrent-bid.mjs 8f3c-... 11000"
+    "사용법: node scripts/verify-concurrent-bid.mjs <productId> <amount1> [amount2]\n" +
+      "  예) node scripts/verify-concurrent-bid.mjs 8f3c-... 11000\n" +
+      "      node scripts/verify-concurrent-bid.mjs 8f3c-... 11000 12000"
   );
 }
 
@@ -94,11 +109,12 @@ async function signIn(client, label) {
   }
 }
 
-console.log("동시 입찰 검증 시작");
+const krw = (n) => Number(n).toLocaleString("ko-KR");
+
+console.log(`동시 입찰 검증 시작 [${sameAmount ? "동일 금액" : "다른 금액"}]`);
 console.log(`  productId : ${productId}`);
-console.log(
-  `  amount    : ${amount.toLocaleString("ko-KR")}원 (두 세션 동일 금액)`
-);
+console.log(`  세션1 금액: ${krw(amount1)}원`);
+console.log(`  세션2 금액: ${krw(amount2)}원`);
 console.log(`  bidder    : ${BIDDER_EMAIL}`);
 console.log("");
 
@@ -108,10 +124,10 @@ const clientB = newClient();
 await signIn(clientA, "세션1");
 await signIn(clientB, "세션2");
 
-// ===== 두 세션이 같은 금액으로 동시 입찰 =====
+// ===== 두 세션이 각자 금액으로 동시 입찰 =====
 const [r1, r2] = await Promise.allSettled([
-  clientA.rpc("place_bid", { p_product_id: productId, p_amount: amount }),
-  clientB.rpc("place_bid", { p_product_id: productId, p_amount: amount }),
+  clientA.rpc("place_bid", { p_product_id: productId, p_amount: amount1 }),
+  clientB.rpc("place_bid", { p_product_id: productId, p_amount: amount2 }),
 ]);
 
 // allSettled 결과를 {data, error} 형태로 정규화(rpc 는 throw 하지 않고 {data, error} 반환)
@@ -123,40 +139,107 @@ function normalize(settled) {
   return { data, error };
 }
 
-const results = [normalize(r1), normalize(r2)];
+const results = [
+  { amount: amount1, ...normalize(r1) },
+  { amount: amount2, ...normalize(r2) },
+];
 
 results.forEach((res, i) => {
   if (res.error) {
-    console.log(`  세션${i + 1}: ❌ 거부 → ${res.error.message}`);
+    console.log(
+      `  세션${i + 1}(${krw(res.amount)}원): ❌ 거부 → ${res.error.message}`
+    );
   } else {
     console.log(
-      `  세션${i + 1}: ✅ 성공 → 확정 현재가 ${Number(res.data).toLocaleString("ko-KR")}원`
+      `  세션${i + 1}(${krw(res.amount)}원): ✅ 성공 → 확정 현재가 ${krw(res.data)}원`
     );
   }
 });
+
+// ===== DB read-back: 최종 현재가 + 이 상품의 입찰 건수 (SELECT public 허용) =====
+const { data: prod, error: readErr } = await clientA
+  .from("products")
+  .select("current_price, status")
+  .eq("id", productId)
+  .single();
+if (readErr || !prod) {
+  fail(`최종 현재가 조회 실패: ${readErr?.message ?? "row 없음"}`);
+}
+const { count: bidCount, error: cntErr } = await clientA
+  .from("bids")
+  .select("*", { count: "exact", head: true })
+  .eq("product_id", productId);
+if (cntErr) {
+  fail(`입찰 건수 조회 실패: ${cntErr.message}`);
+}
+console.log("");
+console.log(
+  `  DB 확인 → 최종 현재가 ${krw(prod.current_price)}원, 입찰 ${bidCount}건, status=${prod.status}`
+);
 console.log("");
 
-// ===== 불변식 단언: 성공 정확히 1건 + "최소 입찰가" 거부 정확히 1건 =====
-const succeeded = results.filter((r) => !r.error && Number(r.data) === amount);
-const rejectedByMin = results.filter(
-  (r) => r.error && r.error.message.includes("최소 입찰가")
+// ===== 결과 분류 =====
+const successes = results.filter((r) => !r.error);
+const rejections = results.filter((r) => r.error);
+const rejectedByMin = rejections.filter((r) =>
+  r.error.message.includes("최소 입찰가")
 );
+const maxSuccess = successes.length
+  ? Math.max(...successes.map((r) => Number(r.data)))
+  : null;
 
-if (succeeded.length === 1 && rejectedByMin.length === 1) {
-  console.log(
-    "🎉 PASS: 동일 금액 동시 입찰 중 정확히 1건만 성공, 나머지는 최소 입찰가 미달로 거부되었습니다.\n" +
-      "   → place_bid 의 FOR UPDATE 락 + 최소가 재검증이 동시성 경합을 올바르게 직렬화합니다."
-  );
-  process.exit(0);
-}
-
-// 실패 케이스 진단
-if (succeeded.length === 2) {
+// ===== 불변식 단언 =====
+if (sameAmount) {
+  // [동일 금액] 정확히 1건 성공 + 1건 "최소 입찰가" 거부, 최종가 == 그 금액, 입찰 1건
+  const ok =
+    successes.length === 1 &&
+    rejectedByMin.length === 1 &&
+    Number(successes[0].data) === amount1 &&
+    prod.current_price === amount1 &&
+    bidCount === 1;
+  if (ok) {
+    console.log(
+      "🎉 PASS [동일 금액]: 동시 동일금액 입찰 중 정확히 1건만 성공, 나머지는 최소 입찰가 미달로 거부.\n" +
+        "   → FOR UPDATE 락 + 최소가 재검증이 동일가 경합을 올바르게 직렬화(이중 낙찰 없음)."
+    );
+    process.exit(0);
+  }
+  if (successes.length === 2) {
+    fail(
+      "이중 낙찰 감지: 두 세션 모두 성공. FOR UPDATE 직렬화가 깨진 것으로 의심됩니다."
+    );
+  }
   fail(
-    "이중 낙찰 감지: 두 세션 모두 성공했습니다. FOR UPDATE 직렬화가 깨진 것으로 의심됩니다."
+    `예상과 다른 결과. 성공 ${successes.length} / 최소가거부 ${rejectedByMin.length} / 최종가 ${krw(prod.current_price)} / 입찰 ${bidCount}건.\n` +
+      "   상품이 active 이고 현재가+증가폭 == amount 인지, 입찰자가 seller 와 다른지 확인하세요."
+  );
+} else {
+  // [다른 금액] 순서 비결정적이지만 아래 불변식은 순서와 무관하게 성립해야 한다:
+  //   1) 최소 1건 성공(두 금액 모두 시작 시점엔 유효)
+  //   2) 성공 건의 반환값 == 그 입찰 금액(일관성)
+  //   3) 모든 거부는 "최소 입찰가" 사유(경합으로 이미 현재가 상승)
+  //   4) 최종 현재가 == 성공 입찰 중 최댓값(갱신 손실 없음)
+  //   5) 입찰 건수 == 성공 건수
+  const ok =
+    successes.length >= 1 &&
+    successes.every((r) => Number(r.data) === r.amount) &&
+    rejections.length === rejectedByMin.length &&
+    prod.current_price === maxSuccess &&
+    bidCount === successes.length;
+  if (ok) {
+    const loserNote =
+      successes.length === 2
+        ? "두 입찰 모두 순차 반영(낮은 금액이 먼저 락을 잡아 체인 성립)"
+        : "낮은 금액은 경합에서 밀려 최소 입찰가 미달로 거부";
+    console.log(
+      `🎉 PASS [다른 금액]: 최종 현재가 ${krw(prod.current_price)}원 == 성공 입찰 최댓값. 갱신 손실 없음.\n` +
+        `   → ${loserNote}. FOR UPDATE 락이 동시 경합을 일관되게 직렬화합니다.`
+    );
+    process.exit(0);
+  }
+  fail(
+    `예상과 다른 결과. 성공 ${successes.length}(반환 ${successes.map((r) => r.data).join(",")}) / ` +
+      `거부 ${rejections.length}(최소가거부 ${rejectedByMin.length}) / 최종가 ${krw(prod.current_price)} / 입찰 ${bidCount}건.\n` +
+      "   두 금액이 모두 시작 현재가+증가폭 이상인지, 입찰자가 seller 와 다른지 확인하세요."
   );
 }
-fail(
-  `예상과 다른 결과입니다. 성공 ${succeeded.length}건 / 최소가거부 ${rejectedByMin.length}건.\n` +
-    "   상품이 active 상태이고 현재가+증가폭 == amount 인지, 입찰자가 seller 와 다른지 확인하세요."
-);
