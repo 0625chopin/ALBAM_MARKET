@@ -8,8 +8,7 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Loader2, X } from "lucide-react";
-import { cn } from "@0625chopin/shared/utils";
+import { Loader2 } from "lucide-react";
 import { isAllowedImageFile } from "@0625chopin/shared/supabase/storage";
 import { Button } from "@0625chopin/shared/ui/button";
 import { Input } from "@0625chopin/shared/ui/input";
@@ -22,21 +21,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@0625chopin/shared/ui/select";
-import { Badge } from "@0625chopin/shared/ui/badge";
-import { ImagePlaceholder } from "@0625chopin/shared/common/image-placeholder";
+import { ImageSlotGrid } from "@/components/auctions/image-slot-grid";
 import type { SelectOption } from "@0625chopin/shared/types";
 import { createAuction } from "@/lib/mutations/auctions";
 import { DEFAULT_AUCTION_DURATION_HOURS } from "@0625chopin/shared/constants";
-
-// 이미지 최대 등록 개수 (대표 1 + 추가 5)
-const IMAGE_SLOT_COUNT = 6;
-
-// 입력 문자열에서 숫자만 남긴다 (콤마·공백 등 제거)
-const onlyDigits = (value: string) => value.replace(/[^\d]/g, "");
-
-// 숫자 문자열을 3자리마다 콤마 찍어 표시용으로 변환 (빈 값이면 빈 문자열)
-const formatWithComma = (digits: string) =>
-  digits === "" ? "" : Number(digits).toLocaleString("ko-KR");
+import {
+  IMAGE_SLOT_COUNT,
+  onlyDigits,
+  formatWithComma,
+} from "@/lib/utils/product-form";
 
 // 지금부터 hours 시간 뒤의 예상 마감 시각을 한국어 로컬 포맷으로 반환 (안내 표시용)
 const formatExpectedEndAt = (hours: number) =>
@@ -275,88 +268,13 @@ export function AuctionForm({
       <div className="space-y-2">
         <Label>상품 이미지</Label>
 
-        {/* 숨김 파일 입력 — 선택 시 미리보기 생성, 제출 시 Storage 업로드 */}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/jpeg,image/png,image/webp,image/gif"
-          multiple
-          className="sr-only"
-          aria-label="상품 이미지 파일 선택"
-          onChange={(e) => handleFilesSelected(e.target.files)}
+        {/* 이미지 슬롯 그리드 — 상태(images)는 이 폼이 보유하고 표시는 공용 컴포넌트에 위임 */}
+        <ImageSlotGrid
+          slots={images.map((img) => ({ key: img.preview, src: img.preview }))}
+          fileInputRef={fileInputRef}
+          onFilesSelected={handleFilesSelected}
+          onRemove={removeImage}
         />
-
-        {/* 이미지 미리보기 그리드 (3열) — 선택 파일 미리보기 + 추가 슬롯 */}
-        <div
-          className="grid grid-cols-3 gap-2"
-          role="group"
-          aria-label="이미지 슬롯"
-        >
-          {images.map((img, index) => (
-            <div key={img.preview} className="relative">
-              <div className="aspect-square w-full overflow-hidden rounded-md border">
-                {/* 미리보기는 ObjectURL 이라 next/image 미사용 */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={img.preview}
-                  alt={`상품 이미지 ${index + 1}`}
-                  className="size-full object-cover"
-                />
-              </div>
-
-              {/* 첫 번째 이미지에 "대표" 배지 표시 */}
-              {index === 0 && (
-                <Badge
-                  variant="default"
-                  className="pointer-events-none absolute top-1 left-1 text-xs"
-                >
-                  대표
-                </Badge>
-              )}
-
-              {/* 이미지 제거 버튼 */}
-              <button
-                type="button"
-                onClick={() => removeImage(index)}
-                aria-label={`상품 이미지 ${index + 1} 제거`}
-                className="bg-foreground/70 text-background hover:bg-foreground focus-visible:ring-ring absolute top-1 right-1 inline-flex size-5 items-center justify-center rounded-full transition-colors focus-visible:ring-2 focus-visible:outline-none"
-              >
-                <X className="size-3" aria-hidden="true" />
-              </button>
-            </div>
-          ))}
-
-          {/* 추가 업로드 슬롯 (최대 개수 미만일 때만) */}
-          {images.length < IMAGE_SLOT_COUNT && (
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className={cn(
-                "w-full overflow-hidden rounded-md transition-colors",
-                "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:outline-none",
-                images.length === 0
-                  ? "border-muted-foreground hover:border-ring border-2 border-dashed"
-                  : "border-input hover:border-ring border border-dashed"
-              )}
-              aria-label={
-                images.length === 0
-                  ? "대표 이미지 업로드"
-                  : "이미지 추가 업로드"
-              }
-            >
-              <ImagePlaceholder
-                className="aspect-square w-full rounded-md"
-                label={images.length === 0 ? "대표 이미지 추가" : "이미지 추가"}
-              />
-            </button>
-          )}
-        </div>
-
-        {/* 이미지 등록 안내 텍스트 */}
-        <p className="text-muted-foreground text-xs">
-          첫 번째 이미지가 대표 이미지로 사용됩니다. 최대 6장까지 등록
-          가능합니다.
-        </p>
 
         {/* 선택 검증 안내(거부/초과) */}
         {imageNotice && (
